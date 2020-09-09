@@ -41,11 +41,10 @@ public class KochanekBartelsSpline {
         public double m_bias = 0.0;
         public double m_tension = 0.0;
         public double m_continuity = 0.0;
-        public double m_dXin;
-        public double m_dXout;
-        public double m_dYin;
-        public double m_dYout;
-        public double m_dHeadingIn;
+        public boolean m_locationDerivativesEdited = false;
+        public double m_dX;
+        public double m_dY;
+        public double m_dHeading;
         public double m_dHeadingOut;
 
         public ControlPoint() {
@@ -69,31 +68,74 @@ public class KochanekBartelsSpline {
             }
         }
 
+        public double getTangentX() {
+            return m_fieldX + m_dX;
+        }
+        public double getTangentY() {
+            return m_fieldY + m_dY;
+        }
+
+        public void setTangentLocation(Point2D pt) {
+            setTangentLocation(pt.getX(), pt.getY());
+            // update the derivatives
+        }
+        public void setTangentLocation(double fieldX, double fieldY) {
+            m_dX = fieldX - m_fieldX;
+            m_dY = fieldY - m_fieldY;
+            m_locationDerivativesEdited = true;
+        }
+
         private void updateLocationDerivatives() {
-            double fieldXprev = (m_last != null) ? m_last.m_fieldX : m_fieldX;
-            double fieldYprev = (m_last != null) ? m_last.m_fieldY : m_fieldY;
-            double fieldXnext = (m_next != null) ? m_next.m_fieldX : m_fieldX;
-            double fieldYnext = (m_next != null) ? m_next.m_fieldY : m_fieldY;
-            m_dXin = m_dXout = 0.5 * (fieldXnext - fieldXprev);
-            m_dYin = m_dYout = 0.5 * (fieldYnext - fieldYprev);
+            if (!m_locationDerivativesEdited) {
+                double fieldXprev = (m_last != null) ? m_last.m_fieldX : m_fieldX;
+                double fieldYprev = (m_last != null) ? m_last.m_fieldY : m_fieldY;
+                double fieldXnext = (m_next != null) ? m_next.m_fieldX : m_fieldX;
+                double fieldYnext = (m_next != null) ? m_next.m_fieldY : m_fieldY;
+                m_dX = 0.5 * (fieldXnext - fieldXprev);
+                m_dY = 0.5 * (fieldYnext - fieldYprev);
+            }
         }
 
         public void setFieldHeading(double heading) {
             m_fieldHeading = heading;
             // update the derivatives
-            updateHeadingDerivatives();
+            updateHeadingDerivative();
             if (m_last != null) {
-                m_last.updateHeadingDerivatives();
+                m_last.updateHeadingDerivative();
             }
             if (m_next != null) {
-                m_next.updateHeadingDerivatives();
+                m_next.updateHeadingDerivative();
             }
         }
 
-        private void updateHeadingDerivatives() {
+        private void updateHeadingDerivative() {
             double fieldHeadingPrev = m_last != null ? m_last.m_fieldHeading : 0.0;
             double fieldHeadingNext = m_next != null ? m_next.m_fieldHeading : 0.0;
-            m_dHeadingIn = m_dHeadingOut = 0.5 * (fieldHeadingNext - fieldHeadingPrev);
+            m_dHeading = 0.5 * (fieldHeadingNext - fieldHeadingPrev);
+        }
+
+        /**
+         * @param fieldX
+         * @param fieldY
+         * @param tolerance
+         * @return Returns {@cade true} if the test point is over the control point, and {@code false} otherwise.
+         */
+        public boolean testOverControlPoint(double fieldX, double fieldY, double tolerance) {
+            double dx = m_fieldX - fieldX;
+            double dy = m_fieldY - fieldY;
+            return Math.sqrt((dx * dx) + (dy * dy)) < tolerance;
+        }
+
+        /**
+         * @param fieldX
+         * @param fieldY
+         * @param tolerance
+         * @return Returns {@cade true} if the test point is over the tangent point, and {@code false} otherwise.
+         */
+        public boolean testOveTangentPoint(double fieldX, double fieldY, double tolerance) {
+            double dx = (m_fieldX + m_dX) - fieldX;
+            double dy = (m_fieldY + m_dY) - fieldY;
+            return Math.sqrt((dx * dx) + (dy * dy)) < tolerance;
         }
     }
 
@@ -133,7 +175,7 @@ public class KochanekBartelsSpline {
     public class PathIterator implements Iterator<PathPoint>, Iterable<PathPoint> {
         ControlPoint m_thisSegmentStart = m_first;
         ControlPoint m_thisSegmentEnd = m_first == null ? null : m_first.m_next;
-        double[][] m_segment = {
+        final double[][] m_segment = {
                 {0.0, 0.0, 0.0},
                 {0.0, 0.0, 0.0},
                 {0.0, 0.0, 0.0},
@@ -155,16 +197,16 @@ public class KochanekBartelsSpline {
             m_s = m_delta;
             m_segment[0][0] = m_thisSegmentStart.m_fieldX;
             m_segment[1][0] = m_thisSegmentEnd.m_fieldX;
-            m_segment[2][0] = m_thisSegmentStart.m_dXout;
-            m_segment[3][0] = m_thisSegmentEnd.m_dXin;
+            m_segment[2][0] = m_thisSegmentStart.m_dX;
+            m_segment[3][0] = m_thisSegmentEnd.m_dX;
             m_segment[0][1] = m_thisSegmentStart.m_fieldY;
             m_segment[1][1] = m_thisSegmentEnd.m_fieldY;
-            m_segment[2][1] = m_thisSegmentStart.m_dYout;
-            m_segment[3][1] = m_thisSegmentEnd.m_dYin;
+            m_segment[2][1] = m_thisSegmentStart.m_dY;
+            m_segment[3][1] = m_thisSegmentEnd.m_dY;
             m_segment[0][2] = m_thisSegmentStart.m_fieldHeading;
             m_segment[1][2] = m_thisSegmentEnd.m_fieldHeading;
             m_segment[2][2] = m_thisSegmentStart.m_dHeadingOut;
-            m_segment[3][2] = m_thisSegmentEnd.m_dHeadingIn;
+            m_segment[3][2] = m_thisSegmentEnd.m_dHeading;
         }
 
         @Override
@@ -176,15 +218,15 @@ public class KochanekBartelsSpline {
         public PathPoint next() {
             // get the next point on the curve
             double[] s = {m_s * m_s * m_s, m_s * m_s, m_s, 1.0};
-            double weights[] = {0.0, 0.0, 0.0, 0.0};
-            for (int i=0; i<4; i++) {
-                for (int j = 0; j<4; j++) {
+            double[] weights = {0.0, 0.0, 0.0, 0.0};
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 4; j++) {
                     weights[i] += s[j] * m_basis[j][i];
                 }
             }
-            double field[] = {0.0, 0.0, 0.0};
-            for (int i=0; i<3; i++) {
-                for (int j = 0; j<4; j++) {
+            double[] field = {0.0, 0.0, 0.0};
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 4; j++) {
                     field[i] += weights[j] * m_segment[j][i];
                 }
             }

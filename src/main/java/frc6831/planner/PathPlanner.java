@@ -2,7 +2,6 @@ package frc6831.planner;
 
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,6 +17,10 @@ public class PathPlanner extends Frame implements ActionListener, WindowListener
     private final MenuItem m_menuItemFileLoadField;     // the menu file-load field button
     private final MenuItem m_menuItemFileLoadPath;      // the menu file-load path button
     private final MenuItem m_menuItemFileSavePath;      // the menu file-load button
+
+    private final MenuItem m_menuItemFEditClearPath;    // the menu edit - clear the current path and reset to
+                                                        // start a new path
+
 
     private final PathCanvas m_canvas;                  // the rendering canvas (defined at the end of this file)
 
@@ -58,6 +61,11 @@ public class PathPlanner extends Frame implements ActionListener, WindowListener
         m_menuItemFileSavePath = new MenuItem("Save Path");
         m_menuItemFileSavePath.addActionListener(this);
         menuFile.add(m_menuItemFileSavePath);
+        final Menu menuEdit = new Menu("Edit");
+        menubar.add(menuEdit);
+        m_menuItemFEditClearPath = new MenuItem("Clear Path");
+        m_menuItemFEditClearPath.addActionListener(this);
+        menuEdit.add(m_menuItemFEditClearPath);
         // the menubar is configured, now add it
         setMenuBar(menubar);
         // and right now everything is so simple that this is the listener
@@ -73,10 +81,7 @@ public class PathPlanner extends Frame implements ActionListener, WindowListener
         // Setup the app menu
         //------------------------------------------------------------------
         Desktop desktop = Desktop.getDesktop();
-        desktop.setQuitHandler((e, r) -> {
-                    exitPathPlaner();
-                }
-        );
+        desktop.setQuitHandler((e, r) -> exitPathPlaner());
 
     }
 
@@ -89,6 +94,10 @@ public class PathPlanner extends Frame implements ActionListener, WindowListener
     private void savePath() {
     }
 
+    private void clearPath() {
+        m_canvas.clearPath();
+    }
+
     private void exitPathPlaner() {
         // All done, dispose of the frame (window)
         dispose();
@@ -98,12 +107,16 @@ public class PathPlanner extends Frame implements ActionListener, WindowListener
     public void actionPerformed(ActionEvent event) {
         final Object src = event.getSource();
 
+        // The 'File' manu
         if (src == m_menuItemFileLoadField) {
             loadGameField();
         } else if (src == m_menuItemFileLoadPath) {
             loadFPath();
         } else if (src == m_menuItemFileSavePath) {
             savePath();
+        }
+        else if (src == m_menuItemFEditClearPath) {
+            clearPath();
         }
     }
 
