@@ -21,10 +21,13 @@ public class PathCanvas extends Canvas {
     private String m_mode = MODE_ADD;
     private String m_overWhat = null;
     private Stroke m_highlightStroke = new BasicStroke(2.0f);
+    private Point2D m_mouse = null;
+
 
     private class MouseHandler extends MouseAdapter {
         @Override
         public void mousePressed(MouseEvent e) {
+            m_mouse = e.getPoint();
             if ((m_mode == MODE_ADD) && (e.getClickCount() == 1)) {
                 newControlPoint = path.addControlPoint(e.getPoint());
                 repaint();
@@ -47,6 +50,7 @@ public class PathCanvas extends Canvas {
 
         @Override
         public void mouseReleased(MouseEvent e) {
+            m_mouse = e.getPoint();
             if (m_mode == MODE_ADD)  {
                 if (e.getClickCount() == 1) {
                     newControlPoint = null;
@@ -71,22 +75,22 @@ public class PathCanvas extends Canvas {
 
         @Override
         public void mouseDragged(MouseEvent e) {
+            m_mouse = e.getPoint();
             if (m_mode == MODE_ADD) {
                 newControlPoint.setFieldLocation(e.getPoint());
-                repaint();
             } else if ((m_mode == MODE_EDIT) && (null != overControlPoint)) {
                 if (OVER_CONTROL_POINT == m_overWhat) {
                     overControlPoint.setFieldLocation(e.getPoint());
-                    repaint();
                 } else if (OVER_TANGENT_POINT == m_overWhat) {
                     overControlPoint.setTangentLocation(e.getPoint());
-                    repaint();
                 }
             }
+            repaint();
         }
 
         @Override
         public void mouseMoved(MouseEvent e) {
+            m_mouse = e.getPoint();
             if (m_mode == MODE_EDIT) {
                 Point2D pt = e.getPoint();
                 overControlPoint = null;
@@ -100,8 +104,8 @@ public class PathCanvas extends Canvas {
                         m_overWhat = OVER_TANGENT_POINT;
                     }
                 }
-                repaint();
             }
+            repaint();
         }
     }
 
@@ -117,6 +121,13 @@ public class PathCanvas extends Canvas {
     public void paint(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setPaint(Color.WHITE);
+        int width = getWidth();
+        int height = getHeight();
+        if (null != m_mouse) {
+            g2d.drawString(
+                    String.format("(%.2f,%.2f)", m_mouse.getX(), m_mouse.getY()),
+                    (int) m_mouse.getX(), (int) m_mouse.getY());
+        }
         KochanekBartelsSpline.PathPoint lastPathPoint = null;
         KochanekBartelsSpline.PathPoint thisPathPoint = null;
         for (KochanekBartelsSpline.PathPoint pathPoint : path.getCurveSegments()) {

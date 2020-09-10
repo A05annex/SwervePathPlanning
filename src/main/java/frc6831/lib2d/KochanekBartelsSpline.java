@@ -38,9 +38,6 @@ public class KochanekBartelsSpline {
         public double m_fieldY = 0.0;
         public double m_fieldHeading = 0.0;
         public double m_time = 0.0;
-        public double m_bias = 0.0;
-        public double m_tension = 0.0;
-        public double m_continuity = 0.0;
         public boolean m_locationDerivativesEdited = false;
         public double m_dX;
         public double m_dY;
