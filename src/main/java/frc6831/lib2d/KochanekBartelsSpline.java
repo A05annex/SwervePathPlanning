@@ -8,6 +8,8 @@ import java.util.Iterator;
 
 public class KochanekBartelsSpline {
 
+    private static final double ROBOT_HEADING_HANDLE = 1.0;
+
     static final double[][] m_basis = {
             {2.0, -2.0, 1.0, 1.0},
             {-3.0, 3.0, -2.0, -1.0},
@@ -19,13 +21,11 @@ public class KochanekBartelsSpline {
     private ControlPoint m_last = null;
 
     public class PathPoint {
-        public final double fieldX;
-        public final double fieldY;
+        public final Point2D.Double fieldPt;
         public final double fieldHeading;
 
         public PathPoint(double fieldX, double fieldY, double fieldHeading) {
-            this.fieldX = fieldX;
-            this.fieldY = fieldY;
+            this.fieldPt = new Point2D.Double(fieldX, fieldY);
             this.fieldHeading = fieldHeading;
         }
     }
@@ -36,7 +36,7 @@ public class KochanekBartelsSpline {
         public ControlPoint m_last = null;
         public double m_fieldX = 0.0;
         public double m_fieldY = 0.0;
-        public double m_fieldHeading = 0.0;
+        public double m_fieldHeading = Math.PI/4.0;
         public double m_time = 0.0;
         public boolean m_locationDerivativesEdited = false;
         public double m_dX;
@@ -68,18 +68,31 @@ public class KochanekBartelsSpline {
         public double getTangentX() {
             return m_fieldX + m_dX;
         }
+
         public double getTangentY() {
             return m_fieldY + m_dY;
         }
 
         public void setTangentLocation(Point2D pt) {
             setTangentLocation(pt.getX(), pt.getY());
-            // update the derivatives
         }
+
         public void setTangentLocation(double fieldX, double fieldY) {
             m_dX = fieldX - m_fieldX;
             m_dY = fieldY - m_fieldY;
             m_locationDerivativesEdited = true;
+        }
+
+        public double getHeadingX() {
+            return m_fieldX + (ROBOT_HEADING_HANDLE * Math.cos(m_fieldHeading));
+        }
+
+        public double getHeadingY() {
+            return m_fieldY + (ROBOT_HEADING_HANDLE * Math.sin(m_fieldHeading));
+        }
+
+        public void setHeadingLocation(Point2D pt) {
+            // This really only sets the direction
         }
 
         private void updateLocationDerivatives() {
@@ -130,8 +143,20 @@ public class KochanekBartelsSpline {
          * @return Returns {@cade true} if the test point is over the tangent point, and {@code false} otherwise.
          */
         public boolean testOveTangentPoint(double fieldX, double fieldY, double tolerance) {
-            double dx = (m_fieldX + m_dX) - fieldX;
-            double dy = (m_fieldY + m_dY) - fieldY;
+            double dx = getTangentX() - fieldX;
+            double dy = getTangentY() - fieldY;
+            return Math.sqrt((dx * dx) + (dy * dy)) < tolerance;
+        }
+
+        /**
+         * @param fieldX
+         * @param fieldY
+         * @param tolerance
+         * @return Returns {@cade true} if the test point is over the heading point, and {@code false} otherwise.
+         */
+        public boolean testOveHeadingPoint(double fieldX, double fieldY, double tolerance) {
+            double dx = getHeadingX() - fieldX;
+            double dy = getHeadingY() - fieldY;
             return Math.sqrt((dx * dx) + (dy * dy)) < tolerance;
         }
     }

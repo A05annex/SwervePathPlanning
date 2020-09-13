@@ -1,8 +1,48 @@
 {
-  "components" : {
+  "components": [
+    {
+      "name": "power cell",
+      "color": "yellow",
+      "fill": "yellow",
+      "shapes": [
+        { "type": "circle",
+          "center": [0.0, 0.0],
+          "radius": 0.0889
+        }
+      ],
+    },
+    {
+      "name": "trench",
+      "color": "alliance",
+      "fill": "alliance",
+      "shapes": [
+        { "type": "rect",
+          "lower left": [-4.1050,-2.7432],
+          "upper right": [-2.6953,-2.6924]
+        },
+        { "type": "rect",
+          "lower left": [-2.7464,-2.6924],
+          "upper right": [-2.6953,2.6924]
+        },
+        { "type": "rect",
+          "lower left": [-4.1050,2.6924],
+          "upper right": [-2.6953,2.7432]
+        }
+      ],
+    }
 
-  },
-  "field" : {
-
-  }
+  ],
+  "field": [
+    "components": [
+      {
+        "component": "trench",
+        "alliance": "red",
+      },
+      {
+        "component": "trench",
+        "alliance": "blue",
+        "rotate": 3.1416
+      }
+    ]
+  ]
 }
