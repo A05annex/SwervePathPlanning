@@ -18,8 +18,10 @@ public class PathPlanner extends Frame implements ActionListener, WindowListener
     private final MenuItem m_menuItemFileLoadPath;      // the menu file-load path button
     private final MenuItem m_menuItemFileSavePath;      // the menu file-load button
 
-    private final MenuItem m_menuItemFEditClearPath;    // the menu edit - clear the current path and reset to
+    private final MenuItem m_menuItemEditClearPath;    // the menu edit - clear the current path and reset to
                                                         // start a new path
+
+    private final MenuItem m_menuItemAnimatePlay;      // play an animation of the current path
 
 
     private final PathCanvas m_canvas;                  // the rendering canvas (defined at the end of this file)
@@ -50,22 +52,18 @@ public class PathPlanner extends Frame implements ActionListener, WindowListener
         // Create the menu with exit
         // ----------------------------------------------------------------------------------
         final MenuBar menubar = new MenuBar();
-        final Menu menuFile = new Menu("File");
-        menubar.add(menuFile);
-        m_menuItemFileLoadField = new MenuItem("Load Game Field");
-        m_menuItemFileLoadField.addActionListener(this);
-        menuFile.add(m_menuItemFileLoadField);
-        m_menuItemFileLoadPath = new MenuItem("Load Path");
-        m_menuItemFileLoadPath.addActionListener(this);
-        menuFile.add(m_menuItemFileLoadPath);
-        m_menuItemFileSavePath = new MenuItem("Save Path");
-        m_menuItemFileSavePath.addActionListener(this);
-        menuFile.add(m_menuItemFileSavePath);
-        final Menu menuEdit = new Menu("Edit");
-        menubar.add(menuEdit);
-        m_menuItemFEditClearPath = new MenuItem("Clear Path");
-        m_menuItemFEditClearPath.addActionListener(this);
-        menuEdit.add(m_menuItemFEditClearPath);
+
+        final Menu menuFile = createMenu( menubar,"File");
+        m_menuItemFileLoadField = createMenuItem(menuFile, "Load Game Field", this);
+        m_menuItemFileLoadPath = createMenuItem(menuFile, "Load Path", this);
+        m_menuItemFileSavePath = createMenuItem(menuFile, "Save Path", this);
+
+        final Menu menuEdit = createMenu( menubar,"Edit");
+        m_menuItemEditClearPath = createMenuItem(menuEdit, "Clear Path", this);
+
+        final Menu menuAnimate = createMenu( menubar,"Animate");
+        m_menuItemAnimatePlay = createMenuItem(menuAnimate, "Play Path", this);
+
         // the menubar is configured, now add it
         setMenuBar(menubar);
         // and right now everything is so simple that this is the listener
@@ -85,6 +83,19 @@ public class PathPlanner extends Frame implements ActionListener, WindowListener
 
     }
 
+    static private Menu createMenu(MenuBar menubar, String name) {
+        final Menu menuNamed = new Menu(name);
+        menubar.add(menuNamed);
+        return menuNamed;
+    }
+
+    static private MenuItem createMenuItem(Menu menu, String name, ActionListener actionListener) {
+        MenuItem menuItem = new MenuItem(name);
+        menuItem.addActionListener(actionListener);
+        menu.add(menuItem);
+        return menuItem;
+    }
+
     private void loadGameField() {
     }
 
@@ -96,6 +107,10 @@ public class PathPlanner extends Frame implements ActionListener, WindowListener
 
     private void clearPath() {
         m_canvas.clearPath();
+    }
+
+    private void animatePath() {
+        m_canvas.animatePath();
     }
 
     private void exitPathPlaner() {
@@ -114,9 +129,10 @@ public class PathPlanner extends Frame implements ActionListener, WindowListener
             loadFPath();
         } else if (src == m_menuItemFileSavePath) {
             savePath();
-        }
-        else if (src == m_menuItemFEditClearPath) {
+        } else if (src == m_menuItemEditClearPath) {
             clearPath();
+        } else if (src == m_menuItemAnimatePlay) {
+            animatePath();
         }
     }
 

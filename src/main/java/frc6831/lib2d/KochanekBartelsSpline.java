@@ -6,10 +6,41 @@ import java.awt.geom.Point2D;
 import java.lang.Iterable;
 import java.util.Iterator;
 
+/**
+ * This is an implementation of the
+ * <a href="https://en.wikipedia.org/wiki/Kochanek%E2%80%93Bartels_spline">KochanekBartels Spline</a> designed
+ * for interactive editing of the tangent vector to implicitly control bias and tension. There is no continuity
+ * control.
+ *
+ * When control points are created the tangent (derivatives) at that control point and surrounding control points are
+ * computed using the <a href="https://en.wikipedia.org/wiki/Cubic_Hermite_spline">Cardinal-Spline</a> formulation
+ * with the default tension specified by {@link #DEFAULT_TENSION}. The tangent is adjusted using a control handle
+ * which intuitively manipulates the shape of the spline at the control point to implicitly edit tension and bias.
+ *
+ * This class is primarily a container-editor for a doubly-linked list of control points, and a factory for
+ * path point iterators (iterating through the path points), or path point followers (generating a series of
+ * path points at specified times along the path).
+ */
 public class KochanekBartelsSpline {
 
+    /**
+     * The length of the heading control handle in meters.
+     */
     private static final double ROBOT_HEADING_HANDLE = 1.0;
+    /**
+     * In the formulation of the spline the tension scales the derivative. This was a tension selected for best
+     * default appearance of the spline i.e. the default spline best represents the intent of the path planner.
+     */
+    private static final double DEFAULT_TENSION = 0.7;
+    /**
+     * A scale factor applied to the derivative when computing the position of the editing handle.
+     */
+    private static final double DERIVATIVE_UI_SCALE = 0.5;
 
+    /**
+     * The basis matrix that provides the weighting of the [s] matrix (position on the segment of the spline to
+     * various powers) as applied to the start and end positions and derivatives.
+     */
     static final double[][] m_basis = {
             {2.0, -2.0, 1.0, 1.0},
             {-3.0, 3.0, -2.0, -1.0},
@@ -17,20 +48,67 @@ public class KochanekBartelsSpline {
             {1.0, 0.0, 0.0, 0.0}
     };
 
+    /**
+     * The first control point in this doubly-linked list of control points for the spline.
+     */
     private ControlPoint m_first = null;
+    /**
+     * The last control point in this doubly-linked list of control points for the spline.
+     */
     private ControlPoint m_last = null;
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // PathPoint - a generated point on the path that includes expected field position and heading as well as
+    // forward speed,/ strafe speed, and rotation speed for the robot.
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * The representation of a generated point along the path.
+     */
     public class PathPoint {
+        /**
+         * The point on the field where the robot should be when it reaches this point in the path.
+         */
         public final Point2D.Double fieldPt;
+        /**
+         * The field heading for the robot when it reaches this point on the path
+         */
         public final double fieldHeading;
+        /**
+         * The forward velocity of the robot (-1.0 to 1.0) required to reach this point. NOTE: if the absolute
+         * speed is greater than 1.0 this path is invalid.
+         */
+        public final double speedForward;
+        /**
+         * The strafe velocity of the robot (-1.0 to 1.0) required to reach this point. NOTE: if the absolute
+         * speed is greater than 1.0 this path is invalid.
+         */
+        public final double speedStrafe;
+        /**
+         * The rotation speed of the robot (-1.0 to 1.0) required to reach this point. NOTE: if the absolute
+         * speed is greater than 1.0 this path is invalid.
+         */
+        public final double speedRotation;
+
 
         public PathPoint(double fieldX, double fieldY, double fieldHeading) {
             this.fieldPt = new Point2D.Double(fieldX, fieldY);
             this.fieldHeading = fieldHeading;
+            this.speedForward = 0.0;
+            this.speedStrafe = 0.0;
+            this.speedRotation = 0.0;
         }
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+    // ControlPoint - a control point with heading and derivatives for the spline
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * This class represents a control point and has the operations that manipulate a control point in context with
+     * its surrounding control points. Note that control points are maintained as a doubly-linked list because
+     * manipulation of a control point affects derivatives of the adjacent control points.
+     */
     public static class ControlPoint {
         public ControlPoint m_next = null;
         public ControlPoint m_last = null;
@@ -44,14 +122,36 @@ public class KochanekBartelsSpline {
         public double m_dHeading;
         public double m_dHeadingOut;
 
+        /**
+         * Instantiate a {@link ControlPoint}.
+         */
         public ControlPoint() {
         }
 
+        /**
+         * Instantiate a control point and set the time this control point should be reached when the path
+         * is traversed.
+         *
+         * @param timeInSec (double) The time this control point should be reached (in seconds).
+         */
+        public ControlPoint(double timeInSec) {
+            m_time = timeInSec;
+        }
+
+        /**
+         *
+         * @param pt
+         */
         public void setFieldLocation(Point2D pt) {
             setFieldLocation(pt.getX(), pt.getY());
             // update the derivatives
         }
 
+        /**
+         *
+         * @param fieldX
+         * @param fieldY
+         */
         public void setFieldLocation(double fieldX, double fieldY) {
             m_fieldX = fieldX;
             m_fieldY = fieldY;
@@ -65,47 +165,88 @@ public class KochanekBartelsSpline {
             }
         }
 
-        public double getTangentX() {
-            return m_fieldX + m_dX;
-        }
-
-        public double getTangentY() {
-            return m_fieldY + m_dY;
-        }
-
-        public void setTangentLocation(Point2D pt) {
-            setTangentLocation(pt.getX(), pt.getY());
-        }
-
-        public void setTangentLocation(double fieldX, double fieldY) {
-            m_dX = fieldX - m_fieldX;
-            m_dY = fieldY - m_fieldY;
-            m_locationDerivativesEdited = true;
-        }
-
-        public double getHeadingX() {
-            return m_fieldX + (ROBOT_HEADING_HANDLE * Math.cos(m_fieldHeading));
-        }
-
-        public double getHeadingY() {
-            return m_fieldY + (ROBOT_HEADING_HANDLE * Math.sin(m_fieldHeading));
-        }
-
-        public void setHeadingLocation(Point2D pt) {
-            // This really only sets the direction
-        }
-
+        /**
+         *
+         */
         private void updateLocationDerivatives() {
+            // NOTE: If the derivative has been edited, then we assume the edited derivative is the intended
+            // derivative and should not be recomputed when the control point is moved.
             if (!m_locationDerivativesEdited) {
                 double fieldXprev = (m_last != null) ? m_last.m_fieldX : m_fieldX;
                 double fieldYprev = (m_last != null) ? m_last.m_fieldY : m_fieldY;
                 double fieldXnext = (m_next != null) ? m_next.m_fieldX : m_fieldX;
                 double fieldYnext = (m_next != null) ? m_next.m_fieldY : m_fieldY;
-                m_dX = 0.5 * (fieldXnext - fieldXprev);
-                m_dY = 0.5 * (fieldYnext - fieldYprev);
+                m_dX = DEFAULT_TENSION * (fieldXnext - fieldXprev);
+                m_dY = DEFAULT_TENSION * (fieldYnext - fieldYprev);
             }
         }
 
+        /**
+         *
+         * @return
+         */
+        public double getTangentX() {
+            return m_fieldX + (DERIVATIVE_UI_SCALE * m_dX);
+        }
+
+        /**
+         *
+         * @return
+         */
+        public double getTangentY() {
+            return m_fieldY + (DERIVATIVE_UI_SCALE * m_dY);
+        }
+
+        /**
+         *
+         * @param pt
+         */
+        public void setTangentLocation(Point2D pt) {
+            setTangentLocation(pt.getX(), pt.getY());
+        }
+
+        /**
+         *
+         * @param fieldX
+         * @param fieldY
+         */
+        public void setTangentLocation(double fieldX, double fieldY) {
+            m_dX = (fieldX - m_fieldX) / DERIVATIVE_UI_SCALE;
+            m_dY = (fieldY - m_fieldY) / DERIVATIVE_UI_SCALE;
+            m_locationDerivativesEdited = true;
+        }
+
+        /**
+         *
+         * @return
+         */
+        public double getHeadingX() {
+            return m_fieldX + (ROBOT_HEADING_HANDLE * Math.sin(m_fieldHeading));
+        }
+
+        /**
+         *
+         * @return
+         */
+        public double getHeadingY() {
+            return m_fieldY + (ROBOT_HEADING_HANDLE * Math.cos(m_fieldHeading));
+        }
+
+        /**
+         *
+         * @param pt
+         */
+        public void setHeadingLocation(Point2D pt) {
+            // OK, the simple action here is to look at the current mouse position relative to the control
+            // point position, use the atan2, and get a heading. However, tis does not handle the -180/180 degree
+            // transition, so we need some logic like the NavX logic. for passing over the boundary
+            setFieldHeading(Math.atan2(pt.getX() - m_fieldX, pt.getY() - m_fieldY));
+        }
+
+        /**
+         *
+         * @param heading
+         */
         public void setFieldHeading(double heading) {
             m_fieldHeading = heading;
             // update the derivatives
@@ -118,10 +259,13 @@ public class KochanekBartelsSpline {
             }
         }
 
+        /**
+         *
+         */
         private void updateHeadingDerivative() {
             double fieldHeadingPrev = m_last != null ? m_last.m_fieldHeading : 0.0;
             double fieldHeadingNext = m_next != null ? m_next.m_fieldHeading : 0.0;
-            m_dHeading = 0.5 * (fieldHeadingNext - fieldHeadingPrev);
+            m_dHeading = DEFAULT_TENSION * (fieldHeadingNext - fieldHeadingPrev);
         }
 
         /**
@@ -194,29 +338,30 @@ public class KochanekBartelsSpline {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    public class PathIterator implements Iterator<PathPoint>, Iterable<PathPoint> {
+    private abstract class PathGenerator {
+        /**
+         * The start of the segment being generated
+         */
         ControlPoint m_thisSegmentStart = m_first;
+        /**
+         * The end of the segment being generated.
+         */
         ControlPoint m_thisSegmentEnd = m_first == null ? null : m_first.m_next;
+        /**
+         * The basis matrix.
+         */
         final double[][] m_segment = {
                 {0.0, 0.0, 0.0},
                 {0.0, 0.0, 0.0},
                 {0.0, 0.0, 0.0},
                 {0.0, 0.0, 0.0}
         };
-        double m_s = 0.0;
-        double m_delta = 0.05;
 
-        private PathIterator() {
-            resetSegment();
-            m_s = 0.0;
-        }
-
-        private void resetSegment() {
+        protected void resetSegment() {
             if (null == m_thisSegmentEnd) {
                 // we are done with this spline, just return.
                 return;
             }
-            m_s = m_delta;
             m_segment[0][0] = m_thisSegmentStart.m_fieldX;
             m_segment[1][0] = m_thisSegmentEnd.m_fieldX;
             m_segment[2][0] = m_thisSegmentStart.m_dX;
@@ -231,15 +376,9 @@ public class KochanekBartelsSpline {
             m_segment[3][2] = m_thisSegmentEnd.m_dHeading;
         }
 
-        @Override
-        public boolean hasNext() {
-            return m_thisSegmentEnd != null;
-        }
-
-        @Override
-        public PathPoint next() {
+        public PathPoint getPointOnSegment(double sValue) {
             // get the next point on the curve
-            double[] s = {m_s * m_s * m_s, m_s * m_s, m_s, 1.0};
+            double[] s = {sValue * sValue * sValue, sValue * sValue, sValue, 1.0};
             double[] weights = {0.0, 0.0, 0.0, 0.0};
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 4; j++) {
@@ -252,16 +391,52 @@ public class KochanekBartelsSpline {
                     field[i] += weights[j] * m_segment[j][i];
                 }
             }
+            // create and return the path point
+            return new PathPoint(field[0], field[1], field[2]);
+        }
+    }
+
+    /**
+     * An iterator for points along a path.
+     */
+    public class PathIterator extends PathGenerator implements Iterator<PathPoint>, Iterable<PathPoint> {
+        /**
+         * The current position on the segment being generated, from 0.0 being on {@link #m_thisSegmentStart}
+         * to 1.0 being on {@link #m_thisSegmentEnd}.
+         */
+        double m_s = 0.0;
+        /**
+         * The point spacing increment on the curve.
+         */
+        final double m_delta;
+
+        private PathIterator(double delta) {
+            resetSegment();
+            m_s = 0.0;
+            m_delta = delta;
+        }
+
+
+        @Override
+        public boolean hasNext() {
+            return m_thisSegmentEnd != null;
+        }
+
+        @Override
+        public PathPoint next() {
+            // get the next point on the curve
+            PathPoint pathPoint = getPointOnSegment(m_s);
             // get ready for the next
             m_s += m_delta;
             if (m_s > 1.0001) {
                 // past the end of this segment for the next point, transition to the next segment
                 m_thisSegmentStart = m_thisSegmentEnd;
                 m_thisSegmentEnd = m_thisSegmentStart.m_next;
+                m_s = m_delta;
                 resetSegment();
             }
             // create and return the path point
-            return new PathPoint(field[0], field[1], field[2]);
+            return pathPoint;
         }
 
         @NotNull
@@ -273,6 +448,42 @@ public class KochanekBartelsSpline {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * A follower that will generate points along the path from start to finish as described by the
+     * parametric position on the path
+     */
+    public class PathFollower extends PathGenerator {
+        private PathFollower() {
+            resetSegment();
+        }
+
+        public PathPoint getPointAt(double time) {
+            // get the next point on the curve
+            if (m_thisSegmentStart == null) {
+                return null;
+            }
+            while (time > m_thisSegmentEnd.m_time) {
+                m_thisSegmentStart = m_thisSegmentEnd;
+                m_thisSegmentEnd = m_thisSegmentStart.m_next;
+                if (m_thisSegmentEnd == null) {
+                    return null;
+                }
+                resetSegment();
+            }
+
+            // create and return the path point
+            return getPointOnSegment(time - m_thisSegmentStart.m_time);
+        }
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // This is the actual implementation of the spline object - which is really just a manager of the control
+    // points of the spline and a factor for the PathIterator and PathFollower.
+
+    /**
+     *
+     */
     public KochanekBartelsSpline() {
     }
 
@@ -285,7 +496,7 @@ public class KochanekBartelsSpline {
     }
 
     public ControlPoint addControlPoint(double fieldX, double fieldY, double fieldHeading) {
-        ControlPoint newControlPoint = new ControlPoint();
+        ControlPoint newControlPoint = new ControlPoint((null == m_last) ? 0.0 : m_last.m_time + 1.0);
         if (null == m_first) {
             m_first = newControlPoint;
         } else {
@@ -294,6 +505,7 @@ public class KochanekBartelsSpline {
         }
         m_last = newControlPoint;
         newControlPoint.setFieldLocation(fieldX, fieldY);
+        newControlPoint.updateHeadingDerivative();
         return newControlPoint;
     }
 
@@ -302,7 +514,9 @@ public class KochanekBartelsSpline {
     }
 
     public Iterable<PathPoint> getCurveSegments() {
-        return new PathIterator();
+        return new PathIterator(0.05);
     }
+
+    public PathFollower getPathFollower() { return new PathFollower(); }
 
 }
