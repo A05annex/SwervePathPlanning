@@ -32,13 +32,14 @@ public class PathCanvas extends Canvas implements ActionListener {
     private static final double ROBOT_LENGTH_BUMPER = 0.9144;
 
     // the actual data for the field and path
-    final private Field m_field = new Field();
+    private final Robot m_robot;                        // the robot description
+    private final Field m_field ;
     private KochanekBartelsSpline path = new KochanekBartelsSpline();
     private AffineTransform m_drawXfm = null;
     private AffineTransform m_mouseXfm = null;
     private double m_scale;
 
-    final private GeneralPath robot;
+    final private GeneralPath robotChassis;
     final private GeneralPath robotBumpers;
 
     // controlling the user interaction with the
@@ -179,8 +180,10 @@ public class PathCanvas extends Canvas implements ActionListener {
         }
     }
 
-    public PathCanvas(GraphicsConfiguration gc) {
+    public PathCanvas(GraphicsConfiguration gc, Robot robot, Field field) {
         super(gc);
+        m_robot = robot;
+        m_field = field;
         // setup all of the stuff for the path panel
         setBackground(Color.BLACK);
         MouseAdapter mouseHandler = new MouseHandler();
@@ -189,18 +192,18 @@ public class PathCanvas extends Canvas implements ActionListener {
         ComponentHandler componentHandler = new ComponentHandler();
         addComponentListener(componentHandler);
         // create the robot geometry
-        robot = new GeneralPath(GeneralPath.WIND_NON_ZERO, 4);
-        robot.moveTo(-ROBOT_WIDTH / 2.0, -ROBOT_LENGTH / 2.0);
-        robot.lineTo(-ROBOT_WIDTH / 2.0, ROBOT_LENGTH / 2.0);
-        robot.lineTo(ROBOT_WIDTH / 2.0, ROBOT_LENGTH / 2.0);
-        robot.lineTo(ROBOT_WIDTH / 2.0, -ROBOT_LENGTH / 2.0);
-        robot.closePath();
+        robotChassis = new GeneralPath(GeneralPath.WIND_NON_ZERO, 4);
+        robotChassis.moveTo(-m_robot.getChassisWidth() / 2.0, -m_robot.getChassisLength() / 2.0);
+        robotChassis.lineTo(-m_robot.getChassisWidth() / 2.0, m_robot.getChassisLength() / 2.0);
+        robotChassis.lineTo(m_robot.getChassisWidth() / 2.0, m_robot.getChassisLength() / 2.0);
+        robotChassis.lineTo(m_robot.getChassisWidth() / 2.0, -m_robot.getChassisLength() / 2.0);
+        robotChassis.closePath();
 
         robotBumpers = new GeneralPath(GeneralPath.WIND_NON_ZERO, 4);
-        robotBumpers.moveTo(-ROBOT_WIDTH_BUMPER / 2.0, -ROBOT_LENGTH_BUMPER / 2.0);
-        robotBumpers.lineTo(-ROBOT_WIDTH_BUMPER / 2.0, ROBOT_LENGTH_BUMPER / 2.0);
-        robotBumpers.lineTo(ROBOT_WIDTH_BUMPER / 2.0, ROBOT_LENGTH_BUMPER / 2.0);
-        robotBumpers.lineTo(ROBOT_WIDTH_BUMPER / 2.0, -ROBOT_LENGTH_BUMPER / 2.0);
+        robotBumpers.moveTo(-m_robot.getBumperWidth() / 2.0, -m_robot.getBumperLength() / 2.0);
+        robotBumpers.lineTo(-m_robot.getBumperWidth() / 2.0, m_robot.getBumperLength() / 2.0);
+        robotBumpers.lineTo(m_robot.getBumperWidth() / 2.0, m_robot.getBumperLength() / 2.0);
+        robotBumpers.lineTo(m_robot.getBumperWidth() / 2.0, -m_robot.getBumperLength() / 2.0);
         robotBumpers.closePath();
     }
 
@@ -237,7 +240,16 @@ public class PathCanvas extends Canvas implements ActionListener {
         // other control point editing handles.
         if (m_animate) {
             g2d.drawString(
-                    String.format("t = %.3f", m_currentPathTime), 50, 50);
+                    String.format("time = %.3f", m_currentPathTime), 10, 20);
+            g2d.drawString(
+                    String.format("forward = %.3f", m_currentPathPoint.speedForward), 10, 35);
+            g2d.drawString(
+                    String.format("strafe = %.3f", m_currentPathPoint.speedStrafe), 10, 50);
+            g2d.drawString(
+                    String.format("angular vel = %.3f", m_currentPathPoint.speedRotation), 10, 65);
+            System.out.println(String.format("%10.3f, %10.3f, %10.3f, %10.3f",
+                    m_currentPathTime, m_currentPathPoint.speedForward,
+                    m_currentPathPoint.speedStrafe, m_currentPathPoint.speedRotation));
             paintRobot(g2d, m_currentPathPoint);
             g2d.setPaint(Color.MAGENTA);
             double fieldX = m_currentPathPoint.fieldPt.getX();
@@ -353,7 +365,7 @@ public class PathCanvas extends Canvas implements ActionListener {
         g2d.setPaint(Color.MAGENTA);
         g2d.draw(robotBumpers);
         g2d.setPaint(Color.BLACK);
-        g2d.draw(robot);
+        g2d.draw(robotChassis);
         g2d.setTransform(oldXfm);
     }
 

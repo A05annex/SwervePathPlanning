@@ -1,5 +1,9 @@
 package frc6831.planner;
 
+import net.sourceforge.argparse4j.ArgumentParsers;
+import net.sourceforge.argparse4j.inf.ArgumentParser;
+import net.sourceforge.argparse4j.inf.ArgumentParserException;
+import net.sourceforge.argparse4j.inf.Namespace;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -27,9 +31,29 @@ public class PathPlanner extends Frame implements ActionListener, WindowListener
     private final PathCanvas m_canvas;                  // the rendering canvas (defined at the end of this file)
 
     public static void main(@NotNull final String[] args) {
+        Robot robot = new Robot();          // the robot description
+        Field field = new Field();          // the field description
+        // Setup the commandline argument parser and parse any commandlin arguments
+        ArgumentParser parser = ArgumentParsers.newFor("PathPlanner").build()
+                .description("Swerve Drive Path Planner.");
+        parser.addArgument("-r", "--robot")
+                .type(String.class)
+                .help("a robot description file");
+        parser.addArgument("-f", "--field")
+                .type(String.class)
+                .help("a robot description file");
+        try {
+            Namespace parsedArgs = parser.parseArgs(args);
+            String robotDescFile = parsedArgs.get("robot");
+            if (null != robotDescFile) {
+                robot.loadRobot(robotDescFile);
+            }
+        } catch (ArgumentParserException e) {
+            parser.handleError(e);
+        }
         // start the path planning window
         try {
-            final PathPlanner pathPlanner = new PathPlanner();
+            final PathPlanner pathPlanner = new PathPlanner(robot, field);
             pathPlanner.setVisible(true);
         } catch (final Throwable t) {
             t.printStackTrace();
@@ -37,7 +61,7 @@ public class PathPlanner extends Frame implements ActionListener, WindowListener
         }
     }
 
-    private PathPlanner() {
+    private PathPlanner(Robot robot, Field field) {
         //------------------------------------------------------------------
         // setup the window for drawing the field and paths
         //------------------------------------------------------------------
@@ -72,7 +96,7 @@ public class PathPlanner extends Frame implements ActionListener, WindowListener
         //------------------------------------------------------------------
         // create a canvas to draw on
         //------------------------------------------------------------------
-        m_canvas = new PathCanvas(m_graphicsConfig);
+        m_canvas = new PathCanvas(m_graphicsConfig, robot, field);
         add(m_canvas, BorderLayout.CENTER);
 
         //------------------------------------------------------------------

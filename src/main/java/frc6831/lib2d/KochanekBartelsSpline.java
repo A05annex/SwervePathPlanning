@@ -8,7 +8,7 @@ import java.util.Iterator;
 
 /**
  * This is an implementation of the
- * <a href="https://en.wikipedia.org/wiki/Kochanek%E2%80%93Bartels_spline">KochanekBartels Spline</a> designed
+ * <a href="https://en.wikipedia.org/wiki/Kochanek%E2%80%93Bartels_spline">Kochanek-Bartels Spline</a> designed
  * for interactive editing of the tangent vector to implicitly control bias and tension. There is no continuity
  * control.
  *
@@ -65,7 +65,7 @@ public class KochanekBartelsSpline {
     /**
      * The representation of a generated point along the path.
      */
-    public class PathPoint {
+    public static class PathPoint {
         /**
          * The point on the field where the robot should be when it reaches this point in the path.
          */
@@ -75,28 +75,34 @@ public class KochanekBartelsSpline {
          */
         public final double fieldHeading;
         /**
-         * The forward velocity of the robot (-1.0 to 1.0) required to reach this point. NOTE: if the absolute
-         * speed is greater than 1.0 this path is invalid.
+         * The forward chassis velocity of the robot in meters/sec.
          */
         public final double speedForward;
         /**
-         * The strafe velocity of the robot (-1.0 to 1.0) required to reach this point. NOTE: if the absolute
-         * speed is greater than 1.0 this path is invalid.
+         * The strafe chassis velocity of the robot in meters/sec.
          */
         public final double speedStrafe;
         /**
-         * The rotation speed of the robot (-1.0 to 1.0) required to reach this point. NOTE: if the absolute
-         * speed is greater than 1.0 this path is invalid.
+         * The rotation speed of the robot in radians/sec.
          */
         public final double speedRotation;
 
-
-        public PathPoint(double fieldX, double fieldY, double fieldHeading) {
+        /**
+         * Instantiate a Path Point.
+         * @param fieldX The expected field X position of the robot in meters.
+         * @param fieldY The expected field Y position of the robot in meters.
+         * @param fieldHeading The expected heading of the robot in radians.
+         * @param speedForward The forward chassis speed of the robot in meters/sec.
+         * @param speedStrafe The strafe chassis velocity of the robot in meters/sec.
+         * @param speedRotation The rotation speed of the robot in radians/sec.
+         */
+        public PathPoint(double fieldX, double fieldY, double fieldHeading,
+                         double speedForward, double speedStrafe, double speedRotation) {
             this.fieldPt = new Point2D.Double(fieldX, fieldY);
             this.fieldHeading = fieldHeading;
-            this.speedForward = 0.0;
-            this.speedStrafe = 0.0;
-            this.speedRotation = 0.0;
+            this.speedForward = speedForward;
+            this.speedStrafe = speedStrafe;
+            this.speedRotation = speedRotation;
         }
     }
 
@@ -120,7 +126,6 @@ public class KochanekBartelsSpline {
         public double m_dX;
         public double m_dY;
         public double m_dHeading;
-        public double m_dHeadingOut;
 
         /**
          * Instantiate a {@link ControlPoint}.
@@ -139,6 +144,7 @@ public class KochanekBartelsSpline {
         }
 
         /**
+         *
          *
          * @param pt
          */
@@ -263,8 +269,8 @@ public class KochanekBartelsSpline {
          *
          */
         private void updateHeadingDerivative() {
-            double fieldHeadingPrev = m_last != null ? m_last.m_fieldHeading : 0.0;
-            double fieldHeadingNext = m_next != null ? m_next.m_fieldHeading : 0.0;
+            double fieldHeadingPrev = m_last != null ? m_last.m_fieldHeading : m_fieldHeading;
+            double fieldHeadingNext = m_next != null ? m_next.m_fieldHeading : m_fieldHeading;
             m_dHeading = DEFAULT_TENSION * (fieldHeadingNext - fieldHeadingPrev);
         }
 
@@ -372,27 +378,38 @@ public class KochanekBartelsSpline {
             m_segment[3][1] = m_thisSegmentEnd.m_dY;
             m_segment[0][2] = m_thisSegmentStart.m_fieldHeading;
             m_segment[1][2] = m_thisSegmentEnd.m_fieldHeading;
-            m_segment[2][2] = m_thisSegmentStart.m_dHeadingOut;
+            m_segment[2][2] = m_thisSegmentStart.m_dHeading;
             m_segment[3][2] = m_thisSegmentEnd.m_dHeading;
         }
 
         public PathPoint getPointOnSegment(double sValue) {
             // get the next point on the curve
             double[] s = {sValue * sValue * sValue, sValue * sValue, sValue, 1.0};
+            double[] ds = {3.0 * sValue * sValue, 2.0 * sValue, 1.0, 0.0};
             double[] weights = {0.0, 0.0, 0.0, 0.0};
+            double[] dWeights = {0.0, 0.0, 0.0, 0.0};
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 4; j++) {
                     weights[i] += s[j] * m_basis[j][i];
+                    dWeights[i] += ds[j] * m_basis[j][i];
                 }
             }
             double[] field = {0.0, 0.0, 0.0};
+            double[] dField = {0.0, 0.0, 0.0};
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 4; j++) {
                     field[i] += weights[j] * m_segment[j][i];
+                    dField[i] += dWeights[j] * m_segment[j][i];
                 }
             }
+            // OK, the position derivatives are X and Y relative to the field. These need to be transformed to
+            // robot relative forward and strafe.
+            double sinHeading = Math.sin(field[2]);
+            double cosHeading = Math.cos(field[2]);
+            double forward = (dField[0] * sinHeading) + (dField[1] * cosHeading);
+            double strafe = (dField[0] * cosHeading) - (dField[1] * sinHeading);
             // create and return the path point
-            return new PathPoint(field[0], field[1], field[2]);
+            return new PathPoint(field[0], field[1], field[2], forward, strafe, dField[2]);
         }
     }
 
@@ -517,6 +534,8 @@ public class KochanekBartelsSpline {
         return new PathIterator(0.05);
     }
 
-    public PathFollower getPathFollower() { return new PathFollower(); }
+    public PathFollower getPathFollower() {
+        return new PathFollower();
+    }
 
 }
