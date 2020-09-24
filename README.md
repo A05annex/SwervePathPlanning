@@ -10,7 +10,8 @@ that can be used as a path input in the autonomous program.
 The path planner uses an implementation of the
 [Kochanek-Bartels Spline](https://en.wikipedia.org/wiki/Kochanek%E2%80%93Bartels_spline) modified
 for interactive editing of the tangent vector to implicitly control bias and tension. There is no
-continuity control.
+continuity control. The original reference for this spline can be found at
+[Interpolating Splines with Local Tension, Continuity, and Bias Control](https://www.engr.colostate.edu/ECE455/Readings/TCB.pdf)
 
 When control points are created the tangent (derivatives) at that control point and surrounding
 control points are computed using the [Cardinal-Spline](https://en.wikipedia.org/wiki/Cubic_Hermite_spline)
@@ -20,9 +21,10 @@ edit tension and bias.
 
 ## Robot Description
 
-The robot is described in a <tt>.json</tt> file read into the planner and displayed as the robot during
+The robot is described in a <tt>.json</tt> file read into the path planner and displayed as the robot during
 the path planning, as well as providing the drive geometry and max speed for the modules of the swerve
-drive.
+drive. Having a good description of the robot is helpful in detecting collisions or near collisions
+between the robot and game elements.
 
 ### Robot Description Format
 
@@ -33,15 +35,15 @@ The robot description is divided into 3 sections:
   - **<tt>"maxSpeed"</tt>**: Tha maximum module speed (meters/sec)
 - **<tt>"chassis"</tt>**: describes the geometry of the chassis (it is currently assumed the drive
   and chassis share the same centroid)
-  - **<tt>"length"</tt>**: The length of the drive (pivot axis to pivot axis) in meters.
-  - **<tt>"width"</tt>**: The width of the drive (pivot axis to pivot axis) in meters.
-- **<tt>"bumber"</tt>**:
-  - **<tt>"length"</tt>**: The length of the drive (pivot axis to pivot axis) in meters.
-  - **<tt>"width"</tt>**: The width of the drive (pivot axis to pivot axis) in meters.
+  - **<tt>"length"</tt>**: The length of the chassis in meters.
+  - **<tt>"width"</tt>**: The width of the chassis in meters.
+- **<tt>"bumpers"</tt>**:
+  - **<tt>"length"</tt>**: The length of robot with bumpers in meters.
+  - **<tt>"width"</tt>**: The width of the robot with bumpers in meters.
 
 ### Example Robot Description file
 
-```yaml
+```json
 {
   "drive": {
     "length": 0.574,
@@ -55,11 +57,13 @@ The robot description is divided into 3 sections:
   "bumpers": {
     "length": 0.9144,
     "width": 0.9144
-  },
+  }
 }
 ```
 
 ## Field Description
+
+*This Section is Preliminary!!*
 
 The field is described in a <tt>.json</tt> file read into the planner and displayed as the context
 for planning move paths. The field description file has 2 main elements:
