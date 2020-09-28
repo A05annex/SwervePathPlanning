@@ -33,7 +33,7 @@ public class PathPlanner extends Frame implements ActionListener, WindowListener
     public static void main(@NotNull final String[] args) {
         Robot robot = new Robot();          // the robot description
         Field field = new Field();          // the field description
-        // Setup the commandline argument parser and parse any commandlin arguments
+        // Setup the commandline argument parser and parse any commandline arguments
         ArgumentParser parser = ArgumentParsers.newFor("PathPlanner").build()
                 .description("Swerve Drive Path Planner.");
         parser.addArgument("-r", "--robot")
@@ -47,6 +47,10 @@ public class PathPlanner extends Frame implements ActionListener, WindowListener
             String robotDescFile = parsedArgs.get("robot");
             if (null != robotDescFile) {
                 robot.loadRobot(robotDescFile);
+            }
+            String fieldDescFile = parsedArgs.get("field");
+            if (null != fieldDescFile) {
+                field.loadField(fieldDescFile);
             }
         } catch (ArgumentParserException e) {
             parser.handleError(e);

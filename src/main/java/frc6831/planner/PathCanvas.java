@@ -9,7 +9,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
-import java.awt.image.ColorModel;
 
 /**
  * This is the canvas we draw the field and path to. It is derived from a
@@ -26,12 +25,8 @@ public class PathCanvas extends Canvas implements ActionListener {
     private static final String OVER_TANGENT_POINT = "tangentPoint";
     private static final String OVER_HEADING_POINT = "headingPoint";
 
-    private static final double ROBOT_WIDTH = 0.762;
-    private static final double ROBOT_WIDTH_BUMPER = 0.9144;
-    private static final double ROBOT_LENGTH = 0.762;
-    private static final double ROBOT_LENGTH_BUMPER = 0.9144;
 
-    // the actual data for the field and path
+    // the actual data for the robot, field, and path
     private final Robot m_robot;                        // the robot description
     private final Field m_field ;
     private KochanekBartelsSpline path = new KochanekBartelsSpline();
@@ -39,12 +34,12 @@ public class PathCanvas extends Canvas implements ActionListener {
     private AffineTransform m_mouseXfm = null;
     private double m_scale;
 
-    final private GeneralPath robotChassis;
-    final private GeneralPath robotBumpers;
+    final private GeneralPath m_robotChassis;
+    final private GeneralPath m_robotBumpers;
 
     // controlling the user interaction with the
-    private KochanekBartelsSpline.ControlPoint newControlPoint = null;
-    private KochanekBartelsSpline.ControlPoint overControlPoint = null;
+    private KochanekBartelsSpline.ControlPoint m_newControlPoint = null;
+    private KochanekBartelsSpline.ControlPoint m_overControlPoint = null;
     private String m_mode = MODE_ADD;
     private String m_overWhat = null;
     private Stroke m_highlightStroke = new BasicStroke(2.0f);
@@ -71,8 +66,8 @@ public class PathCanvas extends Canvas implements ActionListener {
             // OK, so here we pick whether we scale X or Y to fill the window, reverse Y,
             // and, translate 0,0 to center screen.
             Field.MinMax fieldMinMax = m_field.getMinMax();
-            float scaleX = width / (fieldMinMax.m_maxX - fieldMinMax.m_minX);
-            float scaleY = height / (fieldMinMax.m_maxY - fieldMinMax.m_minY);
+            double scaleX = width / (fieldMinMax.m_maxX - fieldMinMax.m_minX);
+            double scaleY = height / (fieldMinMax.m_maxY - fieldMinMax.m_minY);
             m_scale = (scaleX < scaleY) ? scaleX : scaleY;
             m_drawXfm = new AffineTransform(m_scale, 0.0f, 0.0f, -m_scale, width / 2.0f, height / 2.0f);
             m_mouseXfm = new AffineTransform(m_drawXfm);
@@ -91,20 +86,20 @@ public class PathCanvas extends Canvas implements ActionListener {
             Point2D pt = m_mouse = (Point2D.Double) m_mouseXfm.transform(
                     new Point2D.Double(e.getPoint().getX(), e.getPoint().getY()), null);
             if ((m_mode == MODE_ADD) && (e.getClickCount() == 1)) {
-                newControlPoint = path.addControlPoint(pt);
+                m_newControlPoint = path.addControlPoint(pt);
                 repaint();
             } else if (m_mode == MODE_EDIT) {
-                overControlPoint = null;
+                m_overControlPoint = null;
                 m_overWhat = null;
                 for (KochanekBartelsSpline.ControlPoint point : path.getControlPoints()) {
                     if (point.testOverControlPoint(pt.getX(), pt.getY(), OVER_TOL / m_scale)) {
-                        overControlPoint = point;
+                        m_overControlPoint = point;
                         m_overWhat = OVER_CONTROL_POINT;
                     } else if (point.testOveTangentPoint(pt.getX(), pt.getY(), OVER_TOL / m_scale)) {
-                        overControlPoint = point;
+                        m_overControlPoint = point;
                         m_overWhat = OVER_TANGENT_POINT;
                     } else if (point.testOveHeadingPoint(pt.getX(), pt.getY(), OVER_TOL / m_scale)) {
-                        overControlPoint = point;
+                        m_overControlPoint = point;
                         m_overWhat = OVER_HEADING_POINT;
                     }
                 }
@@ -118,7 +113,7 @@ public class PathCanvas extends Canvas implements ActionListener {
                     new Point2D.Double(e.getPoint().getX(), e.getPoint().getY()), null);
             if (m_mode == MODE_ADD) {
                 if (e.getClickCount() == 1) {
-                    newControlPoint = null;
+                    m_newControlPoint = null;
                     repaint();
                 } else if (e.getClickCount() == 2) {
                     m_mode = MODE_EDIT;
@@ -143,14 +138,14 @@ public class PathCanvas extends Canvas implements ActionListener {
             Point2D pt = m_mouse = (Point2D.Double) m_mouseXfm.transform(
                     new Point2D.Double(e.getPoint().getX(), e.getPoint().getY()), null);
             if (m_mode == MODE_ADD) {
-                newControlPoint.setFieldLocation(pt);
-            } else if ((m_mode == MODE_EDIT) && (null != overControlPoint)) {
+                m_newControlPoint.setFieldLocation(pt);
+            } else if ((m_mode == MODE_EDIT) && (null != m_overControlPoint)) {
                 if (OVER_CONTROL_POINT == m_overWhat) {
-                    overControlPoint.setFieldLocation(pt);
+                    m_overControlPoint.setFieldLocation(pt);
                 } else if (OVER_TANGENT_POINT == m_overWhat) {
-                    overControlPoint.setTangentLocation(pt);
+                    m_overControlPoint.setTangentLocation(pt);
                 } else if (OVER_HEADING_POINT == m_overWhat) {
-                    overControlPoint.setHeadingLocation(pt);
+                    m_overControlPoint.setHeadingLocation(pt);
                 }
             }
             repaint();
@@ -161,17 +156,17 @@ public class PathCanvas extends Canvas implements ActionListener {
             Point2D pt = m_mouse = (Point2D.Double) m_mouseXfm.transform(
                     new Point2D.Double(e.getPoint().getX(), e.getPoint().getY()), null);
             if (m_mode == MODE_EDIT) {
-                overControlPoint = null;
+                m_overControlPoint = null;
                 m_overWhat = null;
                 for (KochanekBartelsSpline.ControlPoint point : path.getControlPoints()) {
                     if (point.testOverControlPoint(pt.getX(), pt.getY(), OVER_TOL / m_scale)) {
-                        overControlPoint = point;
+                        m_overControlPoint = point;
                         m_overWhat = OVER_CONTROL_POINT;
                     } else if (point.testOveTangentPoint(pt.getX(), pt.getY(), OVER_TOL / m_scale)) {
-                        overControlPoint = point;
+                        m_overControlPoint = point;
                         m_overWhat = OVER_TANGENT_POINT;
                     } else if (point.testOveHeadingPoint(pt.getX(), pt.getY(), OVER_TOL / m_scale)) {
-                        overControlPoint = point;
+                        m_overControlPoint = point;
                         m_overWhat = OVER_HEADING_POINT;
                     }
                 }
@@ -192,19 +187,19 @@ public class PathCanvas extends Canvas implements ActionListener {
         ComponentHandler componentHandler = new ComponentHandler();
         addComponentListener(componentHandler);
         // create the robot geometry
-        robotChassis = new GeneralPath(GeneralPath.WIND_NON_ZERO, 4);
-        robotChassis.moveTo(-m_robot.getChassisWidth() / 2.0, -m_robot.getChassisLength() / 2.0);
-        robotChassis.lineTo(-m_robot.getChassisWidth() / 2.0, m_robot.getChassisLength() / 2.0);
-        robotChassis.lineTo(m_robot.getChassisWidth() / 2.0, m_robot.getChassisLength() / 2.0);
-        robotChassis.lineTo(m_robot.getChassisWidth() / 2.0, -m_robot.getChassisLength() / 2.0);
-        robotChassis.closePath();
+        m_robotChassis = new GeneralPath(GeneralPath.WIND_NON_ZERO, 4);
+        m_robotChassis.moveTo(-m_robot.getChassisWidth() / 2.0, -m_robot.getChassisLength() / 2.0);
+        m_robotChassis.lineTo(-m_robot.getChassisWidth() / 2.0, m_robot.getChassisLength() / 2.0);
+        m_robotChassis.lineTo(m_robot.getChassisWidth() / 2.0, m_robot.getChassisLength() / 2.0);
+        m_robotChassis.lineTo(m_robot.getChassisWidth() / 2.0, -m_robot.getChassisLength() / 2.0);
+        m_robotChassis.closePath();
 
-        robotBumpers = new GeneralPath(GeneralPath.WIND_NON_ZERO, 4);
-        robotBumpers.moveTo(-m_robot.getBumperWidth() / 2.0, -m_robot.getBumperLength() / 2.0);
-        robotBumpers.lineTo(-m_robot.getBumperWidth() / 2.0, m_robot.getBumperLength() / 2.0);
-        robotBumpers.lineTo(m_robot.getBumperWidth() / 2.0, m_robot.getBumperLength() / 2.0);
-        robotBumpers.lineTo(m_robot.getBumperWidth() / 2.0, -m_robot.getBumperLength() / 2.0);
-        robotBumpers.closePath();
+        m_robotBumpers = new GeneralPath(GeneralPath.WIND_NON_ZERO, 4);
+        m_robotBumpers.moveTo(-m_robot.getBumperWidth() / 2.0, -m_robot.getBumperLength() / 2.0);
+        m_robotBumpers.lineTo(-m_robot.getBumperWidth() / 2.0, m_robot.getBumperLength() / 2.0);
+        m_robotBumpers.lineTo(m_robot.getBumperWidth() / 2.0, m_robot.getBumperLength() / 2.0);
+        m_robotBumpers.lineTo(m_robot.getBumperWidth() / 2.0, -m_robot.getBumperLength() / 2.0);
+        m_robotBumpers.closePath();
     }
 
     @Override
@@ -307,22 +302,22 @@ public class PathCanvas extends Canvas implements ActionListener {
             }
 
             // If the cursor is over a control point, highlight it
-            if (null != overControlPoint) {
+            if (null != m_overControlPoint) {
                 Stroke oldStroke = g2d.getStroke();
                 g2d.setStroke(m_highlightStroke);
                 g2d.setPaint(Color.GREEN);
                 if (OVER_CONTROL_POINT == m_overWhat) {
                     Point2D.Double fieldPt = (Point2D.Double) m_drawXfm.transform(
-                            new Point2D.Double(overControlPoint.m_fieldX, overControlPoint.m_fieldY), null);
+                            new Point2D.Double(m_overControlPoint.m_fieldX, m_overControlPoint.m_fieldY), null);
                     g2d.drawOval((int) fieldPt.getX() - 4, (int) fieldPt.getY() - 4,
                             8, 8);
                 } else if (OVER_TANGENT_POINT == m_overWhat) {
                     Point2D.Double tangentPt = (Point2D.Double) m_drawXfm.transform(
-                            new Point2D.Double(overControlPoint.getTangentX(), overControlPoint.getTangentY()), null);
+                            new Point2D.Double(m_overControlPoint.getTangentX(), m_overControlPoint.getTangentY()), null);
                     g2d.drawOval((int) tangentPt.getX() - 4, (int) tangentPt.getY() - 4, 8, 8);
                 } else if (OVER_HEADING_POINT == m_overWhat) {
                     Point2D.Double headingPt = (Point2D.Double) m_drawXfm.transform(
-                            new Point2D.Double(overControlPoint.getHeadingX(), overControlPoint.getHeadingY()), null);
+                            new Point2D.Double(m_overControlPoint.getHeadingX(), m_overControlPoint.getHeadingY()), null);
                     g2d.drawOval((int) headingPt.getX() - 4, (int) headingPt.getY() - 4, 8, 8);
                 }
                 g2d.setStroke(oldStroke);
@@ -359,20 +354,21 @@ public class PathCanvas extends Canvas implements ActionListener {
         xfm.concatenate(m_drawXfm);
         xfm.translate(fieldPt.getX(), fieldPt.getY());
         xfm.rotate(-heading);
+        // don't know why this scale is required, it should be on the oldXfm
         xfm.scale(0.5, 0.5);
 //        xfm.concatenate(m_drawXfm);
         g2d.setTransform(xfm);
         g2d.setPaint(Color.MAGENTA);
-        g2d.draw(robotBumpers);
+        g2d.draw(m_robotBumpers);
         g2d.setPaint(Color.BLACK);
-        g2d.draw(robotChassis);
+        g2d.draw(m_robotChassis);
         g2d.setTransform(oldXfm);
     }
 
     public void clearPath() {
         path = new KochanekBartelsSpline();
-        newControlPoint = null;
-        overControlPoint = null;
+        m_newControlPoint = null;
+        m_overControlPoint = null;
         m_mode = MODE_ADD;
         m_overWhat = null;
         repaint();

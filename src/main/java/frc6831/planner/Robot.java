@@ -10,6 +10,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Dictionary;
 
+import static frc6831.lib2d.JsonSupport.*;
+
 /**
  * This class is a description of the robot. There is a default programmed description, but it is expected that
  * the actual description will be read from a data file
@@ -57,6 +59,7 @@ public class Robot {
         return m_moduleMaxSpeed / getDriveRadius();
 
     }
+
     // ----------------------------------------------------------------------------------------------------
     // Robot Chassis Geometry
     // ----------------------------------------------------------------------------------------------------
@@ -68,6 +71,9 @@ public class Robot {
         return m_chassisWidth;
     }
 
+    // ----------------------------------------------------------------------------------------------------
+    // Robot Bumper Geometry
+    // ----------------------------------------------------------------------------------------------------
     public double getBumperLength() {
         return m_bumperLength;
     }
@@ -77,53 +83,36 @@ public class Robot {
     }
 
 
+    // ----------------------------------------------------------------------------------------------------
+    // Loading from a JSON file
+    // ----------------------------------------------------------------------------------------------------
     public void loadRobot(String filename) {
-        //JSON parser object to parse read file
-        JSONParser jsonParser = new JSONParser();
-
-        try (FileReader reader = new FileReader(filename)) {
-            //Read JSON file
-            Object obj = jsonParser.parse(reader);
-            if (obj.getClass() == JSONObject.class) {
-                JSONObject dict = (JSONObject) obj;
+        try {
+            JSONObject dict = readJsonFile(filename);
+            if (null != dict) {
                 // Read in the drive geometry
-                Object drive = dict.get(DRIVE);
-                if ((null != drive) && (drive.getClass() == JSONObject.class)) {
-                    m_driveLength = parseDouble((JSONObject) drive, LENGTH, m_driveLength);
-                    m_driveWidth = parseDouble((JSONObject) drive, WIDTH, m_driveWidth);
-                    m_moduleMaxSpeed = parseDouble((JSONObject) drive, MAX_SPEED, m_moduleMaxSpeed);
+                JSONObject drive = getJSONObject(dict, DRIVE, false);
+                if (null != drive) {
+                    m_driveLength = parseDouble(drive, LENGTH, m_driveLength);
+                    m_driveWidth = parseDouble(drive, WIDTH, m_driveWidth);
+                    m_moduleMaxSpeed = parseDouble(drive, MAX_SPEED, m_moduleMaxSpeed);
                 }
                 // Read in the chassis geometry
-                Object chassis = dict.get(CHASSIS);
-                if ((null != chassis) && (chassis.getClass() == JSONObject.class)) {
-                    m_chassisLength = parseDouble((JSONObject) chassis, LENGTH, m_chassisLength);
-                    m_chassisWidth = parseDouble((JSONObject) chassis, WIDTH, m_chassisWidth);
+                JSONObject chassis = getJSONObject(dict, CHASSIS, false);
+                if (null != chassis) {
+                    m_chassisLength = parseDouble(chassis, LENGTH, m_chassisLength);
+                    m_chassisWidth = parseDouble(chassis, WIDTH, m_chassisWidth);
                 }
                 // Read in the bumper geometry
-                Object bumpers = dict.get(BUMPERS);
-                if ((null != bumpers) && (bumpers.getClass() == JSONObject.class)) {
-                    m_bumperLength = parseDouble((JSONObject) bumpers, LENGTH, m_bumperLength);
-                    m_bumperWidth = parseDouble((JSONObject) bumpers, WIDTH, m_bumperWidth);
+                JSONObject bumpers = getJSONObject(dict, BUMPERS, false);
+                if (null != bumpers) {
+                    m_bumperLength = parseDouble(bumpers, LENGTH, m_bumperLength);
+                    m_bumperWidth = parseDouble(bumpers, WIDTH, m_bumperWidth);
                 }
-
             }
-            double x = 1.0;
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
+        } catch (IOException | ParseException | ClassCastException | NullPointerException e) {
             e.printStackTrace();
         }
-    }
-
-    private double parseDouble(JSONObject dict, String key, double defaultValue) {
-        double value = defaultValue;
-        Object valueObj = dict.get(key);
-        if (null != valueObj) {
-            value = (double) valueObj;
-        }
-        return value;
     }
 }

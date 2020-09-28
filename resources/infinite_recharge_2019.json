@@ -2,41 +2,185 @@
   "components": [
     {
       "name": "power cell",
-      "color": "yellow",
-      "fill": "yellow",
+      "lineColor": "yellow",
+      "fillColor": "yellow",
       "shapes": [
-        { "type": "circle",
-          "center": [0.0, 0.0],
+        {
+          "type": "circle",
+          "center": [
+            0.0,
+            0.0
+          ],
           "radius": 0.0889
         }
-      ],
+      ]
+    },
+    {
+      "name": "start line",
+      "lineColor": "white",
+      "fillColor": "white",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [
+            -4.1050,
+            -0.0254
+          ],
+          "upper right": [
+            4.1050,
+            0.0254
+          ]
+        }
+      ]
     },
     {
       "name": "trench",
-      "color": "alliance",
-      "fill": "alliance",
+      "lineColor": "alliance",
+      "fillColor": "alliance",
       "shapes": [
-        { "type": "rect",
-          "lower left": [-4.1050,-2.7432],
-          "upper right": [-2.6953,-2.6924]
+        {
+          "type": "rect",
+          "lower left": [
+            -4.1050,
+            -2.7432
+          ],
+          "upper right": [
+            -2.6953,
+            -2.6924
+          ]
         },
-        { "type": "rect",
-          "lower left": [-2.7464,-2.6924],
-          "upper right": [-2.6953,2.6924]
+        {
+          "type": "rect",
+          "lower left": [
+            -2.7464,
+            -2.6924
+          ],
+          "upper right": [
+            -2.6953,
+            2.6924
+          ]
         },
-        { "type": "rect",
-          "lower left": [-4.1050,2.6924],
-          "upper right": [-2.6953,2.7432]
+        {
+          "type": "rect",
+          "lower left": [
+            -4.1050,
+            2.6924
+          ],
+          "upper right": [
+            -2.6953,
+            2.7432
+          ]
         }
-      ],
+      ]
+    },
+    {
+      "name": "ball pickup",
+      "lineColor": "alliance",
+      "fillColor": "alliance",
+      "shapes": [
+        {
+          "type": "polygon",
+          "points": [
+            [2.4626,7.9900],
+            [2.3968,7.9900],
+            [1.7006,7.2998],
+            [1.0104,7.9900],
+            [0.9386,7.9900],
+            [1.7006,7.2280]
+          ]
+        }
+      ]
     }
-
   ],
-  "field": [
+  "field": {
     "components": [
       {
+        "component": "power cell",
+        "translate": [
+          -3.4001,
+          0.0
+        ]
+      },
+      {
+        "component": "power cell",
+        "translate": [
+          -3.4001,
+          -0.9144
+        ]
+      },
+      {
+        "component": "power cell",
+        "translate": [
+          -3.4001,
+          -1.8288
+        ]
+      },
+      {
+        "component": "power cell",
+        "translate": [
+          -3.6394,
+          1.6324
+        ]
+      },
+      {
+        "component": "power cell",
+        "translate": [
+          -3.1617,
+          1.6324
+        ]
+      },
+      {
+        "component": "power cell",
+        "translate": [
+          3.4001,
+          0.0
+        ]
+      },
+      {
+        "component": "power cell",
+        "translate": [
+          3.4001,
+          0.9144
+        ]
+      },
+      {
+        "component": "power cell",
+        "translate": [
+          3.4001,
+          1.8288
+        ]
+      },
+      {
+        "component": "power cell",
+        "translate": [
+          3.6394,
+          -1.6324
+        ]
+      },
+      {
+        "component": "power cell",
+        "translate": [
+          3.1617,
+          -1.6324
+        ]
+      },
+      {
+        "component": "start line",
+        "translate": [
+          0.0000,
+          4.9766
+        ]
+      },
+      {
+        "component": "start line",
+        "translate": [
+          0.0000,
+          -4.9766
+        ]
+      },
+      {
         "component": "trench",
-        "alliance": "red",
+        "alliance": "red"
       },
       {
         "component": "trench",
@@ -44,5 +188,5 @@
         "rotate": 3.1416
       }
     ]
-  ]
+  }
 }
