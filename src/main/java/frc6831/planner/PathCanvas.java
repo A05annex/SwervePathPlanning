@@ -360,8 +360,10 @@ public class PathCanvas extends Canvas implements ActionListener {
         g2d.setTransform(xfm);
         g2d.setPaint(Color.MAGENTA);
         g2d.draw(m_robotBumpers);
+        g2d.fill(m_robotBumpers);
         g2d.setPaint(Color.BLACK);
         g2d.draw(m_robotChassis);
+        g2d.fill(m_robotChassis);
         g2d.setTransform(oldXfm);
     }
 

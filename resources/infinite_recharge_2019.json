@@ -81,11 +81,29 @@
         {
           "type": "polygon",
           "points": [
-            [2.4626,7.9900],
-            [2.3968,7.9900],
-            [1.7006,7.2998],
-            [1.0104,7.9900],
-            [0.9386,7.9900],
+            [-2.4626,7.9900],
+            [-2.3968,7.9900],
+            [-1.7006,7.2998],
+            [-1.0104,7.9900],
+            [-0.9386,7.9900],
+            [-1.7006,7.2280]
+          ]
+        }
+      ]
+    },
+    {
+      "name": "score panel",
+      "lineColor": "alliance",
+      "fillColor": "alliance",
+      "shapes": [
+        {
+          "type": "polygon",
+          "points": [
+            [1.0914,7.9900],
+            [1.1564,7.9900],
+            [1.7006,7.3094],
+            [2.2448,7.9900],
+            [2.3098,7.9900],
             [1.7006,7.2280]
           ]
         }
@@ -185,6 +203,24 @@
       {
         "component": "trench",
         "alliance": "blue",
+        "rotate": 3.1416
+      },
+      {
+        "component": "ball pickup",
+        "alliance": "red"
+      },
+      {
+        "component": "ball pickup",
+        "alliance": "blue",
+        "rotate": 3.1416
+      },
+      {
+        "component": "score panel",
+        "alliance": "blue"
+      },
+      {
+        "component": "score panel",
+        "alliance": "red",
         "rotate": 3.1416
       }
     ]

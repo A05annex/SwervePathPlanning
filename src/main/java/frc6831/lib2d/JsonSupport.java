@@ -30,6 +30,10 @@ public class JsonSupport {
         return pt;
     }
 
+    static public Point2D parsePoint(JSONArray coordList) {
+        return new Point2D.Double((double) coordList.get(0), (double) coordList.get(1));
+    }
+
     static public String parseString(JSONObject dict, String key, String defaultValue) {
         String value = defaultValue;
         Object valueObj = dict.get(key);

@@ -7,6 +7,7 @@ import org.json.simple.parser.ParseException;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -41,6 +42,9 @@ public class Field {
     private static final String TYPE_RECT = "rect";
     private static final String RECT_LOWER_LEFT = "lower left";
     private static final String RECT_UPPER_RIGHT = "upper right";
+
+    private static final String TYPE_POLYGON = "polygon";
+    private static final String POINTS = "points";
 
     private static final String COMPONENT = "component";
     private static final String ALLIANCE = "alliance";
@@ -197,6 +201,43 @@ public class Field {
                 g2d.setPaint(fill);
                 g2d.fillRect(x,y,width,height);
             }
+        }
+    }
+
+    private static class FieldPolygon extends FieldShape {
+        Point2D[]  m_pts;
+        Point2D[]  m_xfmPts;
+
+        FieldPolygon(JSONObject shapeDesc) {
+            JSONArray ptList = getJSONArray(shapeDesc, POINTS);
+            int index = 0;
+            m_pts = new Point2D[ptList.size()];
+            m_xfmPts = new Point2D[ptList.size()];
+            for (Object ptObj : ptList) {
+                m_pts[index++] = parsePoint((JSONArray)ptObj);
+            }
+        }
+
+        @Override
+        void draw(Graphics2D g2d, AffineTransform drawXfm, Color outline, Color fill) {
+            drawXfm.transform(m_pts, 0, m_xfmPts, 0, m_pts.length);
+            GeneralPath polyPath = new GeneralPath(GeneralPath.WIND_NON_ZERO, 4);
+            for (int i = 0; i < m_xfmPts.length; i++) {
+                if (i == 0) {
+                    polyPath.moveTo(m_xfmPts[i].getX(), m_xfmPts[i].getY());
+                } else {
+                    polyPath.lineTo(m_xfmPts[i].getX(), m_xfmPts[i].getY());
+                }
+            }
+            polyPath.closePath();
+            if (null != outline) {
+                g2d.setPaint(outline);
+                g2d.draw(polyPath);
+            }
+            if (null != fill) {
+                g2d.setPaint(fill);
+                g2d.fill(polyPath);
+            }
 
         }
     }
@@ -339,6 +380,8 @@ public class Field {
                 return new FieldCircle(shapeDesc);
             case TYPE_RECT:
                 return new FieldRect(shapeDesc);
+            case TYPE_POLYGON:
+                return new FieldPolygon(shapeDesc);
             default:
                 return null;
         }
