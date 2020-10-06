@@ -98,7 +98,7 @@ public class PathCanvas extends Canvas implements ActionListener {
                     } else if (point.testOveTangentPoint(pt.getX(), pt.getY(), OVER_TOL / m_scale)) {
                         m_overControlPoint = point;
                         m_overWhat = OVER_TANGENT_POINT;
-                    } else if (point.testOveHeadingPoint(pt.getX(), pt.getY(), OVER_TOL / m_scale)) {
+                    } else if (point.testOverHeadingPoint(pt.getX(), pt.getY(), OVER_TOL / m_scale)) {
                         m_overControlPoint = point;
                         m_overWhat = OVER_HEADING_POINT;
                     }
@@ -165,7 +165,7 @@ public class PathCanvas extends Canvas implements ActionListener {
                     } else if (point.testOveTangentPoint(pt.getX(), pt.getY(), OVER_TOL / m_scale)) {
                         m_overControlPoint = point;
                         m_overWhat = OVER_TANGENT_POINT;
-                    } else if (point.testOveHeadingPoint(pt.getX(), pt.getY(), OVER_TOL / m_scale)) {
+                    } else if (point.testOverHeadingPoint(pt.getX(), pt.getY(), OVER_TOL / m_scale)) {
                         m_overControlPoint = point;
                         m_overWhat = OVER_HEADING_POINT;
                     }
@@ -202,21 +202,27 @@ public class PathCanvas extends Canvas implements ActionListener {
         m_robotBumpers.closePath();
     }
 
+    /**
+     * An action listener for the {@link PathCanvas} that is specifically looking for {@link #m_timer} events
+     * during path animation.
+     *
+     * @param e (ActionEvent) The action event that was sent to this path canvas.
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         if ((e.getSource() == m_timer) && (null != m_pathFollower)) {
+            // This is a timer event while there is a path follower.
             if (m_pathStartTime == -1) {
+                //  This is the start of the animation. The robot is currently drawn at the start position
+                // so the only action is to record the start time.
                 m_pathStartTime = e.getWhen();
             } else {
+                // This is a point at some time on the path
                 m_currentPathTime = (e.getWhen() - m_pathStartTime) / 1000.0;
                 m_currentPathPoint = m_pathFollower.getPointAt(m_currentPathTime);
                 if (null == m_currentPathPoint) {
+                    stopAnimation();
                     // reached the end of the path
-                    m_timer.stop();
-                    m_animate = false;
-                    m_pathFollower = null;
-                    m_currentPathTime = 0.0;
-                    m_pathStartTime = -1;
                 }
                 repaint();
             }
@@ -287,7 +293,7 @@ public class PathCanvas extends Canvas implements ActionListener {
             for (KochanekBartelsSpline.ControlPoint point : path.getControlPoints()) {
                 g2d.setPaint(Color.RED);
                 Point2D.Double fieldPt = (Point2D.Double) m_drawXfm.transform(
-                        new Point2D.Double(point.m_fieldX, point.m_fieldY), null);
+                        new Point2D.Double(point.getFieldX(), point.getFieldY()), null);
                 Point2D.Double tangentPt = (Point2D.Double) m_drawXfm.transform(
                         new Point2D.Double(point.getTangentX(), point.getTangentY()), null);
                 g2d.drawOval((int) fieldPt.getX() - 3, (int) fieldPt.getY() - 3, 6, 6);
@@ -308,7 +314,7 @@ public class PathCanvas extends Canvas implements ActionListener {
                 g2d.setPaint(Color.GREEN);
                 if (OVER_CONTROL_POINT == m_overWhat) {
                     Point2D.Double fieldPt = (Point2D.Double) m_drawXfm.transform(
-                            new Point2D.Double(m_overControlPoint.m_fieldX, m_overControlPoint.m_fieldY), null);
+                            new Point2D.Double(m_overControlPoint.getFieldX(), m_overControlPoint.getFieldY()), null);
                     g2d.drawOval((int) fieldPt.getX() - 4, (int) fieldPt.getY() - 4,
                             8, 8);
                 } else if (OVER_TANGENT_POINT == m_overWhat) {
@@ -337,8 +343,8 @@ public class PathCanvas extends Canvas implements ActionListener {
     }
 
     void paintRobot(Graphics2D g2d, KochanekBartelsSpline.ControlPoint controlPoint) {
-        paintRobot(g2d, new Point2D.Double(controlPoint.m_fieldX, controlPoint.m_fieldY),
-                controlPoint.m_fieldHeading);
+        paintRobot(g2d, new Point2D.Double(controlPoint.getFieldX(), controlPoint.getFieldY()),
+                controlPoint.getFieldHeading());
 
     }
 
@@ -368,7 +374,7 @@ public class PathCanvas extends Canvas implements ActionListener {
     }
 
     public void clearPath() {
-        path = new KochanekBartelsSpline();
+        path.clearPath();
         m_newControlPoint = null;
         m_overControlPoint = null;
         m_mode = MODE_ADD;
@@ -376,8 +382,12 @@ public class PathCanvas extends Canvas implements ActionListener {
         repaint();
     }
 
+    /**
+     * Animate the robot position on the path from start to end of the path.
+     */
     public void animatePath() {
         if (null == m_timer) {
+            // create the timer if one does not exist
             m_timer = new Timer(20, this);
             m_timer.setInitialDelay(200);
             m_timer.start();
@@ -389,6 +399,17 @@ public class PathCanvas extends Canvas implements ActionListener {
         m_currentPathTime = 0.0;
         m_pathFollower = path.getPathFollower();
         m_currentPathPoint = m_pathFollower.getPointAt(m_currentPathTime);
+        if (null == m_currentPathPoint) {
+            stopAnimation();
+        }
         repaint();
+    }
+
+    public void stopAnimation() {
+        m_timer.stop();
+        m_animate = false;
+        m_pathFollower = null;
+        m_currentPathTime = 0.0;
+        m_pathStartTime = -1;
     }
 }

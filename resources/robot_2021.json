@@ -1,4 +1,6 @@
 {
+  "title": "prototype base, summer 2020",
+  "description": "This is the prototype base for A05 annex, FRC 6831, our first experience programming a swerve drive",
   "drive": {
     "length": 0.574,
     "width": 0.577,

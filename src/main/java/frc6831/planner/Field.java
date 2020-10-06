@@ -2,15 +2,12 @@ package frc6831.planner;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -125,6 +122,7 @@ public class Field {
         void setNext(FieldShape nextShape) {
             m_next = nextShape;
         }
+
         FieldShape getNext() {
             return m_next;
         }
@@ -151,13 +149,13 @@ public class Field {
             double scaledRadius = scale * m_radius;
             if (null != outline) {
                 g2d.setPaint(outline);
-                g2d.drawOval((int)(ptCenter.getX() - scaledRadius), (int) (ptCenter.getY() - scaledRadius),
-                        (int)(2.0 * scaledRadius), (int)(2.0 * scaledRadius));
+                g2d.drawOval((int) (ptCenter.getX() - scaledRadius), (int) (ptCenter.getY() - scaledRadius),
+                        (int) (2.0 * scaledRadius), (int) (2.0 * scaledRadius));
             }
             if (null != fill) {
                 g2d.setPaint(fill);
-                g2d.fillOval((int)(ptCenter.getX() - scaledRadius), (int) (ptCenter.getY() - scaledRadius),
-                        (int)(2.0 * scaledRadius), (int)(2.0 * scaledRadius));
+                g2d.fillOval((int) (ptCenter.getX() - scaledRadius), (int) (ptCenter.getY() - scaledRadius),
+                        (int) (2.0 * scaledRadius), (int) (2.0 * scaledRadius));
             }
 
         }
@@ -172,41 +170,42 @@ public class Field {
             m_UR = parsePoint(shapeDesc, RECT_UPPER_RIGHT);
 
         }
+
         @Override
         void draw(Graphics2D g2d, AffineTransform drawXfm, Color outline, Color fill) {
             Point2D.Double ptLL = (Point2D.Double) drawXfm.transform(m_LL, null);
             Point2D.Double ptUR = (Point2D.Double) drawXfm.transform(m_UR, null);
             int x, y, width, height;
             if (ptLL.x < ptUR.x) {
-                x = (int)ptLL.x;
-                width = (int)(ptUR.x - ptLL.x);
+                x = (int) ptLL.x;
+                width = (int) (ptUR.x - ptLL.x);
             } else {
-                x = (int)ptUR.x;
-                width = (int)(ptLL.x - ptUR.x);
+                x = (int) ptUR.x;
+                width = (int) (ptLL.x - ptUR.x);
 
             }
             if (ptLL.y < ptUR.y) {
-                y = (int)ptLL.y;
-                height = (int)(ptUR.y - ptLL.y);
+                y = (int) ptLL.y;
+                height = (int) (ptUR.y - ptLL.y);
             } else {
-                y = (int)ptUR.y;
-                height = (int)(ptLL.y - ptUR.y);
+                y = (int) ptUR.y;
+                height = (int) (ptLL.y - ptUR.y);
 
             }
             if (null != outline) {
                 g2d.setPaint(outline);
-                g2d.drawRect(x,y,width,height);
+                g2d.drawRect(x, y, width, height);
             }
             if (null != fill) {
                 g2d.setPaint(fill);
-                g2d.fillRect(x,y,width,height);
+                g2d.fillRect(x, y, width, height);
             }
         }
     }
 
     private static class FieldPolygon extends FieldShape {
-        Point2D[]  m_pts;
-        Point2D[]  m_xfmPts;
+        Point2D[] m_pts;
+        Point2D[] m_xfmPts;
 
         FieldPolygon(JSONObject shapeDesc) {
             JSONArray ptList = getJSONArray(shapeDesc, POINTS);
@@ -214,7 +213,7 @@ public class Field {
             m_pts = new Point2D[ptList.size()];
             m_xfmPts = new Point2D[ptList.size()];
             for (Object ptObj : ptList) {
-                m_pts[index++] = parsePoint((JSONArray)ptObj);
+                m_pts[index++] = parsePoint((JSONArray) ptObj);
             }
         }
 
@@ -259,7 +258,7 @@ public class Field {
             JSONArray shapeList = getJSONArray(componentDesc, SHAPES);
             FieldShape lastShape = null;
             for (Object shape : shapeList) {
-                FieldShape fieldShape = shapeFactory((JSONObject)shape);
+                FieldShape fieldShape = shapeFactory((JSONObject) shape);
                 if (null != fieldShape) {
                     if (null == lastShape) {
                         m_shape = fieldShape;
@@ -279,8 +278,8 @@ public class Field {
             FieldShape nextShape = m_shape;
             while (null != nextShape) {
                 nextShape.draw(g2d, drawXfm,
-                        (null == m_outlineColor) ? null : getColor(m_outlineColor,null,allianceColor),
-                        (null == m_fillColor) ? null : getColor(m_fillColor,null,allianceColor));
+                        (null == m_outlineColor) ? null : getColor(m_outlineColor, null, allianceColor),
+                        (null == m_fillColor) ? null : getColor(m_fillColor, null, allianceColor));
                 nextShape = nextShape.getNext();
             }
         }
@@ -356,13 +355,13 @@ public class Field {
                         }
                         Point2D translate = parsePoint(drawDesc, TRANSLATE);
                         if (null != translate) {
-                            xfm.translate(translate.getX(),translate.getY());
+                            xfm.translate(translate.getX(), translate.getY());
                         }
                         // and set the alliance color (if there is one)
                         String colorName = parseString(drawDesc, ALLIANCE, null);
-                        Color allianceColor = (null == colorName) ? null : getColor(colorName,null,null);
+                        Color allianceColor = (null == colorName) ? null : getColor(colorName, null, null);
                         // and now add it to the list of field stuff we draw.
-                        m_drawList.add(new FieldDraw(component,xfm,allianceColor));
+                        m_drawList.add(new FieldDraw(component, xfm, allianceColor));
                     }
                 }
             }
@@ -427,6 +426,7 @@ public class Field {
 
     public void draw(Graphics2D g2d, AffineTransform drawXfm) {
         Stroke oldStroke = g2d.getStroke();
+        Color oldColor = g2d.getColor();
 
         // draw the axis
         g2d.setPaint(Color.ORANGE);
@@ -443,6 +443,7 @@ public class Field {
         }
 
         g2d.setStroke(oldStroke);
+        g2d.setPaint(oldColor);
     }
 
     /**
