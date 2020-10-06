@@ -94,11 +94,11 @@ for planning move paths. The field description file has 4 main elements:
   - **<tt>"name"</tt>**: The name of the component. This name will be used in the field description to specify
     components to be added to the field and must be unique in the list of components.
   - **<tt>"lineColor"</tt>**: The outline color or <tt>null</tt> if no outline should be drawn,
-    see [Color Description](#Color Description).
+    see [Color Description](#Color-Description).
   - **<tt>"fillColor"</tt>**: The fill color or <tt>null</tt> if the geometry should not be filled,
-    see [Color Description](#Color Description).
+    see [Color Description](#Color-Description).
   - **<tt>"shapes"</tt>**: A list of shapes which will be rendered using the <tt>"lineColor"</tt> and
-    <tt>"fillColor"</tt> directives, see [Shapes Description](#Shapes Descriptions) for the formats of the
+    <tt>"fillColor"</tt> directives, see [Shapes Description](#Shapes-Descriptions) for the formats of the
     shapes that are currently supported.
 - **<tt>"field"</tt>**: The drawing of the field. By default, the path planner draws the field axes and outline.
   This section describes the things that should be drawn on the field, specifically: components as describes in
