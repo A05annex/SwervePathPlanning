@@ -21,13 +21,11 @@ public class JsonSupport {
     }
 
     static public Point2D parsePoint(JSONObject dict, String key) {
-        Point2D pt = null;
         Object valueObj = dict.get(key);
         if ((null != valueObj) && (valueObj.getClass() == JSONArray.class)) {
-            JSONArray coordList = (JSONArray) valueObj;
-            pt = new Point2D.Double((double) coordList.get(0), (double) coordList.get(1));
+            return parsePoint((JSONArray) valueObj);
         }
-        return pt;
+        return null;
     }
 
     static public Point2D parsePoint(JSONArray coordList) {
