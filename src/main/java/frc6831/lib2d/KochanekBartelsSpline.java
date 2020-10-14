@@ -1,10 +1,17 @@
 package frc6831.lib2d;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
 
 import java.awt.geom.Point2D;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.Iterable;
 import java.util.Iterator;
+
+import static frc6831.lib2d.JsonSupport.*;
 
 /**
  * This is an implementation of the
@@ -12,18 +19,33 @@ import java.util.Iterator;
  * for interactive editing of the tangent vector to implicitly control bias and tension. There is no continuity
  * control as we expect robot movement to be continuous unless we end this spline and the robot stops to do
  * something.
- *
+ * <p>
  * When control points are created the tangent (derivatives) at that control point and surrounding control points are
  * computed using the <a href="https://en.wikipedia.org/wiki/Cubic_Hermite_spline">Cardinal-Spline</a> formulation
  * with the default tension specified by {@link #DEFAULT_TENSION}. The tangent is adjusted using a control handle
  * which intuitively manipulates the shape of the spline at the control point to implicitly edit tension and bias.
- *
+ * <p>
  * This class is primarily a container-editor for a doubly-linked list of control points, and a factory for
  * path point iterators (iterating through the path points), or path point followers (generating a series of
  * path points at specified times along the path).
  */
 public class KochanekBartelsSpline {
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // these are the keys for the JSON representation of the spline.
+    static final String TITLE = "title";
+    static final String DESCRIPTION = "description";
+    static final String CONTROL_POINTS = "controlPoints";
+    static final String FIELD_X = "fieldX";
+    static final String FIELD_Y = "fieldY";
+    static final String FIELD_HEADING = "fieldHeading";
+    static final String TIME = "time";
+    static final String LOCATION_DERIVATIVES_EDITED = "derivativesEdited";
+    static final String FIELD_dX = "field_dX";
+    static final String FIELD_dY = "field_dY";
+    static final String FIELD_dHEADING = "field_dHeading";
+
+    // -----------------------------------------------------------------------------------------------------------------
     /**
      * The length of the heading control handle in meters.
      */
@@ -40,6 +62,10 @@ public class KochanekBartelsSpline {
 
     private static final double DEFAULT_PATH_DELTA = 0.05;
 
+    private static final String DEFAULT_TITLE = "untitled";
+
+    private static final String DEFAULT_DESCRIPTION = "No description provided.";
+
     /**
      * The basis matrix that provides the weighting of the [s] matrix (position on the segment of the spline to
      * various powers) as applied to the start and end positions and derivatives.
@@ -51,6 +77,8 @@ public class KochanekBartelsSpline {
             {1.0, 0.0, 0.0, 0.0}
     };
 
+    private String m_title = DEFAULT_TITLE;
+    private String m_description = DEFAULT_DESCRIPTION;
     /**
      * The first control point in this doubly-linked list of control points for the spline.
      */
@@ -94,11 +122,12 @@ public class KochanekBartelsSpline {
 
         /**
          * Instantiate a Path Point.
-         * @param fieldX The expected field X position of the robot in meters.
-         * @param fieldY The expected field Y position of the robot in meters.
-         * @param fieldHeading The expected heading of the robot in radians.
-         * @param speedForward The forward chassis speed of the robot in meters/sec.
-         * @param speedStrafe The strafe chassis velocity of the robot in meters/sec.
+         *
+         * @param fieldX        The expected field X position of the robot in meters.
+         * @param fieldY        The expected field Y position of the robot in meters.
+         * @param fieldHeading  The expected heading of the robot in radians.
+         * @param speedForward  The forward chassis speed of the robot in meters/sec.
+         * @param speedStrafe   The strafe chassis velocity of the robot in meters/sec.
          * @param speedRotation The rotation speed of the robot in radians/sec.
          */
         public PathPoint(double fieldX, double fieldY, double fieldHeading,
@@ -128,9 +157,9 @@ public class KochanekBartelsSpline {
         double m_fieldHeading = 0.0;
         double m_time;
         boolean m_locationDerivativesEdited = false;
-        double m_dX;
-        double m_dY;
-        double m_dHeading;
+        double m_dX = 0.0;
+        double m_dY = 0.0;
+        double m_dHeading = 0.0;
 
         /**
          * Instantiate a control point and set the time this control point should be reached when the path
@@ -140,6 +169,30 @@ public class KochanekBartelsSpline {
          */
         public ControlPoint(double timeInSec) {
             m_time = timeInSec;
+        }
+
+        public ControlPoint(JSONObject json) {
+            m_fieldX = parseDouble(json, FIELD_X, 0.0);
+            m_fieldY = parseDouble(json, FIELD_Y, 0.0);
+            m_fieldHeading = parseDouble(json, FIELD_HEADING, 0.0);
+            m_time = parseDouble(json, TIME, 0.0);
+            m_locationDerivativesEdited = parseBoolean(json, LOCATION_DERIVATIVES_EDITED, false);
+            m_dX = parseDouble(json, FIELD_dX, 0.0);
+            m_dY = parseDouble(json, FIELD_dY, 0.0);
+            m_dHeading = parseDouble(json, FIELD_dHEADING, 0.0);
+        }
+
+        public JSONObject toJSON() {
+            JSONObject controlPoint = new JSONObject();
+            controlPoint.put(FIELD_X, m_fieldX);
+            controlPoint.put(FIELD_Y, m_fieldY);
+            controlPoint.put(FIELD_HEADING, m_fieldHeading);
+            controlPoint.put(TIME, m_time);
+            controlPoint.put(LOCATION_DERIVATIVES_EDITED, m_locationDerivativesEdited);
+            controlPoint.put(FIELD_dX, m_dX);
+            controlPoint.put(FIELD_dY, m_dY);
+            controlPoint.put(FIELD_dHEADING, m_dHeading);
+            return controlPoint;
         }
 
         public double getFieldX() {
@@ -271,8 +324,8 @@ public class KochanekBartelsSpline {
          * is taken to be a point somewhere along the heading vector, and the heading handle will be repositioned
          * to be on that heading vector.
          *
-         * @param pt  (not null, Point2D) A point through which the heading vector from the centroid of the
-         *            robot should pass.
+         * @param pt (not null, Point2D) A point through which the heading vector from the centroid of the
+         *           robot should pass.
          */
         public void setHeadingLocation(Point2D pt) {
             // OK, the simple action here is to look at the current mouse position relative to the control
@@ -311,8 +364,8 @@ public class KochanekBartelsSpline {
          * Test whether a field position (probably a mouse position during path editing) is over this control
          * point.
          *
-         * @param fieldX (double) The X coordinate of the test point.
-         * @param fieldY (double) The Y coordinate of the test point.
+         * @param fieldX    (double) The X coordinate of the test point.
+         * @param fieldY    (double) The Y coordinate of the test point.
          * @param tolerance (double) The test tolerance - specifically, the distance from the actual field
          *                  position that the test point must be within to be considered a hit on the
          *                  control point position.
@@ -328,8 +381,8 @@ public class KochanekBartelsSpline {
          * Test whether a field position (probably a mouse position during path editing) is over this control
          * point tangent editing handle.
          *
-         * @param fieldX (double) The X coordinate of the test point.
-         * @param fieldY (double) The Y coordinate of the test point.
+         * @param fieldX    (double) The X coordinate of the test point.
+         * @param fieldY    (double) The Y coordinate of the test point.
          * @param tolerance (double) The test tolerance - specifically, the distance from the actual field
          *                  position that the test point must be within to be considered a hit on the
          *                  control point tangent handle.
@@ -345,8 +398,8 @@ public class KochanekBartelsSpline {
          * Test whether a field position (probably a mouse position during path editing) is over this control
          * point robot heading control handle.
          *
-         * @param fieldX (double) The X coordinate of the test point.
-         * @param fieldY (double) The Y coordinate of the test point.
+         * @param fieldX    (double) The X coordinate of the test point.
+         * @param fieldY    (double) The Y coordinate of the test point.
          * @param tolerance (double) The test tolerance - specifically, the distance from the actual field
          *                  position that the test point must be within to be considered a hit on the
          *                  control point heading handle.
@@ -404,7 +457,7 @@ public class KochanekBartelsSpline {
      * display during planning), and {@link PathFollower} that generates points at the requested time (useful
      * in animation or when the robot is in a command loop to generate the points at whatever time they are
      * requested).
-     *
+     * <p>
      * The path is divided into segments, each having a start and end control point. As points are generated
      * this class has a method to update the segment start-end parameters whenever a control point boundary
      * is passed. The implementing class is responsible for calling this method at the appropriate time.
@@ -516,7 +569,7 @@ public class KochanekBartelsSpline {
          * The current position on the segment being generated, from 0.0 being on {@link #m_thisSegmentStart}
          * to 1.0 being on {@link #m_thisSegmentEnd}.
          */
-        double m_time = 0.0;
+        double m_time;
         /**
          * The point spacing increment on the curve.
          */
@@ -601,6 +654,22 @@ public class KochanekBartelsSpline {
     public KochanekBartelsSpline() {
     }
 
+    public void setTitle(@NotNull String title) {
+        m_title = title;
+    }
+
+    public String getTitle() {
+        return m_title;
+    }
+
+    public void setDescription(@NotNull String description) {
+        m_description = description;
+    }
+
+    public String getDescription() {
+        return m_description;
+    }
+
     /**
      * Add a control point to the end of the path, which will extend that path to that new control point. This
      * method defers to {@link #addControlPoint(double, double, double)} with a heading of 0.0.
@@ -629,8 +698,8 @@ public class KochanekBartelsSpline {
     /**
      * Add a control point to the end of the path, which will extend that path to that new control point.
      *
-     * @param fieldX The X field position for the added control point.
-     * @param fieldY The field Y position for the added control point.
+     * @param fieldX       The X field position for the added control point.
+     * @param fieldY       The field Y position for the added control point.
      * @param fieldHeading The heading for the added control point.
      * @return (not null) Returns the added control point.
      */
@@ -639,7 +708,8 @@ public class KochanekBartelsSpline {
         ControlPoint newControlPoint = new ControlPoint((null == m_last) ? 0.0 : m_last.m_time + 1.0);
         if (null == m_first) {
             m_first = newControlPoint;
-        } else {
+        }
+        if (null != m_last) {
             m_last.m_next = newControlPoint;
             newControlPoint.m_last = m_last;
         }
@@ -653,6 +723,8 @@ public class KochanekBartelsSpline {
      * Clear the path to an empty path with no control points.
      */
     public void clearPath() {
+        m_title = DEFAULT_TITLE;
+        m_description = DEFAULT_DESCRIPTION;
         m_first = null;
         m_last = null;
     }
@@ -661,17 +733,37 @@ public class KochanekBartelsSpline {
      * Insert a control point at a specific field position and heading before an existing control point. When
      * a control point is inserted the time for the following points is shifted to compensate for the insertion.
      *
-     * @param controlPoint
-     * @param fieldX
-     * @param fieldY
-     * @param fieldHeading
-     * @return
+     * @param controlPoint (not null) The existing control point the new control point will be inserted before.
+     * @param fieldX       The X field position for the added control point.
+     * @param fieldY       The field Y position for the added control point.
+     * @param fieldHeading The heading for the added control point.
+     * @return (not null) Returns the added control point.
      */
     @NotNull
     public ControlPoint insertControlPointBefore(@NotNull ControlPoint controlPoint,
-                                                double fieldX, double fieldY, double fieldHeading) {
-        // TODO - write this
-        return null;
+                                                 double fieldX, double fieldY, double fieldHeading) {
+        ControlPoint newControlPoint = new ControlPoint(controlPoint.m_time);
+        newControlPoint.m_last = controlPoint.m_last;
+        if (null == newControlPoint.m_last) {
+            // there is no last control point because this is being inserted in front of the first point
+            m_first = newControlPoint;
+        } else {
+            newControlPoint.m_last.m_next = newControlPoint;
+        }
+        newControlPoint.m_next = controlPoint;
+        controlPoint.m_last = newControlPoint;
+        // reset timing on all control points after this control point
+        ControlPoint tmpControlPoint = newControlPoint;
+        while (null != tmpControlPoint) {
+            if (null != tmpControlPoint.m_next) {
+                tmpControlPoint.m_next.m_time = tmpControlPoint.m_time;
+                tmpControlPoint = tmpControlPoint.m_next;
+            }
+        }
+        // set the location and heading for this control point
+        newControlPoint.setFieldLocation(fieldX, fieldY);
+        newControlPoint.setFieldHeading(fieldHeading);
+        return newControlPoint;
     }
 
     /**
@@ -687,7 +779,7 @@ public class KochanekBartelsSpline {
     /**
      * This factory method instantiates a control point iterator.
      *
-     * @return
+     * @return (not null) Returns an iterator for the control points of this spline.
      */
     @NotNull
     public Iterable<ControlPoint> getControlPoints() {
@@ -696,7 +788,6 @@ public class KochanekBartelsSpline {
 
 
     /**
-     *
      * @return
      */
     @NotNull
@@ -705,7 +796,6 @@ public class KochanekBartelsSpline {
     }
 
     /**
-     *
      * @param timeInterval
      * @return
      */
@@ -713,8 +803,8 @@ public class KochanekBartelsSpline {
     public Iterable<PathPoint> getCurveSegments(double timeInterval) {
         return new PathIterator(timeInterval);
     }
+
     /**
-     *
      * @return
      */
     @NotNull
@@ -725,21 +815,58 @@ public class KochanekBartelsSpline {
     /**
      * Load a path from a {@code .json} path file.
      *
-     * @param filename
+     * @param filename (String, not null) The name of the file the path will be read from.
      */
     public void loadPath(String filename) {
+        // The deal here is that we want to make sure we can read this file as a path before we
+        // the existing path description.
+        clearPath();
+        try {
+            JSONObject path = readJsonFile(filename);
+            m_title = parseString(path, TITLE, DEFAULT_TITLE);
+            m_description = parseString(path, DESCRIPTION, DEFAULT_DESCRIPTION);
+            JSONArray controlPoints = getJSONArray(path, CONTROL_POINTS);
+            for (Object cpObj : controlPoints) {
+                JSONObject cpJson = (JSONObject)cpObj;
+                ControlPoint newControlPoint = new ControlPoint(cpJson);
+                if (null == m_first) {
+                    m_first = newControlPoint;
+                }
+                if (null != m_last) {
+                    m_last.m_next = newControlPoint;
+                    newControlPoint.m_last = m_last;
+                }
+                m_last = newControlPoint;
+            }
+
+
+        } catch (IOException | ParseException | ClassCastException | NullPointerException e) {
+            e.printStackTrace();
+        }
 
     }
 
     /**
      * Save the path to a {@code .json} path file.
      *
-     * @param filename
-     * @param title
-     * @param description
+     * @param filename (String, not null) The filename the path will be written to.
      */
-    public void savePath(String filename, String title, String description) {
-
+    public void savePath(@NotNull String filename) {
+        JSONObject path = new JSONObject();
+        path.put(TITLE, m_title);
+        path.put(DESCRIPTION, m_description);
+        JSONArray controlPoints = new JSONArray();
+        path.put(CONTROL_POINTS, controlPoints);
+        for (ControlPoint pt : getControlPoints()) {
+            controlPoints.add(pt.toJSON());
+        }
+        //Write JSON file
+        try (FileWriter file = new FileWriter(filename)) {
+            file.write(path.toJSONString());
+            file.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

@@ -12,7 +12,7 @@ The path planner uses an implementation of the
 for interactive editing of the tangent vector to implicitly control bias and tension. There is no
 continuity control because we want our robot paths to be continuous. The original reference for this
 spline can be found at
-[Interpolating Splines with Local Tension, Continuity, and Bias Control](https://www.engr.colostate.edu/ECE455/Readings/TCB.pdf)
+[Interpolating Splines with Local Tension, Continuity, and Bias Control](https://www.engr.colostate.edu/ECE455/Readings/TCB.pdf).
 
 When control points are created the tangent (derivatives) at that control point and surrounding
 control points are computed using the [Cardinal-Spline](https://en.wikipedia.org/wiki/Cubic_Hermite_spline)
@@ -22,13 +22,22 @@ edit tension and bias.
 
 ### Path Description Format
 
+*To be written.*
+
 ### Path Description Example
+
+*To be written.*
+
+### Using a Path Description in Your Autonomous
+
+*To be written.*
 
 ## Robot Description
 
 The robot is described in a <tt>.json</tt> file read into the path planner and displayed as the robot during
 the path planning, as well as providing the drive geometry and max speed for the modules of the swerve
-drive. Having a good description of the robot is helpful in detecting collisions or near collisions
+drive. Having a good description of the robot is helpful in identifying when the planned path exceeds the
+capability of the robot (i.e. it just cannot go that fast), and detecting collisions or near collisions
 between the robot and game elements.
 
 ### Robot Description Format
@@ -41,7 +50,7 @@ The robot description is divided into 3 sections:
 - **<tt>"drive"</tt>**: (optional, dictionary) describes the geometry of the drive
   - **<tt>"length"</tt>**: (optional, double, default=0.7) The length of the drive (pivot axis to pivot axis) in meters.
   - **<tt>"width"</tt>**: (optional, double, default=0.3) The width of the drive (pivot axis to pivot axis) in meters.
-  - **<tt>"maxSpeed"</tt>**: (optional, double, default=3.0) Tha maximum module speed (meters/sec)
+  - **<tt>"maxSpeed"</tt>**: (optional, double, default=3.0) The maximum module speed (meters/sec)
 - **<tt>"chassis"</tt>**: (optional, dictionary) describes the geometry of the chassis (it is currently assumed the drive
   and chassis share the same centroid)
   - **<tt>"length"</tt>**: (optional, double, default=0.9) The length of the chassis in meters.
@@ -75,7 +84,10 @@ The robot description is divided into 3 sections:
 ## Field Description
 
 The field is described in a <tt>.json</tt> file read into the path planner and displayed as the background
-field context during path planning. To simplify field description there is a section of the description for
+field context during path planning. The Path Planner always displays the field axes ([0.0,0.0] is center field),
+and the standard field outline. The field description adds the game elements for the season-specific game.
+
+To simplify field description there is a section of the description for
 game <tt>components</tt> where you describe game elements like the scoring pieces, scoring targets, scoring
 piece depots, etc; and a <tt>field</tt> section that lets you position components and describe which
 alliance (if any) they belong to.
@@ -84,9 +96,9 @@ alliance (if any) they belong to.
 
 The field is described in a <tt>.json</tt> file read into the planner and displayed as the context
 for planning move paths. The field description file has 4 main elements:
-- **<tt>title</tt>**: (optional, string) A title or name for the field, primarily used as file documentation
+- **<tt>"title"</tt>**: (optional, string) A title or name for the field, primarily used as file documentation
   to refresh you on the field this file represents.
-- **<tt>description</tt>**: (optional, string) A more verbose description if the field, again primarily used as file
+- **<tt>"description"</tt>**: (optional, string) A more verbose description if the field, again primarily used as file
   documentation to refresh you on the field this file represents.
 - **<tt>"components"</tt>**: (required, list) The list of field components (elements or assembles) that are
   generally specific to the competition for the year, and often appear multiple times on the field. Within
@@ -110,8 +122,10 @@ for planning move paths. The field description file has 4 main elements:
       components section of the field.
     - **<tt>"alliance"</tt>**: (optional, string, default=<tt>null</tt>) If this component is being drawn as
       an alliance specific game element, specify the alliance as <tt>"red"</tt> or <tt>"blue"</tt>.
-    - **<tt>"translate"</tt>**:
-    - **<tt>"rotate"</tt>**:
+    - **<tt>"translate"</tt>**: (optional, [*x*,*y*], default=[0.0,0.0]) The translation for this component (in
+      meters). NOTE: rotations are applied before translations.
+    - **<tt>"rotate"</tt>**: (optional, double, default=0.0) The rotation for this component (in radians). NOTE:
+      rotations are applied before translations.
 
 #### Color Description
 
@@ -141,10 +155,10 @@ intended to be extended to be extended (i.e. new types of shapes added) if requi
 arena for the season's competition. Each shape is represented by a dictionary with a <tt>"type"</tt> key
 describing the shape type, and then type-specific keys and values. These are the shape types, and the
 corresponding keys that describe the shape:
-- **<tt>"circle"</tt>**:
-  - **<tt>"center"</tt>**: (required, [*x*,*y*]) The local X and Y coordinates (in meters) of the center
+- **<tt>"circle"</tt>**: A circle
+  - **<tt>"center"</tt>**: (required, [*x*,*y*]) The local X and Y coordinates, in meters, of the center
   of the circle.
-  - **<tt>"radius"</tt>**:
+  - **<tt>"radius"</tt>**: (required, double) The radius, in meters.
 - **<tt>"rect"</tt>**:
   - **<tt>"lower left"</tt>**:
   - **<tt>"upper right"</tt>**:
@@ -152,4 +166,6 @@ corresponding keys that describe the shape:
   - **<tt>"points"</tt>**:
 
 ### Example Field Description file
+
+*To be written.*
 

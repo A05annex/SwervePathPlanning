@@ -1,5 +1,6 @@
 package frc6831.planner;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
@@ -22,6 +23,8 @@ public class Field {
 
     // -------------------------------------------------------------------------------------------
     // Parsing the field file
+    private static final String TITLE = "title";
+    private static final String DESCRIPTION = "description";
     private static final String COMPONENTS = "components";
     private static final String FIELD = "field";
 
@@ -77,6 +80,8 @@ public class Field {
             new Point2D.Double(X_FIELD_MAX, Y_FIELD_MIN)
     };
 
+    private String m_title = "default";
+    private String m_description = "The default field outline with no gale elements.";
     private MinMax m_minMax = new MinMax(X_AXIS_MIN, Y_AXIS_MIN, X_AXIS_MAX, Y_AXIS_MAX);
     private HashMap<String, FieldComponent> m_components = new HashMap();
     private ArrayList<FieldDraw> m_drawList = new ArrayList();
@@ -132,8 +137,8 @@ public class Field {
 
     private static class FieldCircle extends FieldShape {
 
-        Point2D m_center;
-        double m_radius;
+        Point2D m_center = new Point2D.Double(0.0, 0.0);
+        double m_radius = 1.0;
 
 
         FieldCircle(JSONObject shapeDesc) {
@@ -313,6 +318,15 @@ public class Field {
     }
 
     // ----------------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------------
+    public String getTitle() {
+        return m_title;
+    }
+
+    public String getDescription() {
+        return m_description;
+    }
+
     public MinMax getMinMax() {
         return m_minMax;
     }
@@ -320,9 +334,19 @@ public class Field {
     // ----------------------------------------------------------------------------------------------------
     // Loading from a JSON file
     // ----------------------------------------------------------------------------------------------------
-    public void loadField(String filename) {
+
+    /**
+     *
+     * @param filename
+     */
+    public void loadField(@NotNull String filename) {
+        m_components.clear();
+        m_drawList.clear();
         try {
             JSONObject dict = readJsonFile(filename);
+            // title and description
+            m_title = parseString(dict, TITLE, "untitled");
+            m_description = parseString(dict, DESCRIPTION, "No description provided.");
             // Read the field components
             JSONArray componentList = getJSONArray(dict, COMPONENTS, false);
             if (null != componentList) {

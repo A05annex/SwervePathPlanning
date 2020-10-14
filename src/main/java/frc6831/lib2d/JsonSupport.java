@@ -9,6 +9,10 @@ import java.awt.geom.Point2D;
 import java.io.FileReader;
 import java.io.IOException;
 
+/**
+ * This class provides utility methods for standard data types for robotics with well known default
+ * and failure behaviour.
+ */
 public class JsonSupport {
 
     static public double parseDouble(JSONObject dict, String key, double defaultValue) {
@@ -16,6 +20,14 @@ public class JsonSupport {
         Object valueObj = dict.get(key);
         if (null != valueObj) {
             value = (double) valueObj;
+        }
+        return value;
+    }
+    static public boolean parseBoolean(JSONObject dict, String key, boolean defaultValue) {
+        boolean value = defaultValue;
+        Object valueObj = dict.get(key);
+        if (null != valueObj) {
+            value = (boolean) valueObj;
         }
         return value;
     }

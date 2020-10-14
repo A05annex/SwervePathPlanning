@@ -24,27 +24,40 @@ public class PathCanvas extends Canvas implements ActionListener {
     private static final String OVER_CONTROL_POINT = "controlPoint";
     private static final String OVER_TANGENT_POINT = "tangentPoint";
     private static final String OVER_HEADING_POINT = "headingPoint";
+    private static final String OVER_PATH_POINT = "pathPoint";
 
+    private final PopupMenu m_contextMenu;
+    private final MenuItem m_menuItemClearPath;
+    private final MenuItem m_menuItemAnimatePath;
+    private final MenuItem m_menuItemExtendPath;
+    private final MenuItem m_menuItemEndPath;
+    private final MenuItem m_menuItemInsert;
+    private final MenuItem m_menuItemDelete;
+    private final MenuItem m_menuItemResetTangent;
+    private final MenuItem m_menuItemSetTime;
+    private final MenuItem m_menuItemInfo;
 
     // the actual data for the robot, field, and path
     private final Robot m_robot;                        // the robot description
     private final Field m_field ;
-    private KochanekBartelsSpline path = new KochanekBartelsSpline();
+    private final KochanekBartelsSpline path = new KochanekBartelsSpline();
     private AffineTransform m_drawXfm = null;
     private AffineTransform m_mouseXfm = null;
     private double m_scale;
 
-    final private GeneralPath m_robotChassis;
-    final private GeneralPath m_robotBumpers;
+    // members to support robot draw
+    private GeneralPath m_robotChassis;
+    private GeneralPath m_robotBumpers;
 
-    // controlling the user interaction with the
+    // controlling the user interaction with the path
     private KochanekBartelsSpline.ControlPoint m_newControlPoint = null;
     private KochanekBartelsSpline.ControlPoint m_overControlPoint = null;
     private String m_mode = MODE_ADD;
     private String m_overWhat = null;
-    private Stroke m_highlightStroke = new BasicStroke(2.0f);
+    private final Stroke m_highlightStroke = new BasicStroke(2.0f);
     private Point2D.Double m_mouse = null;
 
+    // The members that support the path animation functionality
     private Timer m_timer = null;
     private long m_pathStartTime = -1;
     private Double m_currentPathTime = 0.0;
@@ -62,7 +75,7 @@ public class PathCanvas extends Canvas implements ActionListener {
             Component comp = e.getComponent();
             float width = comp.getWidth();
             float height = comp.getHeight();
-            System.out.println(String.format("Size Changed %d,%d", (int) width, (int) height));
+            System.out.printf("Size Changed %d,%d%n", (int) width, (int) height);
             // OK, so here we pick whether we scale X or Y to fill the window, reverse Y,
             // and, translate 0,0 to center screen.
             Field.MinMax fieldMinMax = m_field.getMinMax();
@@ -80,12 +93,17 @@ public class PathCanvas extends Canvas implements ActionListener {
 
     }
 
+    /**
+     * This is the handler for mouse actions on the path planning canvas.
+     */
     private class MouseHandler extends MouseAdapter {
         @Override
         public void mousePressed(MouseEvent e) {
             Point2D pt = m_mouse = (Point2D.Double) m_mouseXfm.transform(
                     new Point2D.Double(e.getPoint().getX(), e.getPoint().getY()), null);
-            if ((m_mode == MODE_ADD) && (e.getClickCount() == 1)) {
+            if (e.isPopupTrigger()) {
+                displayContextMenu(e);
+            } else if ((m_mode == MODE_ADD) && (e.getClickCount() == 1)) {
                 m_newControlPoint = path.addControlPoint(pt);
                 repaint();
             } else if (m_mode == MODE_EDIT) {
@@ -109,9 +127,11 @@ public class PathCanvas extends Canvas implements ActionListener {
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            Point2D pt = m_mouse = (Point2D.Double) m_mouseXfm.transform(
-                    new Point2D.Double(e.getPoint().getX(), e.getPoint().getY()), null);
-            if (m_mode == MODE_ADD) {
+            if (e.isPopupTrigger()) {
+                displayContextMenu(e);
+            } else if (m_mode == MODE_ADD) {
+                Point2D pt = m_mouse = (Point2D.Double) m_mouseXfm.transform(
+                        new Point2D.Double(e.getPoint().getX(), e.getPoint().getY()), null);
                 if (e.getClickCount() == 1) {
                     m_newControlPoint = null;
                     repaint();
@@ -173,19 +193,57 @@ public class PathCanvas extends Canvas implements ActionListener {
             }
             repaint();
         }
+
+        private void displayContextMenu(MouseEvent e) {
+            // check the current state of the path and editing state and disable menu choices that do
+            // not apply.
+            m_contextMenu.show(e.getComponent(), e.getX(), e.getY());
+        }
+    }
+
+    static private MenuItem createMenuItem(PopupMenu menu, String name, ActionListener actionListener) {
+        MenuItem menuItem = new MenuItem(name);
+        menuItem.addActionListener(actionListener);
+        menu.add(menuItem);
+        return menuItem;
     }
 
     public PathCanvas(GraphicsConfiguration gc, Robot robot, Field field) {
         super(gc);
         m_robot = robot;
         m_field = field;
+
+        // build the right menu popup
+        m_contextMenu = new PopupMenu();
+        m_menuItemClearPath = createMenuItem(m_contextMenu, "Clear Path", this);
+        m_menuItemAnimatePath = createMenuItem(m_contextMenu, "Play Path", this);
+        m_menuItemExtendPath = createMenuItem(m_contextMenu, "Extend Path", this);
+        m_menuItemExtendPath.disable();
+        m_menuItemEndPath = createMenuItem(m_contextMenu, "End Path", this);
+        m_menuItemEndPath.disable();
+        m_contextMenu.addSeparator();
+        m_menuItemInsert = createMenuItem(m_contextMenu, "Insert Control Point", this);
+        m_menuItemInsert.disable();
+        m_menuItemDelete = createMenuItem(m_contextMenu, "Delete Control Point", this);
+        m_menuItemDelete.disable();
+        m_menuItemResetTangent = createMenuItem(m_contextMenu, "Reset Tangent", this);
+        m_menuItemResetTangent.disable();
+        m_menuItemSetTime = createMenuItem(m_contextMenu, "Set Time", this);
+        m_menuItemSetTime.disable();
+        m_menuItemInfo = createMenuItem(m_contextMenu, "Info", this);
+        m_menuItemInfo.disable();
+        add(m_contextMenu);
+
         // setup all of the stuff for the path panel
         setBackground(Color.BLACK);
         MouseAdapter mouseHandler = new MouseHandler();
         addMouseListener(mouseHandler);
         addMouseMotionListener(mouseHandler);
-        ComponentHandler componentHandler = new ComponentHandler();
-        addComponentListener(componentHandler);
+        addComponentListener(new ComponentHandler());
+        resetRobotGeometry();
+    }
+
+    public void resetRobotGeometry() {
         // create the robot geometry
         m_robotChassis = new GeneralPath(GeneralPath.WIND_NON_ZERO, 4);
         m_robotChassis.moveTo(-m_robot.getChassisWidth() / 2.0, -m_robot.getChassisLength() / 2.0);
@@ -200,25 +258,27 @@ public class PathCanvas extends Canvas implements ActionListener {
         m_robotBumpers.lineTo(m_robot.getBumperWidth() / 2.0, m_robot.getBumperLength() / 2.0);
         m_robotBumpers.lineTo(m_robot.getBumperWidth() / 2.0, -m_robot.getBumperLength() / 2.0);
         m_robotBumpers.closePath();
+
     }
 
     /**
      * An action listener for the {@link PathCanvas} that is specifically looking for {@link #m_timer} events
      * during path animation.
      *
-     * @param e (ActionEvent) The action event that was sent to this path canvas.
+     * @param event (ActionEvent) The action event that was sent to this path canvas.
      */
     @Override
-    public void actionPerformed(ActionEvent e) {
-        if ((e.getSource() == m_timer) && (null != m_pathFollower)) {
+    public void actionPerformed(ActionEvent event) {
+        final Object src = event.getSource();
+        if ((event.getSource() == m_timer) && (null != m_pathFollower)) {
             // This is a timer event while there is a path follower.
             if (m_pathStartTime == -1) {
                 //  This is the start of the animation. The robot is currently drawn at the start position
                 // so the only action is to record the start time.
-                m_pathStartTime = e.getWhen();
+                m_pathStartTime = event.getWhen();
             } else {
                 // This is a point at some time on the path
-                m_currentPathTime = (e.getWhen() - m_pathStartTime) / 1000.0;
+                m_currentPathTime = (event.getWhen() - m_pathStartTime) / 1000.0;
                 m_currentPathPoint = m_pathFollower.getPointAt(m_currentPathTime);
                 if (null == m_currentPathPoint) {
                     stopAnimation();
@@ -226,6 +286,17 @@ public class PathCanvas extends Canvas implements ActionListener {
                 }
                 repaint();
             }
+        } else if (src == m_menuItemClearPath) {
+            clearPath();
+        } else if (src == m_menuItemAnimatePath) {
+            animatePath();
+        } else if (src == m_menuItemExtendPath) {
+        } else if (src == m_menuItemInsert) {
+        } else if (src == m_menuItemDelete) {
+        } else if (src == m_menuItemResetTangent) {
+        } else if (src == m_menuItemSetTime) {
+        } else if (src == m_menuItemInfo) {
+
         }
     }
 
@@ -248,9 +319,9 @@ public class PathCanvas extends Canvas implements ActionListener {
                     String.format("strafe = %.3f", m_currentPathPoint.speedStrafe), 10, 50);
             g2d.drawString(
                     String.format("angular vel = %.3f", m_currentPathPoint.speedRotation), 10, 65);
-            System.out.println(String.format("%10.3f, %10.3f, %10.3f, %10.3f",
+            System.out.printf("%10.3f, %10.3f, %10.3f, %10.3f%n",
                     m_currentPathTime, m_currentPathPoint.speedForward,
-                    m_currentPathPoint.speedStrafe, m_currentPathPoint.speedRotation));
+                    m_currentPathPoint.speedStrafe, m_currentPathPoint.speedRotation);
             paintRobot(g2d, m_currentPathPoint);
             g2d.setPaint(Color.MAGENTA);
             double fieldX = m_currentPathPoint.fieldPt.getX();
@@ -340,6 +411,10 @@ public class PathCanvas extends Canvas implements ActionListener {
                         (int) screenMouse.getX(), (int) screenMouse.getY());
             }
         }
+    }
+
+    public KochanekBartelsSpline getPath() {
+        return path;
     }
 
     void paintRobot(Graphics2D g2d, KochanekBartelsSpline.ControlPoint controlPoint) {

@@ -6,33 +6,38 @@ import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.File;
 
 public class PathPlanner extends Frame implements ActionListener, WindowListener {
 
     private int m_nSizeX = 565;         // the initial X size of the app window (for images for class website).
     private int m_nSizeY = 574;         // the initial Y size of the app window (for images for class website).
-    private final GraphicsConfiguration m_graphicsConfig;       // the graphics configuration of the window devide
+    private final GraphicsConfiguration m_graphicsConfig;       // the graphics configuration of the window device
 
     private final MenuItem m_menuItemFileLoadField;     // the menu file-load field button
+    private final MenuItem m_menuItemFileLoadRobot;     // the menu file-load robot button
     private final MenuItem m_menuItemFileLoadPath;      // the menu file-load path button
-    private final MenuItem m_menuItemFileSavePath;      // the menu file-load button
+    private final MenuItem m_menuItemFileSavePath;      // the menu path save button
+    private final MenuItem m_menuItemFileSaveAsPath;    // the menu path save-as button
 
-    private final MenuItem m_menuItemEditClearPath;    // the menu edit - clear the current path and reset to
+    private final MenuItem m_menuItemEditClearPath;     // the menu edit - clear the current path and reset to
                                                         // start a new path
 
-    private final MenuItem m_menuItemAnimatePlay;      // play an animation of the current path
-
+    private final MenuItem m_menuItemAnimatePlay;       // play an animation of the current path
 
     private final PathCanvas m_canvas;                  // the rendering canvas (defined at the end of this file)
+    private final Robot m_robot = new Robot();          // the robot description
+    private final Field m_field = new Field();          // the field description
+    private String m_pathFilename = null;
 
     public static void main(@NotNull final String[] args) {
-        Robot robot = new Robot();          // the robot description
-        Field field = new Field();          // the field description
         // Setup the commandline argument parser and parse any commandline arguments
         ArgumentParser parser = ArgumentParsers.newFor("PathPlanner").build()
                 .description("Swerve Drive Path Planner.");
@@ -42,22 +47,18 @@ public class PathPlanner extends Frame implements ActionListener, WindowListener
         parser.addArgument("-f", "--field")
                 .type(String.class)
                 .help("a robot description file");
+        String robotDescFile = null;
+        String fieldDescFile = null;
         try {
             Namespace parsedArgs = parser.parseArgs(args);
-            String robotDescFile = parsedArgs.get("robot");
-            if (null != robotDescFile) {
-                robot.loadRobot(robotDescFile);
-            }
-            String fieldDescFile = parsedArgs.get("field");
-            if (null != fieldDescFile) {
-                field.loadField(fieldDescFile);
-            }
+            robotDescFile = parsedArgs.get("robot");
+            fieldDescFile = parsedArgs.get("field");
         } catch (ArgumentParserException e) {
             parser.handleError(e);
         }
         // start the path planning window
         try {
-            final PathPlanner pathPlanner = new PathPlanner(robot, field);
+            final PathPlanner pathPlanner = new PathPlanner(robotDescFile, fieldDescFile);
             pathPlanner.setVisible(true);
         } catch (final Throwable t) {
             t.printStackTrace();
@@ -65,7 +66,7 @@ public class PathPlanner extends Frame implements ActionListener, WindowListener
         }
     }
 
-    private PathPlanner(Robot robot, Field field) {
+    private PathPlanner(String robotDescFile, String fieldDescFile) {
         //------------------------------------------------------------------
         // setup the window for drawing the field and paths
         //------------------------------------------------------------------
@@ -82,9 +83,12 @@ public class PathPlanner extends Frame implements ActionListener, WindowListener
         final MenuBar menubar = new MenuBar();
 
         final Menu menuFile = createMenu( menubar,"File");
-        m_menuItemFileLoadField = createMenuItem(menuFile, "Load Game Field", this);
-        m_menuItemFileLoadPath = createMenuItem(menuFile, "Load Path", this);
+        m_menuItemFileLoadField = createMenuItem(menuFile, "Load Game Field ...", this);
+        m_menuItemFileLoadRobot = createMenuItem(menuFile, "Load Robot ...", this);
+        menuFile.addSeparator();
+        m_menuItemFileLoadPath = createMenuItem(menuFile, "Load Path ...", this);
         m_menuItemFileSavePath = createMenuItem(menuFile, "Save Path", this);
+        m_menuItemFileSaveAsPath = createMenuItem(menuFile, "Save Path As ...", this);
 
         final Menu menuEdit = createMenu( menubar,"Edit");
         m_menuItemEditClearPath = createMenuItem(menuEdit, "Clear Path", this);
@@ -100,7 +104,14 @@ public class PathPlanner extends Frame implements ActionListener, WindowListener
         //------------------------------------------------------------------
         // create a canvas to draw on
         //------------------------------------------------------------------
-        m_canvas = new PathCanvas(m_graphicsConfig, robot, field);
+        if (null != robotDescFile) {
+            m_robot.loadRobot(robotDescFile);
+        }
+        if (null != fieldDescFile) {
+            m_field.loadField(fieldDescFile);
+        }
+        resetTitle();
+        m_canvas = new PathCanvas(m_graphicsConfig, m_robot, m_field);
         add(m_canvas, BorderLayout.CENTER);
 
         //------------------------------------------------------------------
@@ -109,6 +120,10 @@ public class PathPlanner extends Frame implements ActionListener, WindowListener
         Desktop desktop = Desktop.getDesktop();
         desktop.setQuitHandler((e, r) -> exitPathPlaner());
 
+    }
+
+    private void resetTitle() {
+        setTitle("Swerve Path Planner - " + m_field.getTitle());
     }
 
     static private Menu createMenu(MenuBar menubar, String name) {
@@ -125,12 +140,72 @@ public class PathPlanner extends Frame implements ActionListener, WindowListener
     }
 
     private void loadGameField() {
+        JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+        fc.setDialogTitle("Load Field");
+        fc.setFileFilter(new FileNameExtensionFilter("JSON file","json"));
+        fc.setAcceptAllFileFilterUsed(false);
+        if (JFileChooser.APPROVE_OPTION == fc.showOpenDialog(m_canvas)) {
+            File file = fc.getSelectedFile();
+            System.out.println("Loading field from: " + file.getAbsolutePath());
+            m_field.loadField(file.getAbsolutePath());
+            resetTitle();
+            m_canvas.repaint();
+        } else {
+            System.out.println("Load field command cancelled by user.");
+        }
     }
 
-    private void loadFPath() {
+    private void loadRobot() {
+        JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+        fc.setDialogTitle("Load Robot");
+        fc.setFileFilter(new FileNameExtensionFilter("JSON file","json"));
+        fc.setAcceptAllFileFilterUsed(false);
+        if (JFileChooser.APPROVE_OPTION == fc.showOpenDialog(m_canvas)) {
+            File file = fc.getSelectedFile();
+            System.out.println("Loading robot from: " + file.getAbsolutePath());
+            m_pathFilename = file.getAbsolutePath();
+            m_robot.loadRobot(m_pathFilename);
+            m_canvas.resetRobotGeometry();
+            m_canvas.repaint();
+        } else {
+            System.out.println("Load path command cancelled by user.");
+        }
+    }
+
+    private void loadPath() {
+        JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+        fc.setDialogTitle("Load Path");
+        fc.setFileFilter(new FileNameExtensionFilter("JSON file","json"));
+        fc.setAcceptAllFileFilterUsed(false);
+        if (JFileChooser.APPROVE_OPTION == fc.showOpenDialog(m_canvas)) {
+            File file = fc.getSelectedFile();
+            System.out.println("Loading path from: " + file.getAbsolutePath());
+            m_pathFilename = file.getAbsolutePath();
+            m_canvas.getPath().loadPath(m_pathFilename);
+            m_canvas.repaint();
+        } else {
+            System.out.println("Load path command cancelled by user.");
+        }
     }
 
     private void savePath() {
+        System.out.println("Saving path as: " + m_pathFilename);
+        m_canvas.getPath().savePath(m_pathFilename);
+    }
+
+    private void savePathAs() {
+        JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+        fc.setDialogTitle("Save Path As");
+        fc.setFileFilter(new FileNameExtensionFilter("JSON file","json"));
+        fc.setAcceptAllFileFilterUsed(false);
+        if (JFileChooser.APPROVE_OPTION == fc.showSaveDialog(m_canvas)) {
+            File file = fc.getSelectedFile();
+            m_pathFilename = file.getAbsolutePath();
+            savePath();
+        } else {
+            System.out.println("Save path command cancelled by user.");
+        }
+
     }
 
     private void clearPath() {
@@ -150,13 +225,21 @@ public class PathPlanner extends Frame implements ActionListener, WindowListener
     public void actionPerformed(ActionEvent event) {
         final Object src = event.getSource();
 
-        // The 'File' manu
+        // The 'File' menu
         if (src == m_menuItemFileLoadField) {
             loadGameField();
         } else if (src == m_menuItemFileLoadPath) {
-            loadFPath();
+            loadPath();
+        } else if (src == m_menuItemFileLoadRobot) {
+            loadRobot();
         } else if (src == m_menuItemFileSavePath) {
-            savePath();
+            if (null == m_pathFilename) {
+                savePathAs();
+            } else {
+                savePath();
+            }
+        } else if (src == m_menuItemFileSaveAsPath) {
+            savePathAs();
         } else if (src == m_menuItemEditClearPath) {
             clearPath();
         } else if (src == m_menuItemAnimatePlay) {
