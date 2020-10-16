@@ -1,17 +1,1 @@
-{
-  "title": "prototype base, summer 2020",
-  "description": "This is the prototype base for A05 annex, FRC 6831, our first experience programming a swerve drive",
-  "drive": {
-    "length": 0.574,
-    "width": 0.577,
-    "maxSpeed": 3.1951
-  },
-  "chassis": {
-    "length": 0.762,
-    "width": 0.762
-  },
-  "bumpers": {
-    "length": 0.9144,
-    "width": 0.9144
-  }
-}
+{"description":"No description provided.","title":"untitled","controlPoints":[{"field_dX":-0.3079710144927539,"fieldY":-5.019927536231885,"field_dY":5.297101449275363,"fieldX":-2.1403985507246386,"fieldHeading":0.0,"time":0.0,"field_dHeading":0.2701178685786513,"derivativesEdited":true},{"field_dX":2.4282898550724656,"fieldY":2.58695652173913,"field_dY":5.833931884057969,"fieldX":-1.616847826086957,"fieldHeading":0.3858826693980733,"time":1.0,"field_dHeading":1.5746890126935371,"derivativesEdited":false},{"field_dX":3.60018115942029,"fieldY":3.314260869565214,"field_dY":-2.543840579710145,"fieldX":1.3285869565217412,"fieldHeading":2.249555732419339,"time":2.0,"field_dHeading":1.7725633681357602,"derivativesEdited":false},{"field_dX":1.0641014492753607,"fieldY":-1.0471014492753632,"field_dY":-5.4674463768115915,"fieldX":3.5262681159420293,"fieldHeading":2.9181160524491596,"time":3.0,"field_dHeading":-2.9406009054286204,"derivativesEdited":false},{"field_dX":-2.5869565217391313,"fieldY":-4.496376811594203,"field_dY":-0.7976449275362313,"fieldX":2.8487318840579707,"fieldHeading":-1.9513027039072617,"time":4.0,"field_dHeading":-2.5326062455178833,"derivativesEdited":false},{"field_dX":-1.416666666666666,"fieldY":-2.1865942028985508,"field_dY":2.032608695652172,"fieldX":-0.16938405797101552,"fieldHeading":-0.6998928697192451,"time":5.0,"field_dHeading":0.8759868839316116,"derivativesEdited":true}]}

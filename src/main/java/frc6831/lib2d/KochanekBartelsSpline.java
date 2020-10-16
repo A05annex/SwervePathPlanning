@@ -99,6 +99,8 @@ public class KochanekBartelsSpline {
      * are transformed to be robot-relative so they can be used to set the robot speeds for following this path.
      */
     public static class PathPoint {
+        public final ControlPoint previousControlPoint;
+        public final ControlPoint nextControlPoint;
         /**
          * The point on the field where the robot should be when it reaches this point in the path.
          */
@@ -129,14 +131,36 @@ public class KochanekBartelsSpline {
          * @param speedForward  The forward chassis speed of the robot in meters/sec.
          * @param speedStrafe   The strafe chassis velocity of the robot in meters/sec.
          * @param speedRotation The rotation speed of the robot in radians/sec.
+         * @param previousControlPoint
+         * @param nextControlPoint
          */
         public PathPoint(double fieldX, double fieldY, double fieldHeading,
-                         double speedForward, double speedStrafe, double speedRotation) {
+                         double speedForward, double speedStrafe, double speedRotation,
+                         ControlPoint previousControlPoint, ControlPoint nextControlPoint) {
+            this.previousControlPoint = previousControlPoint;
+            this.nextControlPoint = nextControlPoint;
             this.fieldPt = new Point2D.Double(fieldX, fieldY);
             this.fieldHeading = fieldHeading;
             this.speedForward = speedForward;
             this.speedStrafe = speedStrafe;
             this.speedRotation = speedRotation;
+        }
+
+        /**
+         * Test whether a field position (probably a mouse position during path editing) is over this path
+         * point.
+         *
+         * @param fieldX    (double) The X coordinate of the test point.
+         * @param fieldY    (double) The Y coordinate of the test point.
+         * @param tolerance (double) The test tolerance - specifically, the distance from the actual field
+         *                  position that the test point must be within to be considered a hit on the
+         *                  path point.
+         * @return Returns {@code true} if the test point is over the path point, and {@code false} otherwise.
+         */
+        public boolean testOverPathPoint(double fieldX, double fieldY, double tolerance) {
+            double dx = fieldPt.getX() - fieldX;
+            double dy = fieldPt.getY() - fieldY;
+            return Math.sqrt((dx * dx) + (dy * dy)) < tolerance;
         }
     }
 
@@ -182,7 +206,8 @@ public class KochanekBartelsSpline {
             m_dHeading = parseDouble(json, FIELD_dHEADING, 0.0);
         }
 
-        public JSONObject toJSON() {
+        @SuppressWarnings("unchecked")
+        public @NotNull JSONObject toJSON() {
             JSONObject controlPoint = new JSONObject();
             controlPoint.put(FIELD_X, m_fieldX);
             controlPoint.put(FIELD_Y, m_fieldY);
@@ -193,6 +218,22 @@ public class KochanekBartelsSpline {
             controlPoint.put(FIELD_dY, m_dY);
             controlPoint.put(FIELD_dHEADING, m_dHeading);
             return controlPoint;
+        }
+
+        /**
+         * Restore the control point to automated derivative recalculation when it or surrounding
+         * control points are moved. This only effects points whosee derivatives have been manually edited.
+         */
+        public void resetDerivative() {
+            if (m_locationDerivativesEdited) {
+                m_locationDerivativesEdited = false;
+                updateLocationDerivatives();
+                updateHeadingDerivative();
+            }
+        }
+
+        public boolean getDerivativesManuallyEdited() {
+            return m_locationDerivativesEdited;
         }
 
         public double getFieldX() {
@@ -340,6 +381,12 @@ public class KochanekBartelsSpline {
          * @param heading (double) The heading direction, in radians, for this control point.
          */
         public void setFieldHeading(double heading) {
+            while ((heading - m_fieldHeading) > Math.PI) {
+                heading -= 2.0 * Math.PI;
+            }
+            while ((heading - m_fieldHeading) < -Math.PI) {
+                heading += 2.0 * Math.PI;
+            }
             m_fieldHeading = heading;
             // update the derivatives
             updateHeadingDerivative();
@@ -557,7 +604,8 @@ public class KochanekBartelsSpline {
             double forward = (dField[0] * sinHeading) + (dField[1] * cosHeading);
             double strafe = (dField[0] * cosHeading) - (dField[1] * sinHeading);
             // create and return the path point
-            return new PathPoint(field[0], field[1], field[2], forward, strafe, dField[2]);
+            return new PathPoint(field[0], field[1], field[2], forward, strafe, dField[2],
+                    m_thisSegmentStart, m_thisSegmentEnd);
         }
     }
 
@@ -756,9 +804,11 @@ public class KochanekBartelsSpline {
         ControlPoint tmpControlPoint = newControlPoint;
         while (null != tmpControlPoint) {
             if (null != tmpControlPoint.m_next) {
-                tmpControlPoint.m_next.m_time = tmpControlPoint.m_time;
-                tmpControlPoint = tmpControlPoint.m_next;
+                tmpControlPoint.m_time = tmpControlPoint.m_next.m_time;
+            } else {
+                tmpControlPoint.m_time += 1.0;
             }
+            tmpControlPoint = tmpControlPoint.m_next;
         }
         // set the location and heading for this control point
         newControlPoint.setFieldLocation(fieldX, fieldY);
@@ -773,7 +823,36 @@ public class KochanekBartelsSpline {
      * @param controlPoint (not null) The control point to be deleted.
      */
     public void deleteControlPoint(@NotNull ControlPoint controlPoint) {
-        // TODO - write this
+        // shift the time of any point past the one to be deleted.
+        ControlPoint tmpControlPoint = m_last;
+        while (controlPoint != tmpControlPoint) {
+            tmpControlPoint.m_time = tmpControlPoint.m_last.m_time;
+            tmpControlPoint = tmpControlPoint.m_last;
+        }
+
+        // now delete the point (remove it from the list)
+        if (null != controlPoint.m_last) {
+            controlPoint.m_last.m_next = controlPoint.m_next;
+        } else {
+            // this s the first point being deleted
+            m_first = controlPoint.m_next;
+        }
+        if (null != controlPoint.m_next) {
+            controlPoint.m_next.m_last = controlPoint.m_last;
+        } else {
+            // This is the last point being deleted
+            m_last = controlPoint.m_last;
+        }
+
+        // and reset the derivatives for the surrounding points.
+        if (controlPoint.m_last != null) {
+            controlPoint.m_last.updateLocationDerivatives();
+            controlPoint.m_last.updateHeadingDerivative();
+        }
+        if (controlPoint.m_next != null) {
+            controlPoint.m_next.updateLocationDerivatives();
+            controlPoint.m_next.updateHeadingDerivative();
+        }
     }
 
     /**
@@ -851,6 +930,7 @@ public class KochanekBartelsSpline {
      *
      * @param filename (String, not null) The filename the path will be written to.
      */
+    @SuppressWarnings("unchecked")
     public void savePath(@NotNull String filename) {
         JSONObject path = new JSONObject();
         path.put(TITLE, m_title);

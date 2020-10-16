@@ -28,7 +28,7 @@ public class PathPlanner extends Frame implements ActionListener, WindowListener
     private final MenuItem m_menuItemFileSaveAsPath;    // the menu path save-as button
 
     private final MenuItem m_menuItemEditClearPath;     // the menu edit - clear the current path and reset to
-                                                        // start a new path
+    // start a new path
 
     private final MenuItem m_menuItemAnimatePlay;       // play an animation of the current path
 
@@ -82,7 +82,7 @@ public class PathPlanner extends Frame implements ActionListener, WindowListener
         // ----------------------------------------------------------------------------------
         final MenuBar menubar = new MenuBar();
 
-        final Menu menuFile = createMenu( menubar,"File");
+        final Menu menuFile = createMenu(menubar, "File");
         m_menuItemFileLoadField = createMenuItem(menuFile, "Load Game Field ...", this);
         m_menuItemFileLoadRobot = createMenuItem(menuFile, "Load Robot ...", this);
         menuFile.addSeparator();
@@ -90,10 +90,10 @@ public class PathPlanner extends Frame implements ActionListener, WindowListener
         m_menuItemFileSavePath = createMenuItem(menuFile, "Save Path", this);
         m_menuItemFileSaveAsPath = createMenuItem(menuFile, "Save Path As ...", this);
 
-        final Menu menuEdit = createMenu( menubar,"Edit");
+        final Menu menuEdit = createMenu(menubar, "Edit");
         m_menuItemEditClearPath = createMenuItem(menuEdit, "Clear Path", this);
 
-        final Menu menuAnimate = createMenu( menubar,"Animate");
+        final Menu menuAnimate = createMenu(menubar, "Animate");
         m_menuItemAnimatePlay = createMenuItem(menuAnimate, "Play Path", this);
 
         // the menubar is configured, now add it
@@ -142,7 +142,7 @@ public class PathPlanner extends Frame implements ActionListener, WindowListener
     private void loadGameField() {
         JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
         fc.setDialogTitle("Load Field");
-        fc.setFileFilter(new FileNameExtensionFilter("JSON file","json"));
+        fc.setFileFilter(new FileNameExtensionFilter("JSON file", "json"));
         fc.setAcceptAllFileFilterUsed(false);
         if (JFileChooser.APPROVE_OPTION == fc.showOpenDialog(m_canvas)) {
             File file = fc.getSelectedFile();
@@ -158,7 +158,7 @@ public class PathPlanner extends Frame implements ActionListener, WindowListener
     private void loadRobot() {
         JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
         fc.setDialogTitle("Load Robot");
-        fc.setFileFilter(new FileNameExtensionFilter("JSON file","json"));
+        fc.setFileFilter(new FileNameExtensionFilter("JSON file", "json"));
         fc.setAcceptAllFileFilterUsed(false);
         if (JFileChooser.APPROVE_OPTION == fc.showOpenDialog(m_canvas)) {
             File file = fc.getSelectedFile();
@@ -175,7 +175,7 @@ public class PathPlanner extends Frame implements ActionListener, WindowListener
     private void loadPath() {
         JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
         fc.setDialogTitle("Load Path");
-        fc.setFileFilter(new FileNameExtensionFilter("JSON file","json"));
+        fc.setFileFilter(new FileNameExtensionFilter("JSON file", "json"));
         fc.setAcceptAllFileFilterUsed(false);
         if (JFileChooser.APPROVE_OPTION == fc.showOpenDialog(m_canvas)) {
             File file = fc.getSelectedFile();
@@ -196,11 +196,14 @@ public class PathPlanner extends Frame implements ActionListener, WindowListener
     private void savePathAs() {
         JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
         fc.setDialogTitle("Save Path As");
-        fc.setFileFilter(new FileNameExtensionFilter("JSON file","json"));
+        fc.setFileFilter(new FileNameExtensionFilter("JSON file", "json"));
         fc.setAcceptAllFileFilterUsed(false);
         if (JFileChooser.APPROVE_OPTION == fc.showSaveDialog(m_canvas)) {
             File file = fc.getSelectedFile();
             m_pathFilename = file.getAbsolutePath();
+            if (!m_pathFilename.endsWith(".json")) {
+                m_pathFilename += ".json";
+            }
             savePath();
         } else {
             System.out.println("Save path command cancelled by user.");

@@ -1,6 +1,7 @@
 package frc6831.planner;
 
 import frc6831.lib2d.KochanekBartelsSpline;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,12 +20,15 @@ public class PathCanvas extends Canvas implements ActionListener {
 
     // constants to manage the interaction
     private static final double OVER_TOL = 5.0;
-    private static final String MODE_ADD = "add";
-    private static final String MODE_EDIT = "edit";
-    private static final String OVER_CONTROL_POINT = "controlPoint";
-    private static final String OVER_TANGENT_POINT = "tangentPoint";
-    private static final String OVER_HEADING_POINT = "headingPoint";
-    private static final String OVER_PATH_POINT = "pathPoint";
+
+    private static final int MODE_ADD = 0;
+    private static final int MODE_EDIT = 1;
+
+    private static final int OVER_NOTHING = 0;
+    private static final int OVER_CONTROL_POINT = 1;
+    private static final int OVER_TANGENT_POINT = 2;
+    private static final int OVER_HEADING_POINT = 3;
+    private static final int OVER_PATH_POINT = 4;
 
     private final PopupMenu m_contextMenu;
     private final MenuItem m_menuItemClearPath;
@@ -40,7 +44,7 @@ public class PathCanvas extends Canvas implements ActionListener {
     // the actual data for the robot, field, and path
     private final Robot m_robot;                        // the robot description
     private final Field m_field ;
-    private final KochanekBartelsSpline path = new KochanekBartelsSpline();
+    private final KochanekBartelsSpline m_path = new KochanekBartelsSpline();
     private AffineTransform m_drawXfm = null;
     private AffineTransform m_mouseXfm = null;
     private double m_scale;
@@ -52,8 +56,9 @@ public class PathCanvas extends Canvas implements ActionListener {
     // controlling the user interaction with the path
     private KochanekBartelsSpline.ControlPoint m_newControlPoint = null;
     private KochanekBartelsSpline.ControlPoint m_overControlPoint = null;
-    private String m_mode = MODE_ADD;
-    private String m_overWhat = null;
+    private KochanekBartelsSpline.PathPoint m_overPathPoint = null;
+    private int m_mode = MODE_ADD;
+    private int m_overWhat = OVER_NOTHING;
     private final Stroke m_highlightStroke = new BasicStroke(2.0f);
     private Point2D.Double m_mouse = null;
 
@@ -102,25 +107,15 @@ public class PathCanvas extends Canvas implements ActionListener {
             Point2D pt = m_mouse = (Point2D.Double) m_mouseXfm.transform(
                     new Point2D.Double(e.getPoint().getX(), e.getPoint().getY()), null);
             if (e.isPopupTrigger()) {
+                if (m_mode == MODE_EDIT) {
+                    testMouseOver(pt);
+                }
                 displayContextMenu(e);
             } else if ((m_mode == MODE_ADD) && (e.getClickCount() == 1)) {
-                m_newControlPoint = path.addControlPoint(pt);
+                m_newControlPoint = m_path.addControlPoint(pt);
                 repaint();
             } else if (m_mode == MODE_EDIT) {
-                m_overControlPoint = null;
-                m_overWhat = null;
-                for (KochanekBartelsSpline.ControlPoint point : path.getControlPoints()) {
-                    if (point.testOverControlPoint(pt.getX(), pt.getY(), OVER_TOL / m_scale)) {
-                        m_overControlPoint = point;
-                        m_overWhat = OVER_CONTROL_POINT;
-                    } else if (point.testOveTangentPoint(pt.getX(), pt.getY(), OVER_TOL / m_scale)) {
-                        m_overControlPoint = point;
-                        m_overWhat = OVER_TANGENT_POINT;
-                    } else if (point.testOverHeadingPoint(pt.getX(), pt.getY(), OVER_TOL / m_scale)) {
-                        m_overControlPoint = point;
-                        m_overWhat = OVER_HEADING_POINT;
-                    }
-                }
+                testMouseOver(pt);
                 repaint();
             }
         }
@@ -130,8 +125,6 @@ public class PathCanvas extends Canvas implements ActionListener {
             if (e.isPopupTrigger()) {
                 displayContextMenu(e);
             } else if (m_mode == MODE_ADD) {
-                Point2D pt = m_mouse = (Point2D.Double) m_mouseXfm.transform(
-                        new Point2D.Double(e.getPoint().getX(), e.getPoint().getY()), null);
                 if (e.getClickCount() == 1) {
                     m_newControlPoint = null;
                     repaint();
@@ -176,27 +169,58 @@ public class PathCanvas extends Canvas implements ActionListener {
             Point2D pt = m_mouse = (Point2D.Double) m_mouseXfm.transform(
                     new Point2D.Double(e.getPoint().getX(), e.getPoint().getY()), null);
             if (m_mode == MODE_EDIT) {
-                m_overControlPoint = null;
-                m_overWhat = null;
-                for (KochanekBartelsSpline.ControlPoint point : path.getControlPoints()) {
-                    if (point.testOverControlPoint(pt.getX(), pt.getY(), OVER_TOL / m_scale)) {
-                        m_overControlPoint = point;
-                        m_overWhat = OVER_CONTROL_POINT;
-                    } else if (point.testOveTangentPoint(pt.getX(), pt.getY(), OVER_TOL / m_scale)) {
-                        m_overControlPoint = point;
-                        m_overWhat = OVER_TANGENT_POINT;
-                    } else if (point.testOverHeadingPoint(pt.getX(), pt.getY(), OVER_TOL / m_scale)) {
-                        m_overControlPoint = point;
-                        m_overWhat = OVER_HEADING_POINT;
-                    }
-                }
+                testMouseOver(pt);
             }
             repaint();
         }
 
+        /**
+         * Determine whether the mouse is over anything that is significant for path editing.
+         *
+         * @param pt (Point2D, not null) The position of the mouse transformed to field coordinates.
+         */
+        private void testMouseOver(@NotNull Point2D pt) {
+            m_overControlPoint = null;
+            m_overPathPoint = null;
+            m_overWhat = OVER_NOTHING;
+            for (KochanekBartelsSpline.ControlPoint point : m_path.getControlPoints()) {
+                if (point.testOverControlPoint(pt.getX(), pt.getY(), OVER_TOL / m_scale)) {
+                    m_overControlPoint = point;
+                    m_overWhat = OVER_CONTROL_POINT;
+                } else if (point.testOveTangentPoint(pt.getX(), pt.getY(), OVER_TOL / m_scale)) {
+                    m_overControlPoint = point;
+                    m_overWhat = OVER_TANGENT_POINT;
+                } else if (point.testOverHeadingPoint(pt.getX(), pt.getY(), OVER_TOL / m_scale)) {
+                    m_overControlPoint = point;
+                    m_overWhat = OVER_HEADING_POINT;
+                }
+            }
+            if (OVER_NOTHING == m_overWhat) {
+                // Draw the path as a set of segments uniformly spaced in time.
+                for (KochanekBartelsSpline.PathPoint pathPoint : m_path.getCurveSegments()) {
+                    if (pathPoint.testOverPathPoint(pt.getX(), pt.getY(), OVER_TOL / m_scale)) {
+                        m_overPathPoint = pathPoint;
+                        m_overWhat = OVER_PATH_POINT;
+                        break;
+                    }
+                }
+            }
+        }
+
         private void displayContextMenu(MouseEvent e) {
-            // check the current state of the path and editing state and disable menu choices that do
-            // not apply.
+            // check the current state of the path and editing state and enable choices that are valid in the
+            // the current state; disable choices that are invalid in the current state.
+            m_menuItemExtendPath.setEnabled(m_mode != MODE_ADD);
+            m_menuItemEndPath.setEnabled(m_mode == MODE_ADD);
+
+            boolean controlPointSelected = (null != m_overControlPoint) && (m_overWhat == OVER_CONTROL_POINT);
+            m_menuItemDelete.setEnabled(controlPointSelected);
+            m_menuItemResetTangent.setEnabled(controlPointSelected && m_overControlPoint.getDerivativesManuallyEdited());
+            m_menuItemSetTime.setEnabled(false);
+            m_menuItemInfo.setEnabled(false);
+
+            m_menuItemInsert.setEnabled((null != m_overPathPoint) && (m_overWhat == OVER_PATH_POINT));
+
             m_contextMenu.show(e.getComponent(), e.getX(), e.getY());
         }
     }
@@ -218,20 +242,13 @@ public class PathCanvas extends Canvas implements ActionListener {
         m_menuItemClearPath = createMenuItem(m_contextMenu, "Clear Path", this);
         m_menuItemAnimatePath = createMenuItem(m_contextMenu, "Play Path", this);
         m_menuItemExtendPath = createMenuItem(m_contextMenu, "Extend Path", this);
-        m_menuItemExtendPath.disable();
         m_menuItemEndPath = createMenuItem(m_contextMenu, "End Path", this);
-        m_menuItemEndPath.disable();
         m_contextMenu.addSeparator();
         m_menuItemInsert = createMenuItem(m_contextMenu, "Insert Control Point", this);
-        m_menuItemInsert.disable();
         m_menuItemDelete = createMenuItem(m_contextMenu, "Delete Control Point", this);
-        m_menuItemDelete.disable();
         m_menuItemResetTangent = createMenuItem(m_contextMenu, "Reset Tangent", this);
-        m_menuItemResetTangent.disable();
         m_menuItemSetTime = createMenuItem(m_contextMenu, "Set Time", this);
-        m_menuItemSetTime.disable();
         m_menuItemInfo = createMenuItem(m_contextMenu, "Info", this);
-        m_menuItemInfo.disable();
         add(m_contextMenu);
 
         // setup all of the stuff for the path panel
@@ -290,11 +307,31 @@ public class PathCanvas extends Canvas implements ActionListener {
             clearPath();
         } else if (src == m_menuItemAnimatePath) {
             animatePath();
+        } else if (src == m_menuItemEndPath) {
+            m_newControlPoint = null;
+            m_overControlPoint = null;
+            m_mode = MODE_EDIT;
+            m_overWhat = OVER_NOTHING;
         } else if (src == m_menuItemExtendPath) {
+            m_newControlPoint = null;
+            m_overControlPoint = null;
+            m_mode = MODE_ADD;
+            m_overWhat = OVER_NOTHING;
         } else if (src == m_menuItemInsert) {
+            m_path.insertControlPointBefore(m_overPathPoint.nextControlPoint,
+                    m_overPathPoint.fieldPt.getX(), m_overPathPoint.fieldPt.getY(),
+                    m_overPathPoint.fieldHeading);
+            repaint();
         } else if (src == m_menuItemDelete) {
+            m_path.deleteControlPoint(m_overControlPoint);
+            m_overControlPoint = null;
+            m_overWhat = OVER_NOTHING;
+            repaint();
         } else if (src == m_menuItemResetTangent) {
+            m_overControlPoint.resetDerivative();
+            repaint();
         } else if (src == m_menuItemSetTime) {
+
         } else if (src == m_menuItemInfo) {
 
         }
@@ -336,18 +373,18 @@ public class PathCanvas extends Canvas implements ActionListener {
             g2d.drawOval((int) dirPt.getX() - 3, (int) dirPt.getY() - 3, 6, 6);
 
         } else {
-            for (KochanekBartelsSpline.ControlPoint point : path.getControlPoints()) {
+            for (KochanekBartelsSpline.ControlPoint point : m_path.getControlPoints()) {
                 paintRobot(g2d, point);
             }
         }
         g2d.setPaint(Color.WHITE);
 
         // Draw the path as a set of segments uniformly spaced in time.
-        KochanekBartelsSpline.PathPoint lastPathPoint = null;
-        Point2D.Double lastPt = null;
+        KochanekBartelsSpline.PathPoint lastPathPoint;
+        Point2D.Double lastPt;
         KochanekBartelsSpline.PathPoint thisPathPoint = null;
         Point2D.Double thisPt = null;
-        for (KochanekBartelsSpline.PathPoint pathPoint : path.getCurveSegments()) {
+        for (KochanekBartelsSpline.PathPoint pathPoint : m_path.getCurveSegments()) {
             lastPathPoint = thisPathPoint;
             lastPt = thisPt;
             thisPathPoint = pathPoint;
@@ -361,7 +398,7 @@ public class PathCanvas extends Canvas implements ActionListener {
 
         if (!m_animate) {
             // draw the control point editing handles.
-            for (KochanekBartelsSpline.ControlPoint point : path.getControlPoints()) {
+            for (KochanekBartelsSpline.ControlPoint point : m_path.getControlPoints()) {
                 g2d.setPaint(Color.RED);
                 Point2D.Double fieldPt = (Point2D.Double) m_drawXfm.transform(
                         new Point2D.Double(point.getFieldX(), point.getFieldY()), null);
@@ -378,24 +415,27 @@ public class PathCanvas extends Canvas implements ActionListener {
                 g2d.drawOval((int) headingPt.getX() - 3, (int) headingPt.getY() - 3, 6, 6);
             }
 
-            // If the cursor is over a control point, highlight it
-            if (null != m_overControlPoint) {
+            // If the cursor is over a control point or path point, highlight it
+            if (m_overWhat != OVER_NOTHING) {
                 Stroke oldStroke = g2d.getStroke();
                 g2d.setStroke(m_highlightStroke);
-                g2d.setPaint(Color.GREEN);
-                if (OVER_CONTROL_POINT == m_overWhat) {
-                    Point2D.Double fieldPt = (Point2D.Double) m_drawXfm.transform(
-                            new Point2D.Double(m_overControlPoint.getFieldX(), m_overControlPoint.getFieldY()), null);
-                    g2d.drawOval((int) fieldPt.getX() - 4, (int) fieldPt.getY() - 4,
-                            8, 8);
-                } else if (OVER_TANGENT_POINT == m_overWhat) {
-                    Point2D.Double tangentPt = (Point2D.Double) m_drawXfm.transform(
-                            new Point2D.Double(m_overControlPoint.getTangentX(), m_overControlPoint.getTangentY()), null);
-                    g2d.drawOval((int) tangentPt.getX() - 4, (int) tangentPt.getY() - 4, 8, 8);
-                } else if (OVER_HEADING_POINT == m_overWhat) {
-                    Point2D.Double headingPt = (Point2D.Double) m_drawXfm.transform(
-                            new Point2D.Double(m_overControlPoint.getHeadingX(), m_overControlPoint.getHeadingY()), null);
-                    g2d.drawOval((int) headingPt.getX() - 4, (int) headingPt.getY() - 4, 8, 8);
+                g2d.setPaint(m_overWhat == OVER_PATH_POINT ? Color.ORANGE : Color.GREEN);
+                switch (m_overWhat) {
+                    case OVER_CONTROL_POINT:
+                        drawFieldPointHighlight(g2d, m_overControlPoint.getFieldX(), m_overControlPoint.getFieldY());
+                        break;
+                    case OVER_TANGENT_POINT:
+                        drawFieldPointHighlight(g2d,
+                                m_overControlPoint.getTangentX(), m_overControlPoint.getTangentY());
+                        break;
+                    case OVER_HEADING_POINT:
+                        drawFieldPointHighlight(g2d,
+                                m_overControlPoint.getHeadingX(), m_overControlPoint.getHeadingY());
+                        break;
+                    case OVER_PATH_POINT:
+                        drawFieldPointHighlight(g2d, m_overPathPoint.fieldPt.getX(), m_overPathPoint.fieldPt.getY());
+                        break;
+
                 }
                 g2d.setStroke(oldStroke);
             }
@@ -413,8 +453,14 @@ public class PathCanvas extends Canvas implements ActionListener {
         }
     }
 
+    private void drawFieldPointHighlight(Graphics2D g2d, double fieldX, double fieldY) {
+        Point2D.Double fieldPt = (Point2D.Double) m_drawXfm.transform(
+                new Point2D.Double(fieldX, fieldY), null);
+        g2d.drawOval((int) fieldPt.getX() - 4, (int) fieldPt.getY() - 4,8, 8);
+    }
+
     public KochanekBartelsSpline getPath() {
-        return path;
+        return m_path;
     }
 
     void paintRobot(Graphics2D g2d, KochanekBartelsSpline.ControlPoint controlPoint) {
@@ -449,11 +495,11 @@ public class PathCanvas extends Canvas implements ActionListener {
     }
 
     public void clearPath() {
-        path.clearPath();
+        m_path.clearPath();
         m_newControlPoint = null;
         m_overControlPoint = null;
         m_mode = MODE_ADD;
-        m_overWhat = null;
+        m_overWhat = OVER_NOTHING;
         repaint();
     }
 
@@ -472,7 +518,7 @@ public class PathCanvas extends Canvas implements ActionListener {
         m_animate = true;
         m_pathStartTime = -1;
         m_currentPathTime = 0.0;
-        m_pathFollower = path.getPathFollower();
+        m_pathFollower = m_path.getPathFollower();
         m_currentPathPoint = m_pathFollower.getPointAt(m_currentPathTime);
         if (null == m_currentPathPoint) {
             stopAnimation();
