@@ -125,18 +125,20 @@ public class KochanekBartelsSpline {
         /**
          * Instantiate a Path Point.
          *
-         * @param fieldX        The expected field X position of the robot in meters.
-         * @param fieldY        The expected field Y position of the robot in meters.
-         * @param fieldHeading  The expected heading of the robot in radians.
-         * @param speedForward  The forward chassis speed of the robot in meters/sec.
-         * @param speedStrafe   The strafe chassis velocity of the robot in meters/sec.
-         * @param speedRotation The rotation speed of the robot in radians/sec.
-         * @param previousControlPoint
-         * @param nextControlPoint
+         * @param fieldX               The expected field X position of the robot in meters.
+         * @param fieldY               The expected field Y position of the robot in meters.
+         * @param fieldHeading         The expected heading of the robot in radians.
+         * @param speedForward         The forward chassis speed of the robot in meters/sec.
+         * @param speedStrafe          The strafe chassis velocity of the robot in meters/sec.
+         * @param speedRotation        The rotation speed of the robot in radians/sec.
+         * @param previousControlPoint (not null) The control point at the start of the curve segment
+         *                             containing this path point.
+         * @param nextControlPoint     (not null) The control point at the end of the curve segment
+         *                             containing this path point.
          */
         public PathPoint(double fieldX, double fieldY, double fieldHeading,
                          double speedForward, double speedStrafe, double speedRotation,
-                         ControlPoint previousControlPoint, ControlPoint nextControlPoint) {
+                         @NotNull ControlPoint previousControlPoint, @NotNull ControlPoint nextControlPoint) {
             this.previousControlPoint = previousControlPoint;
             this.nextControlPoint = nextControlPoint;
             this.fieldPt = new Point2D.Double(fieldX, fieldY);
@@ -563,6 +565,7 @@ public class KochanekBartelsSpline {
                 m_thisSegmentStart = m_thisSegmentEnd;
                 m_thisSegmentEnd = m_thisSegmentStart.m_next;
                 if (null == m_thisSegmentEnd) {
+                    // No more segments, we are done.
                     return null;
                 }
                 resetSegment();
@@ -906,7 +909,7 @@ public class KochanekBartelsSpline {
             m_description = parseString(path, DESCRIPTION, DEFAULT_DESCRIPTION);
             JSONArray controlPoints = getJSONArray(path, CONTROL_POINTS);
             for (Object cpObj : controlPoints) {
-                JSONObject cpJson = (JSONObject)cpObj;
+                JSONObject cpJson = (JSONObject) cpObj;
                 ControlPoint newControlPoint = new ControlPoint(cpJson);
                 if (null == m_first) {
                     m_first = newControlPoint;

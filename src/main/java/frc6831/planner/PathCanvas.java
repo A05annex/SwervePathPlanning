@@ -86,7 +86,7 @@ public class PathCanvas extends Canvas implements ActionListener {
             Field.MinMax fieldMinMax = m_field.getMinMax();
             double scaleX = width / (fieldMinMax.m_maxX - fieldMinMax.m_minX);
             double scaleY = height / (fieldMinMax.m_maxY - fieldMinMax.m_minY);
-            m_scale = (scaleX < scaleY) ? scaleX : scaleY;
+            m_scale = Math.min(scaleX, scaleY);
             m_drawXfm = new AffineTransform(m_scale, 0.0f, 0.0f, -m_scale, width / 2.0f, height / 2.0f);
             m_mouseXfm = new AffineTransform(m_drawXfm);
             try {

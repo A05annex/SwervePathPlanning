@@ -117,8 +117,12 @@ public class PathPlanner extends Frame implements ActionListener, WindowListener
         //------------------------------------------------------------------
         // Setup the app menu
         //------------------------------------------------------------------
-        Desktop desktop = Desktop.getDesktop();
-        desktop.setQuitHandler((e, r) -> exitPathPlaner());
+        try {
+            Desktop desktop = Desktop.getDesktop();
+            desktop.setQuitHandler((e, r) -> exitPathPlaner());
+        } catch (UnsupportedOperationException e) {
+            System.out.println("No desktop quit handler setup, not supported by this platform.");
+        }
 
     }
 
