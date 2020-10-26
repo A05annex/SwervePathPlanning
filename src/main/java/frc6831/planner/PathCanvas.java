@@ -129,7 +129,7 @@ public class PathCanvas extends Canvas implements ActionListener {
                     m_newControlPoint = null;
                     repaint();
                 } else if (e.getClickCount() == 2) {
-                    m_mode = MODE_EDIT;
+                    setEditMode();
                 }
             }
         }
@@ -308,15 +308,9 @@ public class PathCanvas extends Canvas implements ActionListener {
         } else if (src == m_menuItemAnimatePath) {
             animatePath();
         } else if (src == m_menuItemEndPath) {
-            m_newControlPoint = null;
-            m_overControlPoint = null;
-            m_mode = MODE_EDIT;
-            m_overWhat = OVER_NOTHING;
+            setEditMode();
         } else if (src == m_menuItemExtendPath) {
-            m_newControlPoint = null;
-            m_overControlPoint = null;
-            m_mode = MODE_ADD;
-            m_overWhat = OVER_NOTHING;
+            setExtendMode();
         } else if (src == m_menuItemInsert) {
             m_path.insertControlPointBefore(m_overPathPoint.nextControlPoint,
                     m_overPathPoint.fieldPt.getX(), m_overPathPoint.fieldPt.getY(),
@@ -494,12 +488,29 @@ public class PathCanvas extends Canvas implements ActionListener {
         g2d.setTransform(oldXfm);
     }
 
-    public void clearPath() {
-        m_path.clearPath();
+    public void setEditMode() {
+        m_newControlPoint = null;
+        m_overControlPoint = null;
+        m_mode = MODE_EDIT;
+        m_overWhat = OVER_NOTHING;
+    }
+
+    public void setExtendMode() {
         m_newControlPoint = null;
         m_overControlPoint = null;
         m_mode = MODE_ADD;
         m_overWhat = OVER_NOTHING;
+    }
+
+    public void clearPath() {
+        m_path.clearPath();
+        setExtendMode();
+        repaint();
+    }
+
+    public void loadPath(String filename) {
+        m_path.loadPath(filename);
+        setEditMode();
         repaint();
     }
 

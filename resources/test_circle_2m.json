@@ -1,0 +1,42 @@
+{
+  "description": "2m diameter test circle.",
+  "title": "The path for a 2 meter diameter test circle with the robot facing the center of the circle.",
+  "controlPoints": [
+    {
+      "field_dX": -1.85,
+      "fieldY": 0.0,
+      "field_dY": 0.0,
+      "fieldX": 0.0,
+      "fieldHeading": 0.0,
+      "time": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "fieldY": 1.0,
+      "fieldX": -1.0,
+      "fieldHeading": 1.5708,
+      "time": 1.0
+    },
+    {
+      "fieldY": 2.0,
+      "fieldX": 0.0,
+      "fieldHeading": 3.1416,
+      "time": 2.0
+    },
+    {
+      "fieldY": 1.0,
+      "fieldX": 1.0,
+      "fieldHeading": 4.7124,
+      "time": 3.0
+    },
+    {
+      "field_dX": -1.85,
+      "fieldY": 0.0,
+      "field_dY": 0.0,
+      "fieldX": 0.0,
+      "fieldHeading": 6.2832,
+      "time": 4.0,
+      "derivativesEdited": true
+    }
+  ]
+}

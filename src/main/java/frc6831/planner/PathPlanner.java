@@ -185,8 +185,7 @@ public class PathPlanner extends Frame implements ActionListener, WindowListener
             File file = fc.getSelectedFile();
             System.out.println("Loading path from: " + file.getAbsolutePath());
             m_pathFilename = file.getAbsolutePath();
-            m_canvas.getPath().loadPath(m_pathFilename);
-            m_canvas.repaint();
+            m_canvas.loadPath(m_pathFilename);
         } else {
             System.out.println("Load path command cancelled by user.");
         }

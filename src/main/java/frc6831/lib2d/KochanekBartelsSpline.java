@@ -52,9 +52,16 @@ public class KochanekBartelsSpline {
     private static final double ROBOT_HEADING_HANDLE = 1.0;
     /**
      * In the formulation of the spline the tension scales the derivative. This was a tension selected for best
-     * default appearance of the spline i.e. the default spline best represents the intent of the path planner.
+     * default appearance of the field path i.e. the default field path best represents the intent of the path
+     * planner.
      */
-    private static final double DEFAULT_TENSION = 0.7;
+    private static final double DEFAULT_TENSION = 0.85;
+    /**
+     * In the formulation of the spline the tension scales heading derivative. This was a tension selected for best
+     * default behaviour of the heading interpolation i.e. the default heading interpolation best represents the
+     * intent of the path planner.
+     */
+    private static final double DEFAULT_HEADING_TENSION = 0.55;
     /**
      * A scale factor applied to the derivative when computing the position of the editing handle.
      */
@@ -77,7 +84,13 @@ public class KochanekBartelsSpline {
             {1.0, 0.0, 0.0, 0.0}
     };
 
+    /**
+     * The title of this path.
+     */
     private String m_title = DEFAULT_TITLE;
+    /**
+     * The description of this path.
+     */
     private String m_description = DEFAULT_DESCRIPTION;
     /**
      * The first control point in this doubly-linked list of control points for the spline.
@@ -197,6 +210,10 @@ public class KochanekBartelsSpline {
             m_time = timeInSec;
         }
 
+        /**
+         *
+         * @param json
+         */
         public ControlPoint(JSONObject json) {
             m_fieldX = parseDouble(json, FIELD_X, 0.0);
             m_fieldY = parseDouble(json, FIELD_Y, 0.0);
@@ -208,6 +225,10 @@ public class KochanekBartelsSpline {
             m_dHeading = parseDouble(json, FIELD_dHEADING, 0.0);
         }
 
+        /**
+         *
+         * @return
+         */
         @SuppressWarnings("unchecked")
         public @NotNull JSONObject toJSON() {
             JSONObject controlPoint = new JSONObject();
@@ -234,14 +255,26 @@ public class KochanekBartelsSpline {
             }
         }
 
+        /**
+         *
+         * @return
+         */
         public boolean getDerivativesManuallyEdited() {
             return m_locationDerivativesEdited;
         }
 
+        /**
+         *
+         * @return
+         */
         public double getFieldX() {
             return m_fieldX;
         }
 
+        /**
+         *
+         * @return
+         */
         public double getFieldY() {
             return m_fieldY;
         }
@@ -404,9 +437,18 @@ public class KochanekBartelsSpline {
          *
          */
         private void updateHeadingDerivative() {
-            double fieldHeadingPrev = m_last != null ? m_last.m_fieldHeading : m_fieldHeading;
-            double fieldHeadingNext = m_next != null ? m_next.m_fieldHeading : m_fieldHeading;
-            m_dHeading = DEFAULT_TENSION * (fieldHeadingNext - fieldHeadingPrev);
+            // this is a bit different than the path field position derivative because the path derivative
+            // is displayed and editable - until we figure out how to do that with the heading derivative
+            // we need to figure out how to best handle the first and last point.
+            if ((null == m_last) && (null == m_next)) {
+                m_dHeading = 0.0;
+            } else {
+                double fieldHeadingPrev = m_last != null ?
+                        m_last.m_fieldHeading : m_fieldHeading - (m_next.m_fieldHeading - m_fieldHeading);
+                double fieldHeadingNext = m_next != null ?
+                        m_next.m_fieldHeading : m_fieldHeading + (m_fieldHeading - m_last.m_fieldHeading);
+                m_dHeading = DEFAULT_HEADING_TENSION * (fieldHeadingNext - fieldHeadingPrev);
+            }
         }
 
         /**
@@ -531,6 +573,9 @@ public class KochanekBartelsSpline {
                 {0.0, 0.0, 0.0}
         };
 
+        /**
+         *
+         */
         protected void resetSegment() {
             if (null == m_thisSegmentEnd) {
                 // we are done with this spline, just return.
@@ -558,7 +603,7 @@ public class KochanekBartelsSpline {
          * @return Returns the {@link PathPoint} for the specified time, or {@link null} if the time is beyond
          * the last control point in the path.
          */
-        public PathPoint getPointOnSegment(double time) {
+        protected PathPoint getPointOnSegment(double time) {
 
             while (time > m_thisSegmentEnd.m_time) {
                 // past the end of this segment, move on to the next.
@@ -637,12 +682,19 @@ public class KochanekBartelsSpline {
             m_deltaTime = deltaTime;
         }
 
-
+        /**
+         *
+         * @return
+         */
         @Override
         public boolean hasNext() {
             return (null != m_thisSegmentEnd) && (m_time <= m_last.m_time);
         }
 
+        /**
+         *
+         * @return
+         */
         @Override
         public PathPoint next() {
             // get the next point on the curve
@@ -653,6 +705,10 @@ public class KochanekBartelsSpline {
             return pathPoint;
         }
 
+        /**
+         *
+         * @return
+         */
         @NotNull
         @Override
         public Iterator<PathPoint> iterator() {
@@ -705,18 +761,34 @@ public class KochanekBartelsSpline {
     public KochanekBartelsSpline() {
     }
 
+    /**
+     *
+     * @param title
+     */
     public void setTitle(@NotNull String title) {
         m_title = title;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getTitle() {
         return m_title;
     }
 
+    /**
+     *
+     * @param description
+     */
     public void setDescription(@NotNull String description) {
         m_description = description;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getDescription() {
         return m_description;
     }
@@ -904,6 +976,7 @@ public class KochanekBartelsSpline {
         // the existing path description.
         clearPath();
         try {
+            // Load the path from the file.
             JSONObject path = readJsonFile(filename);
             m_title = parseString(path, TITLE, DEFAULT_TITLE);
             m_description = parseString(path, DESCRIPTION, DEFAULT_DESCRIPTION);
@@ -919,6 +992,12 @@ public class KochanekBartelsSpline {
                     newControlPoint.m_last = m_last;
                 }
                 m_last = newControlPoint;
+            }
+            // nor that the points are reloaded, recompute the derivatives for any points that
+            // have not been manually edited
+            for (ControlPoint point : getControlPoints()) {
+                point.updateLocationDerivatives();
+                point.updateHeadingDerivative();
             }
 
 

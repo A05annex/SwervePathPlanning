@@ -22,11 +22,69 @@ edit tension and bias.
 
 ### Path Description Format
 
-*To be written.*
+The path is saves aa a list of control points:
+- **<tt>"title"</tt>**: (optional, string) A title or name for the path, primarily used as file documentation
+  to refresh you on the path this file represents.
+- **<tt>"description"</tt>**: (optional, string) A more verbose description if the path, again primarily used as file
+  documentation to refresh you on the path this file represents.
+- **<tt>"controlPoints"</tt>**: (required, list) The list of control points. A control point is a dictionary
+  containing these fields.
+  - **<tt>"fieldX"</tt>**: (optional, double, default=0.0) The field X position in meters.
+  - **<tt>"fieldY"</tt>**: (optional, double, default=0.0) The field Y position in meters.
+  - **<tt>"fieldHeading"</tt>**: (optional, double, default=0.0) The field heading position in radians.
+  - **<tt>"time"</tt>**: (optional, double, default=0.0) The field heading position in radians.
+  - **<tt>"derivativesEdited"</tt>**: (optional, boolean, default=false) The field heading position in radians.
+  - **<tt>"field_dX"</tt>**: (optional, double, default=0.0) The field X velocity in meters per second.
+  - **<tt>"field_dY"</tt>**: (optional, double, default=0.0) The field Y velocity in meters per second.
+  - **<tt>"field_dHeading"</tt>**: (optional, double, default=0.0) The field angular velocity in
+  radians per second.
 
 ### Path Description Example
 
-*To be written.*
+```json
+{
+  "description": "2m diameter test circle.",
+  "title": "The path for a 2 meter diameter test circle with the robot facing the center of the circle.",
+  "controlPoints": [
+    {
+      "field_dX": -1.85,
+      "fieldY": 0.0,
+      "field_dY": 0.0,
+      "fieldX": 0.0,
+      "fieldHeading": 0.0,
+      "time": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "fieldY": 1.0,
+      "fieldX": -1.0,
+      "fieldHeading": 1.5708,
+      "time": 1.0
+    },
+    {
+      "fieldY": 2.0,
+      "fieldX": 0.0,
+      "fieldHeading": 3.1416,
+      "time": 2.0
+    },
+    {
+      "fieldY": 1.0,
+      "fieldX": 1.0,
+      "fieldHeading": 4.7124,
+      "time": 3.0
+    },
+    {
+      "field_dX": -1.85,
+      "fieldY": 0.0,
+      "field_dY": 0.0,
+      "fieldX": 0.0,
+      "fieldHeading": 6.2832,
+      "time": 4.0,
+      "derivativesEdited": true
+    }
+  ]
+}
+```
 
 ### Using a Path Description in Your Autonomous
 
@@ -163,7 +221,9 @@ corresponding keys that describe the shape:
   - **<tt>"lower left"</tt>**:
   - **<tt>"upper right"</tt>**:
 - **<tt>"polygon"</tt>**:
-  - **<tt>"points"</tt>**:
+  - **<tt>"points"</tt>**: A list of points describing the polygon, each point is described as a list
+    containing the [*x*,*y*] local X and Y coordinates, in meters, of the point. The points describe a
+    path that will be automatically closed.
 
 ### Example Field Description file
 
