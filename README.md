@@ -32,12 +32,15 @@ The path is saves aa a list of control points:
   - **<tt>"fieldX"</tt>**: (optional, double, default=0.0) The field X position in meters.
   - **<tt>"fieldY"</tt>**: (optional, double, default=0.0) The field Y position in meters.
   - **<tt>"fieldHeading"</tt>**: (optional, double, default=0.0) The field heading position in radians.
-  - **<tt>"time"</tt>**: (optional, double, default=0.0) The field heading position in radians.
-  - **<tt>"derivativesEdited"</tt>**: (optional, boolean, default=false) The field heading position in radians.
+  - **<tt>"time"</tt>**: (optional, double, default=0.0) The time at which this control point should be reached.
+  - **<tt>"derivativesEdited"</tt>**: (optional, boolean, default=<tt>false</tt>) Whether the derivatives of the
+    control point have been explicitly set. If <tt>false</tt>, then the X,Y velocities at the control point are set
+    algorithmically. If <tt>false</tt> then the X,Y valocities specified here are used for the point.
   - **<tt>"field_dX"</tt>**: (optional, double, default=0.0) The field X velocity in meters per second.
   - **<tt>"field_dY"</tt>**: (optional, double, default=0.0) The field Y velocity in meters per second.
   - **<tt>"field_dHeading"</tt>**: (optional, double, default=0.0) The field angular velocity in
-  radians per second.
+    radians per second. Currently, ignored as the derivative is always generated from the heading of the adjacent
+    control points.
 
 ### Path Description Example
 
