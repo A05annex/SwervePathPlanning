@@ -1,6 +1,6 @@
 package frc6831.planner;
 
-import frc6831.lib2d.KochanekBartelsSpline;
+import frc6831.util.geo2d.KochanekBartelsSpline;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;

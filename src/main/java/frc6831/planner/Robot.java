@@ -5,7 +5,7 @@ import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 
-import static frc6831.lib2d.JsonSupport.*;
+import static frc6831.util.JsonSupport.*;
 
 /**
  * This class is a description of the robot. There is a default programmed description, but it is expected that

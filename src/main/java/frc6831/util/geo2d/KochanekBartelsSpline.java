@@ -1,4 +1,4 @@
-package frc6831.lib2d;
+package frc6831.util.geo2d;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.simple.JSONArray;
@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.lang.Iterable;
 import java.util.Iterator;
 
-import static frc6831.lib2d.JsonSupport.*;
+import static frc6831.util.JsonSupport.*;
 
 /**
  * This is an implementation of the
@@ -211,10 +211,11 @@ public class KochanekBartelsSpline {
         }
 
         /**
+         * Instantiate a control point read from a JSON file.
          *
-         * @param json
+         * @param json (not null, JSONObject) The JSONObject to read the control point from.
          */
-        public ControlPoint(JSONObject json) {
+        public ControlPoint(@NotNull JSONObject json) {
             m_fieldX = parseDouble(json, FIELD_X, 0.0);
             m_fieldY = parseDouble(json, FIELD_Y, 0.0);
             m_fieldHeading = parseDouble(json, FIELD_HEADING, 0.0);
@@ -226,8 +227,9 @@ public class KochanekBartelsSpline {
         }
 
         /**
+         * Create a JSONObject and write a control point to that JSONObject.
          *
-         * @return
+         * @return (not null, JSONObject) The JSONObject containing this control point.
          */
         @SuppressWarnings("unchecked")
         public @NotNull JSONObject toJSON() {
@@ -245,7 +247,7 @@ public class KochanekBartelsSpline {
 
         /**
          * Restore the control point to automated derivative recalculation when it or surrounding
-         * control points are moved. This only effects points whosee derivatives have been manually edited.
+         * control points are moved. This only effects points whose derivatives have been manually edited.
          */
         public void resetDerivative() {
             if (m_locationDerivativesEdited) {
@@ -256,24 +258,28 @@ public class KochanekBartelsSpline {
         }
 
         /**
+         * Get information about whether the field velocity (derivatives of field position) have been
+         * manually edited.
          *
-         * @return
+         * @return <tt>true</tt> if the velocity has been manually edited, <tt>false</tt> otherwise.
          */
         public boolean getDerivativesManuallyEdited() {
             return m_locationDerivativesEdited;
         }
 
         /**
+         * Get the field X position of the control point.
          *
-         * @return
+         * @return (double) The field X position.
          */
         public double getFieldX() {
             return m_fieldX;
         }
 
         /**
+         * Get the field Y position of the control point.
          *
-         * @return
+         * @return (double) The field Y position.
          */
         public double getFieldY() {
             return m_fieldY;
@@ -306,9 +312,17 @@ public class KochanekBartelsSpline {
             updateLocationDerivatives();
             if (m_last != null) {
                 m_last.updateLocationDerivatives();
+                if ((m_last.m_last != null) && (m_last.m_last.m_last == null)) {
+                    // changing these velocities may affect the start point
+                    m_last.m_last.updateLocationDerivatives();
+                }
             }
             if (m_next != null) {
                 m_next.updateLocationDerivatives();
+                if ((m_next.m_next != null) && (m_next.m_next.m_next == null)) {
+                    // changing these velocities may affect the start point
+                    m_next.m_next.updateLocationDerivatives();
+                }
             }
         }
 
@@ -320,10 +334,53 @@ public class KochanekBartelsSpline {
             // NOTE: If the derivative has been edited, then we assume the edited derivative is the intended
             // derivative and should not be recomputed when the control point is moved.
             if (!m_locationDerivativesEdited) {
-                double fieldXprev = (m_last != null) ? m_last.m_fieldX : m_fieldX;
-                double fieldYprev = (m_last != null) ? m_last.m_fieldY : m_fieldY;
-                double fieldXnext = (m_next != null) ? m_next.m_fieldX : m_fieldX;
-                double fieldYnext = (m_next != null) ? m_next.m_fieldY : m_fieldY;
+                double fieldXprev = 0.0;
+                double fieldYprev = 0.0;
+                double fieldXnext = 0.0;
+                double fieldYnext = 0.0;
+
+                if (m_last != null) {
+                    // There is a previous point
+                    fieldXprev = m_last.m_fieldX;
+                    fieldYprev = m_last.m_fieldY;
+                } else if ((m_next != null) && (m_next.m_next != null)) {
+                    // we are going to manufacture a previous point from the position of the next point
+                    Vector2d chord = new Vector2d(m_fieldX, m_fieldY, m_next.m_fieldX, m_next.m_fieldY);
+                    chord.normalize();
+                    Vector2d nextVelocityVector = new Vector2d(m_next.m_dX, m_next.m_dY);
+                    double nextVelocity = nextVelocityVector.length();
+                    double dot = chord.dot(nextVelocityVector.scale(1.0 / nextVelocity));
+                    Vector2d difference = new Vector2d(nextVelocityVector, chord.scale(dot), Vector2d.VECTOR_SUBTRACT);
+                    Vector2d thisVelocityVector =
+                            new Vector2d(chord, difference, Vector2d.VECTOR_ADD).scale(nextVelocity);
+                    m_dX = thisVelocityVector.getI();
+                    m_dY = thisVelocityVector.getJ();
+                    return;
+                } else {
+                    fieldXprev = m_fieldX;
+                    fieldYprev = m_fieldY;
+                }
+
+                if (m_next != null) {
+                    fieldXnext = m_next.m_fieldX;
+                    fieldYnext = m_next.m_fieldY;
+                } else if ((m_last != null) && (m_last.m_last != null)) {
+                    // we are going to manufacture a previous point from the position of the next point
+                    Vector2d chord = new Vector2d(m_last.m_fieldX, m_last.m_fieldY, m_fieldX, m_fieldY);
+                    chord.normalize();
+                    Vector2d lastVelocityVector = new Vector2d(m_last.m_dX, m_last.m_dY);
+                    double lastVelocity = lastVelocityVector.length();
+                    double dot = chord.dot(lastVelocityVector.scale(1.0 / lastVelocity));
+                    Vector2d difference = new Vector2d(lastVelocityVector, chord.scale(dot), Vector2d.VECTOR_SUBTRACT);
+                    Vector2d thisVelocityVector =
+                            new Vector2d(chord, difference, Vector2d.VECTOR_ADD).scale(lastVelocity);
+                    m_dX = thisVelocityVector.getI();
+                    m_dY = thisVelocityVector.getJ();
+                    return;
+                } else {
+                    fieldXnext = m_fieldX;
+                    fieldYnext = m_fieldY;
+                }
                 m_dX = DEFAULT_TENSION * (fieldXnext - fieldXprev);
                 m_dY = DEFAULT_TENSION * (fieldYnext - fieldYprev);
             }
@@ -355,6 +412,14 @@ public class KochanekBartelsSpline {
          */
         public void setTangentLocation(Point2D pt) {
             setTangentLocation(pt.getX(), pt.getY());
+            // update the derivatives
+            updateLocationDerivatives();
+            if (m_last != null) {
+                m_last.updateLocationDerivatives();
+            }
+            if (m_next != null) {
+                m_next.updateLocationDerivatives();
+            }
         }
 
         /**
@@ -683,8 +748,9 @@ public class KochanekBartelsSpline {
         }
 
         /**
+         * Test whether there is a next point in the path.
          *
-         * @return
+         * @return <tt>true</tt> if there is a next point, <tt>false</tt> otherwise.
          */
         @Override
         public boolean hasNext() {
@@ -692,8 +758,9 @@ public class KochanekBartelsSpline {
         }
 
         /**
+         * Get the next point in the path.
          *
-         * @return
+         * @return The next point in the path, <tt>null</tt> if there is no next point in the path.
          */
         @Override
         public PathPoint next() {
@@ -706,7 +773,6 @@ public class KochanekBartelsSpline {
         }
 
         /**
-         *
          * @return
          */
         @NotNull
@@ -762,7 +828,6 @@ public class KochanekBartelsSpline {
     }
 
     /**
-     *
      * @param title
      */
     public void setTitle(@NotNull String title) {
@@ -770,7 +835,6 @@ public class KochanekBartelsSpline {
     }
 
     /**
-     *
      * @return
      */
     public String getTitle() {
@@ -778,7 +842,6 @@ public class KochanekBartelsSpline {
     }
 
     /**
-     *
      * @param description
      */
     public void setDescription(@NotNull String description) {
@@ -786,7 +849,6 @@ public class KochanekBartelsSpline {
     }
 
     /**
-     *
      * @return
      */
     public String getDescription() {
@@ -993,12 +1055,15 @@ public class KochanekBartelsSpline {
                 }
                 m_last = newControlPoint;
             }
-            // nor that the points are reloaded, recompute the derivatives for any points that
+            // now that the points are reloaded, recompute the derivatives for any points that
             // have not been manually edited
             for (ControlPoint point : getControlPoints()) {
                 point.updateLocationDerivatives();
                 point.updateHeadingDerivative();
             }
+            // and, the derivatives for the first point ius dependent on the derivatives for
+            // the later points in the spline, so recompute that now that we have the later points.
+            m_first.updateLocationDerivatives();
 
 
         } catch (IOException | ParseException | ClassCastException | NullPointerException e) {
