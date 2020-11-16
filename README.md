@@ -50,13 +50,10 @@ The path is saves aa a list of control points:
   "title": "The path for a 2 meter diameter test circle with the robot facing the center of the circle.",
   "controlPoints": [
     {
-      "field_dX": -1.85,
       "fieldY": 0.0,
-      "field_dY": 0.0,
       "fieldX": 0.0,
       "fieldHeading": 0.0,
-      "time": 0.0,
-      "derivativesEdited": true
+      "time": 0.0
     },
     {
       "fieldY": 1.0,
@@ -77,13 +74,10 @@ The path is saves aa a list of control points:
       "time": 3.0
     },
     {
-      "field_dX": -1.85,
       "fieldY": 0.0,
-      "field_dY": 0.0,
       "fieldX": 0.0,
       "fieldHeading": 6.2832,
-      "time": 4.0,
-      "derivativesEdited": true
+      "time": 4.0
     }
   ]
 }

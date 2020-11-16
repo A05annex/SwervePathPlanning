@@ -1,6 +1,7 @@
 package frc6831.util.geo2d;
 
 import frc6831.util.Utl;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The description of a 2 dimensional vector represented by double values.
@@ -109,5 +110,15 @@ public class Vector2d {
         m_i *= scale;
         m_j *= scale;
         return this;
+    }
+
+    /**
+     * Negate, or reverse the direction of, the vector.
+     *
+     * @return The negated (reversed) vector.
+     */
+    @NotNull
+    public Vector2d negate() {
+        return scale(-1.0);
     }
 }
