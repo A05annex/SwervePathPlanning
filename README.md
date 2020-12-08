@@ -22,7 +22,7 @@ edit tension and bias.
 
 ### Path Description Format
 
-The path is saves aa a list of control points:
+The path is saved as a list of control points:
 - **<tt>"title"</tt>**: (optional, string) A title or name for the path, primarily used as file documentation
   to refresh you on the path this file represents.
 - **<tt>"description"</tt>**: (optional, string) A more verbose description if the path, again primarily used as file
@@ -43,6 +43,8 @@ The path is saves aa a list of control points:
     control points.
 
 ### Path Description Example
+
+This is the path description for a 2m diameter calibration path:
 
 ```json
 {
@@ -115,6 +117,8 @@ The robot description is divided into 3 sections:
   - **<tt>"width"</tt>**: (optional, double, default=0.7) The width of the robot with bumpers in meters.
 
 ### Example Robot Description file
+
+This is a robot file which describes our 2020 prototype swerve base:
 
 ```json
 {
@@ -224,5 +228,89 @@ corresponding keys that describe the shape:
 
 ### Example Field Description file
 
-*To be written.*
+This is the part of the description of the Infinite Recharge 2020 field:
+
+```json
+{
+  "title": "Infinite Recharge 2019-2020",
+  "description": "The Infinite Recharge arena with only start lines, trenches, pickup, and scoring.",
+  "components": [
+    {
+      "name": "power cell",
+      "lineColor": "yellow",
+      "fillColor": "yellow",
+      "shapes": [
+        {
+          "type": "circle",
+          "center": [ 0.0, 0.0 ],
+          "radius": 0.0889
+        }
+      ]
+    },
+    {
+      "name": "start line",
+      "lineColor": "white",
+      "fillColor": "white",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [ -4.1050, -0.0254 ],
+          "upper right": [ 4.1050, 0.0254 ]
+        }
+      ]
+    },
+    {
+      "name": "ball pickup",
+      "lineColor": "alliance",
+      "fillColor": "alliance",
+      "shapes": [
+        {
+          "type": "polygon",
+          "points": [
+            [-2.4626,7.9900],
+            [-2.3968,7.9900],
+            [-1.7006,7.2998],
+            [-1.0104,7.9900],
+            [-0.9386,7.9900],
+            [-1.7006,7.2280]
+          ]
+        }
+      ]
+    }
+  ],
+  "field": {
+    "components": [
+      {
+        "component": "power cell",
+        "translate": [ -3.4001, 0.0]
+      },
+      {
+        "component": "power cell",
+        "translate": [ -3.4001, -0.9144]
+      },
+      {
+        "component": "power cell",
+        "translate": [ -3.4001, -1.8288 ]
+      },
+      {
+        "component": "start line",
+        "translate": [ 0.0000, 4.9766 ]
+      },
+      {
+        "component": "start line",
+        "translate": [ 0.0000, -4.9766 ]
+      },
+      {
+        "component": "ball pickup",
+        "alliance": "red"
+      },
+      {
+        "component": "ball pickup",
+        "alliance": "blue",
+        "rotate": 3.1416
+      }
+    ]
+  }
+}
+```
 

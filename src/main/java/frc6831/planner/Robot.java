@@ -5,7 +5,7 @@ import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 
-import static frc6831.util.JsonSupport.*;
+import static org.a05annex.util.JsonSupport.*;
 
 /**
  * This class is a description of the robot. There is a default programmed description, but it is expected that
@@ -83,7 +83,7 @@ public class Robot {
     // ----------------------------------------------------------------------------------------------------
     public void loadRobot(String filename) {
         try {
-            JSONObject dict = readJsonFile(filename);
+            JSONObject dict = readJsonFileAsJSONObject(filename);
             if (null != dict) {
                 // Read in the drive geometry
                 JSONObject drive = getJSONObject(dict, DRIVE, false);

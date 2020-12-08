@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static frc6831.util.JsonSupport.*;
+import static org.a05annex.util.JsonSupport.*;
 
 /**
  * This class maintains and draws the field we will be plotting the path on. Note that the default
@@ -343,7 +343,7 @@ public class Field {
         m_components.clear();
         m_drawList.clear();
         try {
-            JSONObject dict = readJsonFile(filename);
+            JSONObject dict = readJsonFileAsJSONObject(filename);
             // title and description
             m_title = parseString(dict, TITLE, "untitled");
             m_description = parseString(dict, DESCRIPTION, "No description provided.");
