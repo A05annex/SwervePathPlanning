@@ -1,5 +1,6 @@
 package frc6831.planner;
 
+import org.a05annex.util.geo2d.Plane2d;
 import org.jetbrains.annotations.NotNull;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -62,17 +63,21 @@ public class Field {
     private final double Y_FIELD_MIN = -7.99;
     private final double Y_FIELD_MAX = 7.99;
 
+    // the axis lines
     private final Point2D.Double X_AXIS_START = new Point2D.Double(0.0, Y_AXIS_MIN);
     private final Point2D.Double X_AXIS_END = new Point2D.Double(0.0, Y_AXIS_MAX);
     private final Point2D.Double Y_AXIS_START = new Point2D.Double(X_AXIS_MIN, 0.0);
     private final Point2D.Double Y_AXIS_END = new Point2D.Double(X_AXIS_MAX, 0.0);
 
+    // the un-transformed field outline.
     private final Point2D.Double[] FIELD_OUTLINE = {
             new Point2D.Double(X_FIELD_MIN, Y_FIELD_MIN),
             new Point2D.Double(X_FIELD_MIN, Y_FIELD_MAX),
             new Point2D.Double(X_FIELD_MAX, Y_FIELD_MAX),
             new Point2D.Double(X_FIELD_MAX, Y_FIELD_MIN)
     };
+
+    // the transformed (to screen coordinate) field outline.
     private final Point2D.Double[] m_xfmField = {
             new Point2D.Double(X_FIELD_MIN, Y_FIELD_MIN),
             new Point2D.Double(X_FIELD_MIN, Y_FIELD_MAX),
@@ -80,7 +85,14 @@ public class Field {
             new Point2D.Double(X_FIELD_MAX, Y_FIELD_MIN)
     };
 
-    private String m_title = "default";
+    private final Plane2d fieldPlanes[] = {
+            new Plane2d(1.0, 0.0, -X_FIELD_MAX),
+            new Plane2d(-1.0, 0.0, X_FIELD_MIN),
+            new Plane2d(0.0, 1.0, -Y_FIELD_MAX),
+            new Plane2d(0.0, -1.0, Y_FIELD_MIN),
+    };
+
+    private String m_title = "default field";
     private String m_description = "The default field outline with no gale elements.";
     private MinMax m_minMax = new MinMax(X_AXIS_MIN, Y_AXIS_MIN, X_AXIS_MAX, Y_AXIS_MAX);
     private HashMap<String, FieldComponent> m_components = new HashMap();
@@ -88,6 +100,9 @@ public class Field {
 
     // -------------------------------------------------------------------------------------------
 
+    /**
+     *
+     */
     public class MinMax {
         protected double m_minX;
         protected double m_minY;
@@ -317,8 +332,11 @@ public class Field {
 
     }
 
-    // ----------------------------------------------------------------------------------------------------
-    // ----------------------------------------------------------------------------------------------------
+    // ====================================================================================================
+    // ====================================================================================================
+    // Field - the actual implementation of the field class
+    // ====================================================================================================
+    // ====================================================================================================
     public String getTitle() {
         return m_title;
     }
@@ -327,7 +345,13 @@ public class Field {
         return m_description;
     }
 
-    public MinMax getMinMax() {
+    /**
+     * Get the field MinMax, which is used primarily during app resizing to make sure the whole
+     * screen is in the window.
+     *
+     * @return The field min-max
+     */
+    public @NotNull MinMax getMinMax() {
         return m_minMax;
     }
 
@@ -336,7 +360,6 @@ public class Field {
     // ----------------------------------------------------------------------------------------------------
 
     /**
-     *
      * @param filename
      */
     public void loadField(@NotNull String filename) {
@@ -448,7 +471,13 @@ public class Field {
         }
     }
 
-    public void draw(Graphics2D g2d, AffineTransform drawXfm) {
+    /**
+     * Draw the field to the screen.
+     *
+     * @param g2d     The 2d graphics configuration
+     * @param drawXfm The field space to screen space transformation.
+     */
+    public void draw(@NotNull Graphics2D g2d, @NotNull AffineTransform drawXfm) {
         Stroke oldStroke = g2d.getStroke();
         Color oldColor = g2d.getColor();
 
@@ -468,6 +497,26 @@ public class Field {
 
         g2d.setStroke(oldStroke);
         g2d.setPaint(oldColor);
+    }
+
+    /**
+     * Test whether a set of points (field relative) is inside the boundary of the field to the specified tolerance.
+     * The test fails returns {@code false} at the first point testing closer than tolerance.
+     *
+     * @param pts       The points to be tested
+     * @param tolerance The allowable closeness to the field boundary (in meters)
+     * @return {@code false} if any point tests closer than {@code tolerance} to the field
+     * boundary, {@code true} otherwise.
+     */
+    public boolean isInsideField(@NotNull Point2D pts[], double tolerance) {
+        for (Point2D pt : pts) {
+            for (Plane2d plane : fieldPlanes) {
+                if (!plane.isIn(pt, tolerance)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**

@@ -4,12 +4,14 @@ import org.a05annex.util.geo2d.KochanekBartelsSpline;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
+import java.io.File;
 
 /**
  * This is the canvas we draw the field and path to. It is derived from a
@@ -21,8 +23,9 @@ public class PathCanvas extends Canvas implements ActionListener {
     // constants to manage the interaction
     private static final double OVER_TOL = 5.0;
 
-    private static final int MODE_ADD = 0;
-    private static final int MODE_EDIT = 1;
+    // The editing mode
+    private static final int MODE_ADD = 0;      // adding control points to extend the path
+    private static final int MODE_EDIT = 1;     // editing the points that re there
 
     private static final int OVER_NOTHING = 0;
     private static final int OVER_CONTROL_POINT = 1;
@@ -44,14 +47,21 @@ public class PathCanvas extends Canvas implements ActionListener {
     // the actual data for the robot, field, and path
     private final Robot m_robot;                        // the robot description
     private final Field m_field ;
+    private final TitleChangeListener m_titleChange;
+    private File m_pathFile = null;
+    private boolean m_modifiedSinceSave = false;
     private final KochanekBartelsSpline m_path = new KochanekBartelsSpline();
     private AffineTransform m_drawXfm = null;
     private AffineTransform m_mouseXfm = null;
     private double m_scale;
 
-    // members to support robot draw
+    // members to support robot draw and hit-testing
     private GeneralPath m_robotChassis;
     private GeneralPath m_robotBumpers;
+    private Point2D.Double m_robotCorners[] =
+            {new Point2D.Double(), new Point2D.Double(), new Point2D.Double(), new Point2D.Double()};
+    private Point2D.Double m_xfmRobotCorners[] =
+            {new Point2D.Double(), new Point2D.Double(), new Point2D.Double(), new Point2D.Double()};
 
     // controlling the user interaction with the path
     private KochanekBartelsSpline.ControlPoint m_newControlPoint = null;
@@ -113,6 +123,7 @@ public class PathCanvas extends Canvas implements ActionListener {
                 displayContextMenu(e);
             } else if ((m_mode == MODE_ADD) && (e.getClickCount() == 1)) {
                 m_newControlPoint = m_path.addControlPoint(pt);
+                m_modifiedSinceSave = true;
                 repaint();
             } else if (m_mode == MODE_EDIT) {
                 testMouseOver(pt);
@@ -152,13 +163,17 @@ public class PathCanvas extends Canvas implements ActionListener {
                     new Point2D.Double(e.getPoint().getX(), e.getPoint().getY()), null);
             if (m_mode == MODE_ADD) {
                 m_newControlPoint.setFieldLocation(pt);
+                m_modifiedSinceSave = true;
             } else if ((m_mode == MODE_EDIT) && (null != m_overControlPoint)) {
                 if (OVER_CONTROL_POINT == m_overWhat) {
                     m_overControlPoint.setFieldLocation(pt);
+                    m_modifiedSinceSave = true;
                 } else if (OVER_TANGENT_POINT == m_overWhat) {
                     m_overControlPoint.setTangentLocation(pt);
+                    m_modifiedSinceSave = true;
                 } else if (OVER_HEADING_POINT == m_overWhat) {
                     m_overControlPoint.setHeadingLocation(pt);
+                    m_modifiedSinceSave = true;
                 }
             }
             repaint();
@@ -232,10 +247,18 @@ public class PathCanvas extends Canvas implements ActionListener {
         return menuItem;
     }
 
-    public PathCanvas(GraphicsConfiguration gc, Robot robot, Field field) {
+    /**
+     * The constructor for the PathCanvas.
+     * @param gc The graphics configuration that will host this panel
+     * @param robot The representation of the robot.
+     * @param field The representation of the field.
+     */
+    public PathCanvas(@NotNull GraphicsConfiguration gc, @NotNull Robot robot,
+                      @NotNull Field field, @NotNull TitleChangeListener titleChange) {
         super(gc);
         m_robot = robot;
         m_field = field;
+        m_titleChange = titleChange;
 
         // build the right menu popup
         m_contextMenu = new PopupMenu();
@@ -260,6 +283,10 @@ public class PathCanvas extends Canvas implements ActionListener {
         resetRobotGeometry();
     }
 
+    /**
+     * This should be called if a new representation of the robot is loaded so that a new graphic
+     * representation of the robot can be created.
+     */
     public void resetRobotGeometry() {
         // create the robot geometry
         m_robotChassis = new GeneralPath(GeneralPath.WIND_NON_ZERO, 4);
@@ -275,6 +302,15 @@ public class PathCanvas extends Canvas implements ActionListener {
         m_robotBumpers.lineTo(m_robot.getBumperWidth() / 2.0, m_robot.getBumperLength() / 2.0);
         m_robotBumpers.lineTo(m_robot.getBumperWidth() / 2.0, -m_robot.getBumperLength() / 2.0);
         m_robotBumpers.closePath();
+
+        m_robotCorners[0].x = -m_robot.getBumperWidth() / 2.0;
+        m_robotCorners[0].y = -m_robot.getBumperLength() / 2.0;
+        m_robotCorners[1].x = -m_robot.getBumperWidth() / 2.0;
+        m_robotCorners[1].y = m_robot.getBumperLength() / 2.0;
+        m_robotCorners[2].x = m_robot.getBumperWidth() / 2.0;
+        m_robotCorners[2].y = m_robot.getBumperLength() / 2.0;
+        m_robotCorners[3].x = m_robot.getBumperWidth() / 2.0;
+        m_robotCorners[3].y = -m_robot.getBumperLength() / 2.0;
 
     }
 
@@ -315,14 +351,17 @@ public class PathCanvas extends Canvas implements ActionListener {
             m_path.insertControlPointBefore(m_overPathPoint.nextControlPoint,
                     m_overPathPoint.fieldPt.getX(), m_overPathPoint.fieldPt.getY(),
                     m_overPathPoint.fieldHeading);
+            m_modifiedSinceSave = true;
             repaint();
         } else if (src == m_menuItemDelete) {
             m_path.deleteControlPoint(m_overControlPoint);
             m_overControlPoint = null;
             m_overWhat = OVER_NOTHING;
+            m_modifiedSinceSave = true;
             repaint();
         } else if (src == m_menuItemResetTangent) {
             m_overControlPoint.resetDerivative();
+            m_modifiedSinceSave = true;
             repaint();
         } else if (src == m_menuItemSetTime) {
 
@@ -382,7 +421,9 @@ public class PathCanvas extends Canvas implements ActionListener {
             lastPathPoint = thisPathPoint;
             lastPt = thisPt;
             thisPathPoint = pathPoint;
+            g2d.setPaint(isRobotInside(pathPoint.fieldPt, pathPoint.fieldHeading) ? Color.WHITE : Color.ORANGE);
             thisPt = (Point2D.Double) m_drawXfm.transform(pathPoint.fieldPt, null);
+
             if (lastPathPoint != null) {
                 g2d.drawLine((int) lastPt.getX(), (int) lastPt.getY(),
                         (int) thisPt.getX(), (int) thisPt.getY());
@@ -473,19 +514,34 @@ public class PathCanvas extends Canvas implements ActionListener {
         AffineTransform oldXfm = g2d.getTransform();
         AffineTransform xfm = new AffineTransform(oldXfm);
         xfm.concatenate(m_drawXfm);
-        xfm.translate(fieldPt.getX(), fieldPt.getY());
-        xfm.rotate(-heading);
-        // don't know why this scale is required, it should be on the oldXfm
+
+        AffineTransform xfmRobot = new AffineTransform();
+        xfmRobot.translate(fieldPt.getX(), fieldPt.getY());
+        xfmRobot.rotate(-heading);
+        xfm.concatenate(xfmRobot);
+        // don't know why this scale is required, it should be on the oldXfm or the field rendering
+        //  would be wrong ---- TODO. figure this out.
         xfm.scale(0.5, 0.5);
-//        xfm.concatenate(m_drawXfm);
+
+        xfmRobot.transform(m_robotCorners, 0, m_xfmRobotCorners, 0, 4);
+        boolean inside = m_field.isInsideField(m_xfmRobotCorners, 0.05);
+
         g2d.setTransform(xfm);
-        g2d.setPaint(Color.MAGENTA);
+        g2d.setPaint(inside ? Color.MAGENTA : Color.ORANGE);
         g2d.draw(m_robotBumpers);
         g2d.fill(m_robotBumpers);
         g2d.setPaint(Color.BLACK);
         g2d.draw(m_robotChassis);
         g2d.fill(m_robotChassis);
         g2d.setTransform(oldXfm);
+    }
+
+    boolean isRobotInside(Point2D fieldPt, double heading) {
+        AffineTransform xfmRobot = new AffineTransform();
+        xfmRobot.translate(fieldPt.getX(), fieldPt.getY());
+        xfmRobot.rotate(-heading);
+        xfmRobot.transform(m_robotCorners, 0, m_xfmRobotCorners, 0, 4);
+        return m_field.isInsideField(m_xfmRobotCorners, 0.05);
     }
 
     public void setEditMode() {
@@ -502,18 +558,80 @@ public class PathCanvas extends Canvas implements ActionListener {
         m_overWhat = OVER_NOTHING;
     }
 
+    /**
+     * Get the name of the path filename.
+     *
+     * @return {@code null} if a filename has not been set, otherwise the name of the current path file.
+     */
+    public File getPathFile() {
+        return m_pathFile;
+    }
+
+    public boolean modifiedSinceSave() {
+        return m_modifiedSinceSave;
+    }
+
+    public void newPath() {
+        clearPath();
+        m_pathFile = null;
+        m_modifiedSinceSave = false;
+        m_titleChange.titleChanged();
+    }
+
     public void clearPath() {
         m_path.clearPath();
         setExtendMode();
+        m_modifiedSinceSave = true;
         repaint();
     }
 
-    public void loadPath(String filename) {
-        m_path.loadPath(filename);
+    /**
+     * The action to load a path. This displays a file chooser, reads the path and saves the absolute directory
+     * path to the path file.
+     */
+    public void loadPath() {
+        JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+        fc.setDialogTitle("Load Path");
+        fc.setFileFilter(new FileNameExtensionFilter("JSON file", "json"));
+        fc.setAcceptAllFileFilterUsed(false);
+        if (JFileChooser.APPROVE_OPTION == fc.showOpenDialog(this)) {
+            File file = fc.getSelectedFile();
+            System.out.println("Loading path from: " + file.getAbsolutePath());
+            m_pathFile = file;
+            m_path.loadPath(file.getAbsolutePath());
+            m_modifiedSinceSave = false;
+            m_titleChange.titleChanged();
+        } else {
+            System.out.println("Load path command cancelled by user.");
+        }
         setEditMode();
         repaint();
     }
 
+    public void savePath() {
+        System.out.println("Saving path as: " + m_pathFile.getAbsolutePath());
+        m_path.savePath(m_pathFile.getAbsolutePath());
+        m_modifiedSinceSave = false;
+        setEditMode();
+        repaint();
+    }
+
+    public void savePathAs() {
+        JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+        fc.setDialogTitle("Save Path As");
+        fc.setFileFilter(new FileNameExtensionFilter("JSON file", "json"));
+        fc.setAcceptAllFileFilterUsed(false);
+        if (JFileChooser.APPROVE_OPTION == fc.showSaveDialog(this)) {
+            m_pathFile = fc.getSelectedFile();
+            if (!m_pathFile.getAbsolutePath().endsWith(".json")) {
+                m_pathFile = new File(m_pathFile.getAbsolutePath() + ".json");
+            }
+            savePath();
+            m_titleChange.titleChanged();
+        } else {
+            System.out.println("Save path command cancelled by user.");
+        }
+    }
     /**
      * Animate the robot position on the path from start to end of the path.
      */
