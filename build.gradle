@@ -8,8 +8,8 @@ repositories {
     maven {
         url "https://maven.pkg.github.com/A05annex/a05annexUtil"
         credentials {
-            username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
-            password = project.findProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
+            username = 'A05annex'
+            password = 'c7a9e47cde81e97d2794331d73724a10806ba44a'
         }
     }
 
