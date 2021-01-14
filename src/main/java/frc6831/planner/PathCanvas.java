@@ -46,7 +46,7 @@ public class PathCanvas extends Canvas implements ActionListener {
 
     // the actual data for the robot, field, and path
     private final Robot m_robot;                        // the robot description
-    private final Field m_field ;
+    private final Field m_field;
     private final TitleChangeListener m_titleChange;
     private File m_pathFile = null;
     private boolean m_modifiedSinceSave = false;
@@ -94,10 +94,20 @@ public class PathCanvas extends Canvas implements ActionListener {
             // OK, so here we pick whether we scale X or Y to fill the window, reverse Y,
             // and, translate 0,0 to center screen.
             Field.MinMax fieldMinMax = m_field.getMinMax();
+            // this is the scale that fits the X into the window
             double scaleX = width / (fieldMinMax.m_maxX - fieldMinMax.m_minX);
+            // this is the scale that fits y into the window
             double scaleY = height / (fieldMinMax.m_maxY - fieldMinMax.m_minY);
+            // this is the scale that fits them both into the window
             m_scale = Math.min(scaleX, scaleY);
-            m_drawXfm = new AffineTransform(m_scale, 0.0f, 0.0f, -m_scale, width / 2.0f, height / 2.0f);
+            // OK, what is happening here?? Magic - well, not really. The width/2.0 and height/2.0 bits of the
+            // m02 and m12 shift the origin to the center of the screen window. For the default competition field
+            // this is great because we adopted 0,0 as center field. For the 2021 at home field, the 0.0 is at
+            // a corner of the field - the next term is the shift of the 0,0 for the field from center window,
+            // scaled by the field to window scale.
+            m_drawXfm = new AffineTransform(m_scale, 0.0f, 0.0f, -m_scale,
+                    (width/2.0) - (m_scale * (((fieldMinMax.m_maxX - fieldMinMax.m_minX)/2.0) + fieldMinMax.m_minX)),
+                    (height/2.0) + (m_scale * (((fieldMinMax.m_maxY - fieldMinMax.m_minY)/2.0) + fieldMinMax.m_minY)));
             m_mouseXfm = new AffineTransform(m_drawXfm);
             try {
                 m_mouseXfm.invert();
@@ -249,7 +259,8 @@ public class PathCanvas extends Canvas implements ActionListener {
 
     /**
      * The constructor for the PathCanvas.
-     * @param gc The graphics configuration that will host this panel
+     *
+     * @param gc    The graphics configuration that will host this panel
      * @param robot The representation of the robot.
      * @param field The representation of the field.
      */
@@ -396,12 +407,12 @@ public class PathCanvas extends Canvas implements ActionListener {
             g2d.setPaint(Color.MAGENTA);
             double fieldX = m_currentPathPoint.fieldPt.getX();
             double fieldY = m_currentPathPoint.fieldPt.getY();
-            Point2D.Double fieldPt = (Point2D.Double)m_drawXfm.transform(
-                    new Point2D.Double(fieldX, fieldY),null);
+            Point2D.Double fieldPt = (Point2D.Double) m_drawXfm.transform(
+                    new Point2D.Double(fieldX, fieldY), null);
             double dirX = fieldX + Math.sin(m_currentPathPoint.fieldHeading);
             double dirY = fieldY + Math.cos(m_currentPathPoint.fieldHeading);
-            Point2D.Double dirPt = (Point2D.Double)m_drawXfm.transform(
-                    new Point2D.Double(dirX, dirY),null);
+            Point2D.Double dirPt = (Point2D.Double) m_drawXfm.transform(
+                    new Point2D.Double(dirX, dirY), null);
             g2d.drawLine((int) fieldPt.getX(), (int) fieldPt.getY(), (int) dirPt.getX(), (int) dirPt.getY());
             g2d.drawOval((int) dirPt.getX() - 3, (int) dirPt.getY() - 3, 6, 6);
 
@@ -491,7 +502,7 @@ public class PathCanvas extends Canvas implements ActionListener {
     private void drawFieldPointHighlight(Graphics2D g2d, double fieldX, double fieldY) {
         Point2D.Double fieldPt = (Point2D.Double) m_drawXfm.transform(
                 new Point2D.Double(fieldX, fieldY), null);
-        g2d.drawOval((int) fieldPt.getX() - 4, (int) fieldPt.getY() - 4,8, 8);
+        g2d.drawOval((int) fieldPt.getX() - 4, (int) fieldPt.getY() - 4, 8, 8);
     }
 
     public KochanekBartelsSpline getPath() {
@@ -632,6 +643,7 @@ public class PathCanvas extends Canvas implements ActionListener {
             System.out.println("Save path command cancelled by user.");
         }
     }
+
     /**
      * Animate the robot position on the path from start to end of the path.
      */

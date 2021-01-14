@@ -22,6 +22,9 @@ import static org.a05annex.util.JsonSupport.*;
  */
 public class Field {
 
+    public static final int DEFAULT_FIELD = 0;
+    public static final int AT_HOME_FIELD = 1;
+
     // -------------------------------------------------------------------------------------------
     // Parsing the field file
     private static final String TITLE = "title";
@@ -63,47 +66,96 @@ public class Field {
     private final double Y_FIELD_MIN = -7.99;
     private final double Y_FIELD_MAX = 7.99;
 
+    // -------------------------------------------------------------------------------------------
+    // The 2021 at home field axes and outline
+    private final double AT_HOME_X_AXIS_MIN = -0.3;
+    private final double AT_HOME_X_AXIS_MAX = 4.872;
+    private final double AT_HOME_Y_AXIS_MIN = -0.3;
+    private final double AT_HOME_Y_AXIS_MAX = 9.444;
+    private final double AT_HOME_X_FIELD_MIN = 0.0;
+    private final double AT_HOME_X_FIELD_MAX = 4.572;
+    private final double AT_HOME_Y_FIELD_MIN = 0.0;
+    private final double AT_HOME_Y_FIELD_MAX = 9.144;
+
     // the axis lines
-    private final Point2D.Double X_AXIS_START = new Point2D.Double(0.0, Y_AXIS_MIN);
-    private final Point2D.Double X_AXIS_END = new Point2D.Double(0.0, Y_AXIS_MAX);
-    private final Point2D.Double Y_AXIS_START = new Point2D.Double(X_AXIS_MIN, 0.0);
-    private final Point2D.Double Y_AXIS_END = new Point2D.Double(X_AXIS_MAX, 0.0);
+    private final Point2D.Double[] X_AXIS_START = {
+            new Point2D.Double(X_AXIS_MIN, 0.0),
+            new Point2D.Double(AT_HOME_X_AXIS_MIN, 0.0)
+    };
+    private final Point2D.Double[] X_AXIS_END = {
+            new Point2D.Double(X_AXIS_MAX, 0.0),
+            new Point2D.Double(AT_HOME_X_AXIS_MAX, 0.0)
+    };
+    private final Point2D.Double[] Y_AXIS_START = {
+            new Point2D.Double(0.0, Y_AXIS_MIN),
+            new Point2D.Double(0.0, AT_HOME_Y_AXIS_MIN)
+    };
+    private final Point2D.Double[] Y_AXIS_END = {
+            new Point2D.Double(0.0, Y_AXIS_MAX),
+            new Point2D.Double(0.0, AT_HOME_Y_AXIS_MAX)
+    };
 
     // the un-transformed field outline.
-    private final Point2D.Double[] FIELD_OUTLINE = {
+    private final Point2D.Double[][] FIELD_OUTLINE = {{
             new Point2D.Double(X_FIELD_MIN, Y_FIELD_MIN),
             new Point2D.Double(X_FIELD_MIN, Y_FIELD_MAX),
             new Point2D.Double(X_FIELD_MAX, Y_FIELD_MAX),
             new Point2D.Double(X_FIELD_MAX, Y_FIELD_MIN)
-    };
+    }, {
+            new Point2D.Double(AT_HOME_X_FIELD_MIN, AT_HOME_Y_FIELD_MIN),
+            new Point2D.Double(AT_HOME_X_FIELD_MIN, AT_HOME_Y_FIELD_MAX),
+            new Point2D.Double(AT_HOME_X_FIELD_MAX, AT_HOME_Y_FIELD_MAX),
+            new Point2D.Double(AT_HOME_X_FIELD_MAX, AT_HOME_Y_FIELD_MIN)
+    }};
 
     // the transformed (to screen coordinate) field outline.
-    private final Point2D.Double[] m_xfmField = {
+    private final Point2D.Double[][] m_xfmField = {{
             new Point2D.Double(X_FIELD_MIN, Y_FIELD_MIN),
             new Point2D.Double(X_FIELD_MIN, Y_FIELD_MAX),
             new Point2D.Double(X_FIELD_MAX, Y_FIELD_MAX),
             new Point2D.Double(X_FIELD_MAX, Y_FIELD_MIN)
-    };
+    }, {
+            new Point2D.Double(AT_HOME_X_FIELD_MIN, AT_HOME_Y_FIELD_MIN),
+            new Point2D.Double(AT_HOME_X_FIELD_MIN, AT_HOME_Y_FIELD_MAX),
+            new Point2D.Double(AT_HOME_X_FIELD_MAX, AT_HOME_Y_FIELD_MAX),
+            new Point2D.Double(AT_HOME_X_FIELD_MAX, AT_HOME_Y_FIELD_MIN)
+    }};
 
-    private final Plane2d fieldPlanes[] = {
+    private final Plane2d[][] fieldPlanes = {{
             new Plane2d(1.0, 0.0, -X_FIELD_MAX),
             new Plane2d(-1.0, 0.0, X_FIELD_MIN),
             new Plane2d(0.0, 1.0, -Y_FIELD_MAX),
-            new Plane2d(0.0, -1.0, Y_FIELD_MIN),
+            new Plane2d(0.0, -1.0, Y_FIELD_MIN)
+    }, {
+            new Plane2d(1.0, 0.0, -AT_HOME_X_FIELD_MAX),
+            new Plane2d(-1.0, 0.0, AT_HOME_X_FIELD_MIN),
+            new Plane2d(0.0, 1.0, -AT_HOME_Y_FIELD_MAX),
+            new Plane2d(0.0, -1.0, AT_HOME_Y_FIELD_MIN)
+    }};
+
+    private final String[] m_default_title = {"default field", "at Home field"};
+    private final String[] m_default_description = {
+            "The competition field outline with no game elements.",
+            "The at Home field outline with no game elements."
+    };
+    private final MinMax[] m_minMax = {
+            new MinMax(X_AXIS_MIN, Y_AXIS_MIN, X_AXIS_MAX, Y_AXIS_MAX),
+            new MinMax(AT_HOME_X_AXIS_MIN, AT_HOME_Y_AXIS_MIN, AT_HOME_X_AXIS_MAX, AT_HOME_Y_AXIS_MAX)
     };
 
-    private String m_title = "default field";
-    private String m_description = "The default field outline with no gale elements.";
-    private MinMax m_minMax = new MinMax(X_AXIS_MIN, Y_AXIS_MIN, X_AXIS_MAX, Y_AXIS_MAX);
-    private HashMap<String, FieldComponent> m_components = new HashMap();
-    private ArrayList<FieldDraw> m_drawList = new ArrayList();
+    private int useField = DEFAULT_FIELD;
+    private String m_title = m_default_title[useField];
+    private String m_description = m_default_description[useField];
+    private final HashMap<String, FieldComponent> m_components = new HashMap();
+    private final ArrayList<FieldDraw> m_drawList = new ArrayList();
+
 
     // -------------------------------------------------------------------------------------------
 
     /**
      *
      */
-    public class MinMax {
+    public static class MinMax {
         protected double m_minX;
         protected double m_minY;
         protected double m_maxX;
@@ -337,6 +389,16 @@ public class Field {
     // Field - the actual implementation of the field class
     // ====================================================================================================
     // ====================================================================================================
+    public int getFieldType() {
+        return useField;
+    }
+
+    public void setFieldType(int fieldType) {
+        useField = fieldType;
+        m_title = m_default_title[useField];
+        m_description = m_default_description[useField];
+    }
+
     public String getTitle() {
         return m_title;
     }
@@ -352,7 +414,7 @@ public class Field {
      * @return The field min-max
      */
     public @NotNull MinMax getMinMax() {
-        return m_minMax;
+        return m_minMax[useField];
     }
 
     // ----------------------------------------------------------------------------------------------------
@@ -483,12 +545,12 @@ public class Field {
 
         // draw the axis
         g2d.setPaint(Color.ORANGE);
-        drawLine(g2d, drawXfm, X_AXIS_START, X_AXIS_END);
-        drawLine(g2d, drawXfm, Y_AXIS_START, Y_AXIS_END);
+        drawLine(g2d, drawXfm, X_AXIS_START[useField], X_AXIS_END[useField]);
+        drawLine(g2d, drawXfm, Y_AXIS_START[useField], Y_AXIS_END[useField]);
 
         // draw the field outline as a dotted line
         g2d.setPaint(Color.WHITE);
-        drawPolyLine(g2d, drawXfm, FIELD_OUTLINE, m_xfmField, true);
+        drawPolyLine(g2d, drawXfm, FIELD_OUTLINE[useField], m_xfmField[useField], true);
 
         // now draw the field that was read in from the field data file.
         for (FieldDraw fieldDraw : m_drawList) {
@@ -510,7 +572,7 @@ public class Field {
      */
     public boolean isInsideField(@NotNull Point2D pts[], double tolerance) {
         for (Point2D pt : pts) {
-            for (Plane2d plane : fieldPlanes) {
+            for (Plane2d plane : fieldPlanes[useField]) {
                 if (!plane.isIn(pt, tolerance)) {
                     return false;
                 }

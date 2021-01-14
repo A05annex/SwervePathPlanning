@@ -2,8 +2,44 @@
 
 ![alt text](./resources/swerve-path-planner.jpg "Swerve Path Planner")
 This project is a visual 2D editor for path planning for a swerve drive FRC robot. Read a robot description
-and field description into this planner as a context for path planning, then draw, tune, and save a path
+and field description into this planner as a context for path planning, then draw, tune, and save a paths
 that can be used as a path input in the autonomous program.
+
+A05annex is committed to using the internationally recognized SI units, so the field, robot, and path
+descriptions, and path points are in SI units. The +Y axis is always downfield from the driver (as Y is
+the forward/backward axis of control sticks and the vertical or forward axis when the field map is laid
+down in front of the driver. The +X is is always to the right (common engineering convention). We adopted
+the convention that the center of the competition field is (0.0,0.0) for red-blue alliance symmetry, and
+that the left corner closest to the driver is 0,0 for the 2021 at Home field.
+
+## Download and Run
+
+We have not packaged this for distribution as an installable application (above our payscale). The
+easiest way to run this is to clone the repository and open it in your favorite IDE (Intellij IDEA or
+Visual Studio) and create a run target for `PathPlanner`. The gradle build file will resolve the
+dependencies, build, and run the program.
+
+When you run the program it will initialize with a default view of the competition field. You can add some
+commandline arguments to the run target to get your desired view to load automatically. running with the `-h`
+or `--help` command line option to get program help:
+```
+usage: PathPlanner [-h] [-r ROBOT] [-f FIELD] [-ah]
+
+Swerve Drive Path Planner
+
+named arguments:
+-h, --help                  show this help message and exit
+-r ROBOT, --robot ROBOT     specify a robot description file
+-f FIELD, --field FIELD     specify a field description file
+-ah, --atHome               use the 20201 season at Home field instead of the
+                            default competition field
+```
+
+### FRC 2021 At Home Challenges
+
+We added the `-ah` flag to switch from the default competition field to the **2021 At Home Challenges** field. NOTE,
+for us, the +Y axis is downfield from the driver, and +X is always to the right. So our axis mapping
+is different that what is in the game manual.
 
 ## Path Spline
 

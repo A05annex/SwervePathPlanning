@@ -1,6 +1,7 @@
 package frc6831.planner;
 
 import net.sourceforge.argparse4j.ArgumentParsers;
+import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -43,25 +44,32 @@ public class PathPlanner extends JFrame implements ActionListener, MenuListener,
     public static void main(@NotNull final String[] args) {
         // Setup the commandline argument parser and parse any commandline arguments
         ArgumentParser parser = ArgumentParsers.newFor("PathPlanner").build()
-                .description("Swerve Drive Path Planner.");
+                .description("Swerve Drive Path Planner");
         parser.addArgument("-r", "--robot")
                 .type(String.class)
-                .help("a robot description file");
+                .help("specify a field description file");
         parser.addArgument("-f", "--field")
                 .type(String.class)
-                .help("a robot description file");
+                .help("specify a robot description file");
+        parser.addArgument("-ah", "--atHome")
+                .action(Arguments.storeTrue())
+                .help("use the 20201 season at home field instead of the default competition field");
         String robotDescFile = null;
         String fieldDescFile = null;
+        int useField = Field.DEFAULT_FIELD;
         try {
             Namespace parsedArgs = parser.parseArgs(args);
             robotDescFile = parsedArgs.get("robot");
             fieldDescFile = parsedArgs.get("field");
+            if (parsedArgs.get("atHome")) {
+                useField = Field.AT_HOME_FIELD;
+            }
         } catch (ArgumentParserException e) {
             parser.handleError(e);
         }
         // start the path planning window
         try {
-            final PathPlanner pathPlanner = new PathPlanner(robotDescFile, fieldDescFile);
+            final PathPlanner pathPlanner = new PathPlanner(useField, robotDescFile, fieldDescFile);
             pathPlanner.setVisible(true);
         } catch (final Throwable t) {
             t.printStackTrace();
@@ -69,7 +77,7 @@ public class PathPlanner extends JFrame implements ActionListener, MenuListener,
         }
     }
 
-    private PathPlanner(String robotDescFile, String fieldDescFile) {
+    private PathPlanner(int useField, String robotDescFile, String fieldDescFile) {
         //------------------------------------------------------------------
         // setup the window for drawing the field and paths
         //------------------------------------------------------------------
@@ -108,6 +116,7 @@ public class PathPlanner extends JFrame implements ActionListener, MenuListener,
         //------------------------------------------------------------------
         // create a canvas to draw on
         //------------------------------------------------------------------
+        m_field.setFieldType(useField);
         if (null != robotDescFile) {
             m_robot.loadRobot(robotDescFile);
         }
