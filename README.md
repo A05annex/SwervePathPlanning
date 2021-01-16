@@ -1,3 +1,9 @@
+* **version:** 0.8.0
+* **status:** testing with 2021 FRC at Home skills challenges
+* **comments:** We are using this for our 2021 skills autonomous path planning. Watch for updates as the
+  season progresses and we test and tune.
+
+
 # Swerve Path Planning: 6831 A05annex
 
 ![alt text](./resources/swerve-path-planner.jpg "Swerve Path Planner")
@@ -8,8 +14,8 @@ that can be used as a path input in the autonomous program.
 A05annex is committed to using the internationally recognized SI units, so the field, robot, and path
 descriptions, and path points are in SI units. The +Y axis is always downfield from the driver (as Y is
 the forward/backward axis of control sticks and the vertical or forward axis when the field map is laid
-down in front of the driver. The +X is is always to the right (common engineering convention). We adopted
-the convention that the center of the competition field is (0.0,0.0) for red-blue alliance symmetry, and
+down in front of the driver). The +X axis is always to the right (common engineering convention). We adopted
+the convention that the center of the competition field is (0.0,0.0) for red-blue alliance symmetry; and
 that the left corner closest to the driver is 0,0 for the 2021 at Home field.
 
 ## Download and Run
@@ -269,7 +275,7 @@ This is the part of the description of the Infinite Recharge 2020 field:
 ```json
 {
   "title": "Infinite Recharge 2019-2020",
-  "description": "The Infinite Recharge arena with only start lines, trenches, pickup, and scoring.",
+  "description": "The Infinite Recharge arena with only start lines, pickup, and some power cells.",
   "components": [
     {
       "name": "power cell",
@@ -349,4 +355,23 @@ This is the part of the description of the Infinite Recharge 2020 field:
   }
 }
 ```
+When loaded this field looks like this:
+![alt text](./resources/exampleField.jpg "Example Field")
 
+Let's explore the field description file to understand this representation. Components are playing
+pieces that can be anywhere on the field (power cells), or fixed game elements (start lines, pickup areas).
+Components can be alliance neutral (power cells, start lines), or alliance specific (pickup areas). The field
+is described by locating components on the field.
+
+The power cells are defined with a local axis system there (0,0) is the center of the power cell. The color
+is defined as yellow (it is neutral, and is not specific to either alliance). Power cells are translated (moved to)
+specific locations on the game grid when laying out the field.
+
+The start line is specifically placed on the field (a field element), and is symmetrically located on the red-blue
+sides of the field - though it has no alliance-specific meaning. The start line is defined for one end of the field
+in the color white. A 3.14radian (180&deg;) rotation reflects it at the opposite end of the field.
+
+The ball pickup (power cell pickup) is alliance specific - i.e. only the specified alliance can pick up balls
+there, and it is a penalty for the opposing alliance to encroach on this space. **Note** that the component is defined
+relative to the red alliance side of the field, the color is specified as `alliance`, and when drawn, it is the `red`
+alliance when not transformed, and the `blue` alliance when rotated 3.14radian (180&deg;) to the blue alliance side.
