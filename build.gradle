@@ -1,22 +1,13 @@
 plugins {
     id 'java'
-    id 'maven'
 }
 
 repositories {
     mavenCentral()
-    maven {
-        url "https://maven.pkg.github.com/A05annex/a05annexUtil"
-        credentials {
-            username = 'A05annex'
-            password = 'c7a9e47cde81e97d2794331d73724a10806ba44a'
-        }
-    }
-
 }
 
 dependencies {
-    compile 'org.a05annex:util:0.8.5'
+    compile 'org.a05annex:a05annexUtil:0.8.5'
     compile 'org.jetbrains:annotations:17.0.0'
     compile 'com.googlecode.json-simple:json-simple:1.1.1'
     compile 'net.sourceforge.argparse4j:argparse4j:0.8.1'

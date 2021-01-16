@@ -39,7 +39,7 @@ named arguments:
 
 We added the `-ah` flag to switch from the default competition field to the **2021 At Home Challenges** field. NOTE,
 for us, the +Y axis is downfield from the driver, and +X is always to the right. So our axis mapping
-is different that what is in the game manual.
+is different than what is in the game manual.
 
 ## Path Spline
 
