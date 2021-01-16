@@ -44,6 +44,12 @@ public class PathCanvas extends Canvas implements ActionListener {
     private final MenuItem m_menuItemSetTime;
     private final MenuItem m_menuItemInfo;
 
+    // the back buffer to support double buffering
+    private int bufferWidth;
+    private int bufferHeight;
+    private Image bufferImage;
+    private Graphics bufferGraphics;
+
     // the actual data for the robot, field, and path
     private final Robot m_robot;                        // the robot description
     private final Field m_field;
@@ -106,8 +112,8 @@ public class PathCanvas extends Canvas implements ActionListener {
             // a corner of the field - the next term is the shift of the 0,0 for the field from center window,
             // scaled by the field to window scale.
             m_drawXfm = new AffineTransform(m_scale, 0.0f, 0.0f, -m_scale,
-                    (width/2.0) - (m_scale * (((fieldMinMax.m_maxX - fieldMinMax.m_minX)/2.0) + fieldMinMax.m_minX)),
-                    (height/2.0) + (m_scale * (((fieldMinMax.m_maxY - fieldMinMax.m_minY)/2.0) + fieldMinMax.m_minY)));
+                    (width / 2.0) - (m_scale * (((fieldMinMax.m_maxX - fieldMinMax.m_minX) / 2.0) + fieldMinMax.m_minX)),
+                    (height / 2.0) + (m_scale * (((fieldMinMax.m_maxY - fieldMinMax.m_minY) / 2.0) + fieldMinMax.m_minY)));
             m_mouseXfm = new AffineTransform(m_drawXfm);
             try {
                 m_mouseXfm.invert();
@@ -171,7 +177,7 @@ public class PathCanvas extends Canvas implements ActionListener {
         public void mouseDragged(MouseEvent e) {
             Point2D pt = m_mouse = (Point2D.Double) m_mouseXfm.transform(
                     new Point2D.Double(e.getPoint().getX(), e.getPoint().getY()), null);
-            if (m_mode == MODE_ADD) {
+            if ((m_mode == MODE_ADD) && null != m_newControlPoint) {
                 m_newControlPoint.setFieldLocation(pt);
                 m_modifiedSinceSave = true;
             } else if ((m_mode == MODE_EDIT) && (null != m_overControlPoint)) {
@@ -382,7 +388,54 @@ public class PathCanvas extends Canvas implements ActionListener {
     }
 
     @Override
+    public void update(Graphics g) {
+        super.update(g);
+    }
+
+    @Override
     public void paint(Graphics g) {
+        //    checks the buffersize with the current panelsize
+        //    or initialises the image with the first paint
+        if (bufferWidth != getSize().width ||
+                bufferHeight != getSize().height ||
+                bufferImage == null || bufferGraphics == null) {
+            resetBuffer();
+        }
+        if (bufferGraphics != null) {
+            //this clears the offscreen image, not the onscreen one
+            bufferGraphics.clearRect(0, 0, bufferWidth, bufferHeight);
+
+            //calls the paintbuffer method with
+            //the offscreen graphics as a param
+            paintBuffer(bufferGraphics);
+
+            //we finaly paint the offscreen image onto the onscreen image
+            g.drawImage(bufferImage, 0, 0, this);
+        }
+    }
+
+    private void resetBuffer() {
+        // always keep track of the image size
+        bufferWidth = getSize().width;
+        bufferHeight = getSize().height;
+
+        //    clean up the previous image
+        if (bufferGraphics != null) {
+            bufferGraphics.dispose();
+            bufferGraphics = null;
+        }
+        if (bufferImage != null) {
+            bufferImage.flush();
+            bufferImage = null;
+        }
+        System.gc();
+
+        //    create the new image with the size of the panel
+        bufferImage = createImage(bufferWidth, bufferHeight);
+        bufferGraphics = bufferImage.getGraphics();
+    }
+
+    public void paintBuffer(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setPaint(Color.WHITE);
 
