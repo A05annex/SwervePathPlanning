@@ -387,33 +387,51 @@ public class PathCanvas extends Canvas implements ActionListener {
         }
     }
 
+    /**
+     * This override does not do anything other than call {@link #paint(Graphics)}. The overridden method assumed
+     * the update was drawing to the displayed video buffer, so it cleared the buffer and then drew the new content,
+     * which results in a lot of screen flashing for older video cards.
+     *
+     * @param g Thr graphic context to be updated (repainted)
+     */
     @Override
     public void update(Graphics g) {
-        super.update(g);
+       paint(g);
     }
 
+    /**
+     * Paint the panel, which it the double buffer context means:
+     * <ul>
+     *     <li>make sure there is a back buffer that is the size of the panel.</li>
+     *     <li>clear the back buffer</li>
+     *     <li>paint the current content into the back buffer</li>
+     *     <li>copy the back buffer to the panel</li>
+     * </ul>
+     * @param g Thr graphics context for drawing to tha back buffer.
+     */
     @Override
     public void paint(Graphics g) {
-        //    checks the buffersize with the current panelsize
-        //    or initialises the image with the first paint
+        // make surethere is a back buffer that is the size of the onscreen panel
         if (bufferWidth != getSize().width ||
                 bufferHeight != getSize().height ||
                 bufferImage == null || bufferGraphics == null) {
             resetBuffer();
         }
         if (bufferGraphics != null) {
-            //this clears the offscreen image, not the onscreen one
+            //this clears the back buffer
             bufferGraphics.clearRect(0, 0, bufferWidth, bufferHeight);
 
-            //calls the paintbuffer method with
-            //the offscreen graphics as a param
+            // drw the content to the back buffer
             paintBuffer(bufferGraphics);
 
-            //we finaly paint the offscreen image onto the onscreen image
+            //we finally paint the back buffer onto the onscreen [panel]
             g.drawImage(bufferImage, 0, 0, this);
         }
     }
 
+    /**
+     * Create a back buffer that is the size of the panel.
+     */
     private void resetBuffer() {
         // always keep track of the image size
         bufferWidth = getSize().width;
@@ -428,13 +446,17 @@ public class PathCanvas extends Canvas implements ActionListener {
             bufferImage.flush();
             bufferImage = null;
         }
-        System.gc();
 
         //    create the new image with the size of the panel
         bufferImage = createImage(bufferWidth, bufferHeight);
         bufferGraphics = bufferImage.getGraphics();
     }
 
+    /**
+     *  Paint the current field, robot, and path to the back buffer.
+     *
+     * @param g The graphics description for the back buffer.
+     */
     public void paintBuffer(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setPaint(Color.WHITE);
@@ -562,19 +584,19 @@ public class PathCanvas extends Canvas implements ActionListener {
         return m_path;
     }
 
-    void paintRobot(Graphics2D g2d, KochanekBartelsSpline.ControlPoint controlPoint) {
+    private void paintRobot(Graphics2D g2d, KochanekBartelsSpline.ControlPoint controlPoint) {
         paintRobot(g2d, new Point2D.Double(controlPoint.getFieldX(), controlPoint.getFieldY()),
                 controlPoint.getFieldHeading());
 
     }
 
-    void paintRobot(Graphics2D g2d, KochanekBartelsSpline.PathPoint pathPoint) {
+    private void paintRobot(Graphics2D g2d, KochanekBartelsSpline.PathPoint pathPoint) {
         paintRobot(g2d, pathPoint.fieldPt, pathPoint.fieldHeading);
 
 
     }
 
-    void paintRobot(Graphics2D g2d, Point2D fieldPt, double heading) {
+    private void paintRobot(Graphics2D g2d, Point2D fieldPt, double heading) {
         AffineTransform oldXfm = g2d.getTransform();
         AffineTransform xfm = new AffineTransform(oldXfm);
         xfm.concatenate(m_drawXfm);
@@ -600,7 +622,7 @@ public class PathCanvas extends Canvas implements ActionListener {
         g2d.setTransform(oldXfm);
     }
 
-    boolean isRobotInside(Point2D fieldPt, double heading) {
+    private boolean isRobotInside(Point2D fieldPt, double heading) {
         AffineTransform xfmRobot = new AffineTransform();
         xfmRobot.translate(fieldPt.getX(), fieldPt.getY());
         xfmRobot.rotate(-heading);
@@ -631,10 +653,17 @@ public class PathCanvas extends Canvas implements ActionListener {
         return m_pathFile;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean modifiedSinceSave() {
         return m_modifiedSinceSave;
     }
 
+    /**
+     *
+     */
     public void newPath() {
         clearPath();
         m_pathFile = null;
@@ -642,6 +671,9 @@ public class PathCanvas extends Canvas implements ActionListener {
         m_titleChange.titleChanged();
     }
 
+    /**
+     *
+     */
     public void clearPath() {
         m_path.clearPath();
         setExtendMode();
@@ -650,7 +682,7 @@ public class PathCanvas extends Canvas implements ActionListener {
     }
 
     /**
-     * The action to load a path. This displays a file chooser, reads the path and saves the absolute directory
+     * The menu action to load a path. This displays a file chooser, reads the path and saves the absolute directory
      * path to the path file.
      */
     public void loadPath() {
@@ -672,6 +704,9 @@ public class PathCanvas extends Canvas implements ActionListener {
         repaint();
     }
 
+    /**
+     *
+     */
     public void savePath() {
         System.out.println("Saving path as: " + m_pathFile.getAbsolutePath());
         m_path.savePath(m_pathFile.getAbsolutePath());
@@ -680,6 +715,9 @@ public class PathCanvas extends Canvas implements ActionListener {
         repaint();
     }
 
+    /**
+     *
+     */
     public void savePathAs() {
         JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
         fc.setDialogTitle("Save Path As");
