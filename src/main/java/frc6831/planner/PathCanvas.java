@@ -396,7 +396,7 @@ public class PathCanvas extends Canvas implements ActionListener {
      */
     @Override
     public void update(Graphics g) {
-       paint(g);
+        paint(g);
     }
 
     /**
@@ -407,11 +407,12 @@ public class PathCanvas extends Canvas implements ActionListener {
      *     <li>paint the current content into the back buffer</li>
      *     <li>copy the back buffer to the panel</li>
      * </ul>
-     * @param g Thr graphics context for drawing to tha back buffer.
+     *
+     * @param g The graphics context for drawing to tha back buffer.
      */
     @Override
     public void paint(Graphics g) {
-        // make surethere is a back buffer that is the size of the onscreen panel
+        // make sure there is a back buffer that is the size of the onscreen panel
         if (bufferWidth != getSize().width ||
                 bufferHeight != getSize().height ||
                 bufferImage == null || bufferGraphics == null) {
@@ -421,10 +422,10 @@ public class PathCanvas extends Canvas implements ActionListener {
             //this clears the back buffer
             bufferGraphics.clearRect(0, 0, bufferWidth, bufferHeight);
 
-            // drw the content to the back buffer
+            // draw the content to the back buffer
             paintBuffer(bufferGraphics);
 
-            //we finally paint the back buffer onto the onscreen [panel]
+            // copy the back buffer into this displayed panel
             g.drawImage(bufferImage, 0, 0, this);
         }
     }
@@ -453,7 +454,7 @@ public class PathCanvas extends Canvas implements ActionListener {
     }
 
     /**
-     *  Paint the current field, robot, and path to the back buffer.
+     * Paint the current field, robot, and path to the back buffer.
      *
      * @param g The graphics description for the back buffer.
      */
@@ -647,22 +648,27 @@ public class PathCanvas extends Canvas implements ActionListener {
     /**
      * Get the name of the path filename.
      *
-     * @return {@code null} if a filename has not been set, otherwise the name of the current path file.
+     * @return {@code null} if a filename has not been set, otherwise the name of the current
+     * path file.
      */
     public File getPathFile() {
         return m_pathFile;
     }
 
     /**
+     * Test whether the path been modified since the last save.
      *
-     * @return
+     * @return {@code true} the last changes have not been saved, {@code false} if there have
+     * been no path changes since the last path save.
      */
     public boolean modifiedSinceSave() {
         return m_modifiedSinceSave;
     }
 
     /**
-     *
+     * Start a new path. This means clear the current path (all the control points, etc.) and
+     * restart creating a path. This is different from clearing a path which maintains the context
+     * of the path.
      */
     public void newPath() {
         clearPath();
@@ -672,7 +678,7 @@ public class PathCanvas extends Canvas implements ActionListener {
     }
 
     /**
-     *
+     * Clear the current path and restart drawing that path.
      */
     public void clearPath() {
         m_path.clearPath();
@@ -682,8 +688,8 @@ public class PathCanvas extends Canvas implements ActionListener {
     }
 
     /**
-     * The menu action to load a path. This displays a file chooser, reads the path and saves the absolute directory
-     * path to the path file.
+     * The menu action to load a path. This displays a file chooser, reads the path and saves the
+     * absolute directory path to the path file.
      */
     public void loadPath() {
         JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
@@ -705,7 +711,7 @@ public class PathCanvas extends Canvas implements ActionListener {
     }
 
     /**
-     *
+     * Save the path file to the current path file.
      */
     public void savePath() {
         System.out.println("Saving path as: " + m_pathFile.getAbsolutePath());
@@ -716,7 +722,7 @@ public class PathCanvas extends Canvas implements ActionListener {
     }
 
     /**
-     *
+     * Save the path to a new path file.
      */
     public void savePathAs() {
         JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
