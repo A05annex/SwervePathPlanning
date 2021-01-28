@@ -1,0 +1,17 @@
+{
+  "title": "competition base, 2021 season",
+  "description": "This is our 2021 competition robot, drive and chassis lengths are measured. Bumper size is guessed and should be corrected when we have physical bumpers.",
+  "drive": {
+    "length": 0.590,
+    "width": 0.590,
+    "maxSpeed": 3.1951
+  },
+  "chassis": {
+    "length": 0.756,
+    "width": 0.756
+  },
+  "bumpers": {
+    "length": 0.908,
+    "width": 0.908
+  }
+}
