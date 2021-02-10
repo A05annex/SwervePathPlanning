@@ -1,0 +1,81 @@
+{
+  "title": "Infinite Recharge 2019-2020",
+  "description": "The Infinite Recharge arena with only start lines, pickup, and some power cells.",
+  "components": [
+    {
+      "name": "power cell",
+      "lineColor": "yellow",
+      "fillColor": "yellow",
+      "shapes": [
+        {
+          "type": "circle",
+          "center": [ 0.0, 0.0 ],
+          "radius": 0.0889
+        }
+      ]
+    },
+    {
+      "name": "start line",
+      "lineColor": "white",
+      "fillColor": "white",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [ -4.1050, -0.0254 ],
+          "upper right": [ 4.1050, 0.0254 ]
+        }
+      ]
+    },
+    {
+      "name": "ball pickup",
+      "lineColor": "alliance",
+      "fillColor": "alliance",
+      "shapes": [
+        {
+          "type": "polygon",
+          "points": [
+            [-2.4626,7.9900],
+            [-2.3968,7.9900],
+            [-1.7006,7.2998],
+            [-1.0104,7.9900],
+            [-0.9386,7.9900],
+            [-1.7006,7.2280]
+          ]
+        }
+      ]
+    }
+  ],
+  "field": {
+    "components": [
+      {
+        "component": "power cell",
+        "translate": [ -3.4001, 0.0]
+      },
+      {
+        "component": "power cell",
+        "translate": [ -3.4001, -0.9144]
+      },
+      {
+        "component": "power cell",
+        "translate": [ -3.4001, -1.8288 ]
+      },
+      {
+        "component": "start line",
+        "translate": [ 0.0000, 4.9766 ]
+      },
+      {
+        "component": "start line",
+        "translate": [ 0.0000, -4.9766 ]
+      },
+      {
+        "component": "ball pickup",
+        "alliance": "red"
+      },
+      {
+        "component": "ball pickup",
+        "alliance": "blue",
+        "rotate": 3.1416
+      }
+    ]
+  }
+}

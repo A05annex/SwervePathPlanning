@@ -77,6 +77,13 @@ public class Field {
     private final double AT_HOME_Y_FIELD_MIN = 0.0;
     private final double AT_HOME_Y_FIELD_MAX = 9.144;
 
+    // Additional colors
+    private static final Color GREEN_ZONE = new Color(118, 215, 196);
+    private static final Color YELLOW_ZONE = new Color(247, 220, 111);
+    private static final Color BLUE_ZONE = new Color(133, 193, 233);
+    private static final Color PURPLE_ZONE = new Color(187, 143, 206);
+    private static final Color RED_ZONE = new Color(236, 112, 99);
+
     // the axis lines
     private final Point2D.Double[] X_AXIS_START = {
             new Point2D.Double(X_AXIS_MIN, 0.0),
@@ -528,6 +535,16 @@ public class Field {
                 return Color.CYAN;
             case "magenta":
                 return Color.MAGENTA;
+            case "green-zone":
+                return GREEN_ZONE;
+            case "yellow-zone":
+                return YELLOW_ZONE;
+            case "blue-zone":
+                return BLUE_ZONE;
+            case "purple-zone":
+                return PURPLE_ZONE;
+            case "red-zone":
+                return RED_ZONE;
             default:
                 return defaultColor;
         }

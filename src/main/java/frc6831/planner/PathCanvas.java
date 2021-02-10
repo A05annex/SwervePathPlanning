@@ -215,12 +215,13 @@ public class PathCanvas extends Canvas implements ActionListener {
             m_overPathPoint = null;
             m_overWhat = OVER_NOTHING;
             for (KochanekBartelsSpline.ControlPoint point : m_path.getControlPoints()) {
-                if (point.testOverControlPoint(pt.getX(), pt.getY(), OVER_TOL / m_scale)) {
-                    m_overControlPoint = point;
-                    m_overWhat = OVER_CONTROL_POINT;
-                } else if (point.testOveTangentPoint(pt.getX(), pt.getY(), OVER_TOL / m_scale)) {
+                if (point.testOveTangentPoint(pt.getX(), pt.getY(), OVER_TOL / m_scale)) {
                     m_overControlPoint = point;
                     m_overWhat = OVER_TANGENT_POINT;
+                } else if (point.testOverControlPoint(pt.getX(), pt.getY(), OVER_TOL / m_scale)) {
+                    m_overControlPoint = point;
+                    m_overWhat = OVER_CONTROL_POINT;
+
                 } else if (point.testOverHeadingPoint(pt.getX(), pt.getY(), OVER_TOL / m_scale)) {
                     m_overControlPoint = point;
                     m_overWhat = OVER_HEADING_POINT;
@@ -758,6 +759,7 @@ public class PathCanvas extends Canvas implements ActionListener {
         m_currentPathTime = 0.0;
         m_pathFollower = m_path.getPathFollower();
         m_currentPathPoint = m_pathFollower.getPointAt(m_currentPathTime);
+        System.out.printf("   seconds   forward    strafe   angular%n");
         if (null == m_currentPathPoint) {
             stopAnimation();
         }
