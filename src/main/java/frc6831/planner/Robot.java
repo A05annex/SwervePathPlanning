@@ -1,5 +1,6 @@
 package frc6831.planner;
 
+import org.a05annex.util.Utl;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
@@ -22,6 +23,8 @@ public class Robot {
 
     private double m_driveLength = 0.7;
     private double m_driveWidth = 0.3;
+    private double m_driveDiagonal = Utl.length(m_driveLength, m_driveWidth);
+    private double m_driveRadius = m_driveDiagonal / 2.0;
 
     private double m_chassisLength = 0.9;
     private double m_chassisWidth = 0.5;
@@ -43,7 +46,7 @@ public class Robot {
     }
 
     public double getDriveRadius() {
-        return 0.5 * Math.sqrt((m_driveLength * m_driveLength) + (m_driveWidth * m_driveWidth));
+        return m_driveRadius;
     }
 
     public double getMaxModuleSpeed() {
@@ -53,6 +56,21 @@ public class Robot {
     public double getMaxRotationalSpeed() {
         return m_moduleMaxSpeed / getDriveRadius();
 
+    }
+
+    public boolean canRobotAchieve(double forward, double strafe, double rotation)
+    {
+        // calculate a, b, c and d variables
+        double a = strafe - (rotation * (m_driveLength / m_driveDiagonal));
+        double b = strafe + (rotation * (m_driveLength / m_driveDiagonal));
+        double c = forward - (rotation * (m_driveWidth / m_driveDiagonal));
+        double d = forward + (rotation * (m_driveWidth / m_driveDiagonal));
+
+        // calculate wheel speeds
+        return (Utl.length(b, c) <= m_moduleMaxSpeed) ||    // right front
+                (Utl.length(b, d) <= m_moduleMaxSpeed) ||   // left front
+                (Utl.length(a, d) <= m_moduleMaxSpeed) ||   // left rear
+                (Utl.length(a, c) <= m_moduleMaxSpeed) ;    // right rear
     }
 
     // ----------------------------------------------------------------------------------------------------
@@ -104,7 +122,10 @@ public class Robot {
                     m_bumperLength = parseDouble(bumpers, LENGTH, m_bumperLength);
                     m_bumperWidth = parseDouble(bumpers, WIDTH, m_bumperWidth);
                 }
+                m_driveDiagonal = Utl.length(m_driveLength, m_driveWidth);
+                m_driveRadius = m_driveDiagonal / 2.0;
             }
+
 
         } catch (IOException | ParseException | ClassCastException | NullPointerException e) {
             e.printStackTrace();

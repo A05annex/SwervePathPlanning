@@ -247,7 +247,12 @@ colored by the alliance it belongs to. The recognized colors are:
 - **<tt>"orange"</tt>**: Use orange when the component is drawn or filled.
 - **<tt>"green"</tt>**: Use green when the component is drawn or filled.
 - **<tt>"cyan"</tt>**: Use cyan when the component is drawn or filled.
-- **<tt>"magenta"</tt>**: Use magenta when the component is drawn or filled.
+- **<tt>"green-zone"</tt>**: The color for the green zone for Infinite Recharge at Home.
+- **<tt>"yellow-zone"</tt>**: The color for the yellow zone for Infinite Recharge at Home.
+- **<tt>"blue-zone"</tt>**: The color for the blue zone for Infinite Recharge at Home.
+- **<tt>"purple-zone"</tt>**: The color for the purple zone (reintroduction zone) for Infinite Recharge at Home.
+- **<tt>"red-zone"</tt>**: The color for the red zone for Infinite Recharge at Home.
+
 
 #### Shapes Descriptions
 

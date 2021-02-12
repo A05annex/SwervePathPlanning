@@ -477,10 +477,12 @@ public class PathCanvas extends Canvas implements ActionListener {
                     String.format("strafe = %.3f", m_currentPathPoint.speedStrafe), 10, 50);
             g2d.drawString(
                     String.format("angular vel = %.3f", m_currentPathPoint.speedRotation), 10, 65);
-            System.out.printf("%10.3f, %10.3f, %10.3f, %10.3f%n",
+            boolean tooFast = !m_robot.canRobotAchieve(m_currentPathPoint.speedForward,
+                    m_currentPathPoint.speedStrafe,m_currentPathPoint.speedRotation);
+            System.out.printf("%10.3f, %10.3f, %10.3f, %10.3f      %b %n",
                     m_currentPathTime, m_currentPathPoint.speedForward,
-                    m_currentPathPoint.speedStrafe, m_currentPathPoint.speedRotation);
-            paintRobot(g2d, m_currentPathPoint);
+                    m_currentPathPoint.speedStrafe, m_currentPathPoint.speedRotation, tooFast);
+            paintRobot(g2d, m_currentPathPoint, tooFast);
             g2d.setPaint(Color.MAGENTA);
             double fieldX = m_currentPathPoint.fieldPt.getX();
             double fieldY = m_currentPathPoint.fieldPt.getY();
@@ -509,7 +511,11 @@ public class PathCanvas extends Canvas implements ActionListener {
             lastPathPoint = thisPathPoint;
             lastPt = thisPt;
             thisPathPoint = pathPoint;
-            g2d.setPaint(isRobotInside(pathPoint.fieldPt, pathPoint.fieldHeading) ? Color.WHITE : Color.ORANGE);
+            boolean tooFast = !m_robot.canRobotAchieve(pathPoint.speedForward,
+                    pathPoint.speedStrafe,pathPoint.speedRotation);
+
+            g2d.setPaint(isRobotInside(pathPoint.fieldPt, pathPoint.fieldHeading) ?
+                    (tooFast ? Color.RED : Color.WHITE) : Color.ORANGE);
             thisPt = (Point2D.Double) m_drawXfm.transform(pathPoint.fieldPt, null);
 
             if (lastPathPoint != null) {
@@ -588,17 +594,17 @@ public class PathCanvas extends Canvas implements ActionListener {
 
     private void paintRobot(Graphics2D g2d, KochanekBartelsSpline.ControlPoint controlPoint) {
         paintRobot(g2d, new Point2D.Double(controlPoint.getFieldX(), controlPoint.getFieldY()),
-                controlPoint.getFieldHeading());
+                controlPoint.getFieldHeading(), false);
 
     }
 
-    private void paintRobot(Graphics2D g2d, KochanekBartelsSpline.PathPoint pathPoint) {
-        paintRobot(g2d, pathPoint.fieldPt, pathPoint.fieldHeading);
+    private void paintRobot(Graphics2D g2d, KochanekBartelsSpline.PathPoint pathPoint, boolean tooFast) {
+        paintRobot(g2d, pathPoint.fieldPt, pathPoint.fieldHeading, tooFast);
 
 
     }
 
-    private void paintRobot(Graphics2D g2d, Point2D fieldPt, double heading) {
+    private void paintRobot(Graphics2D g2d, Point2D fieldPt, double heading, boolean tooFast) {
         AffineTransform oldXfm = g2d.getTransform();
         AffineTransform xfm = new AffineTransform(oldXfm);
         xfm.concatenate(m_drawXfm);
@@ -615,7 +621,7 @@ public class PathCanvas extends Canvas implements ActionListener {
         boolean inside = m_field.isInsideField(m_xfmRobotCorners, 0.05);
 
         g2d.setTransform(xfm);
-        g2d.setPaint(inside ? Color.MAGENTA : Color.ORANGE);
+        g2d.setPaint(inside ? (tooFast ? Color.RED : Color.MAGENTA) : Color.ORANGE);
         g2d.draw(m_robotBumpers);
         g2d.fill(m_robotBumpers);
         g2d.setPaint(Color.BLACK);
@@ -759,7 +765,7 @@ public class PathCanvas extends Canvas implements ActionListener {
         m_currentPathTime = 0.0;
         m_pathFollower = m_path.getPathFollower();
         m_currentPathPoint = m_pathFollower.getPointAt(m_currentPathTime);
-        System.out.printf("   seconds   forward    strafe   angular%n");
+        System.out.printf("    seconds     forward      strafe     angular    too fast!%n");
         if (null == m_currentPathPoint) {
             stopAnimation();
         }
