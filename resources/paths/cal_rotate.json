@@ -1,0 +1,56 @@
+{
+  "description": "No description provided.",
+  "title": "untitled",
+  "controlPoints": [
+    {
+      "field_dX": 0.000,
+      "fieldY": 2.286,
+      "field_dY": 0.000,
+      "fieldX": 2.286,
+      "fieldHeading": 0.0,
+      "time": 0.0,
+      "field_dHeading": -1.7278759594743864,
+      "derivativesEdited": false
+    },
+    {
+      "field_dX": 0.000,
+      "fieldY": 2.286,
+      "field_dY": 0.000,
+      "fieldX": 2.286,
+      "fieldHeading": -1.5708,
+      "time": 1.0,
+      "field_dHeading": -1.717691938336981,
+      "derivativesEdited": false
+    },
+    {
+      "field_dX": 0.000,
+      "fieldY": 2.286,
+      "field_dY": 0.000,
+      "fieldX": 2.286,
+      "fieldHeading": -3.1416,
+      "time": 2.0,
+      "field_dHeading": -1.7278759594743864,
+      "derivativesEdited": false
+    },
+    {
+      "field_dX": 0.000,
+      "fieldY": 2.286,
+      "field_dY": 0.000,
+      "fieldX": 2.286,
+      "fieldHeading": -4.7124,
+      "time": 3.0,
+      "field_dHeading": -1.7278759594743862,
+      "derivativesEdited": false
+    },
+    {
+      "field_dX": 0.000,
+      "fieldY": 2.286,
+      "field_dY": 0.000,
+      "fieldX": 2.286,
+      "fieldHeading": -6.2832,
+      "time": 4.0,
+      "field_dHeading": -1.7075079171995753,
+      "derivativesEdited": false
+    }
+  ]
+}

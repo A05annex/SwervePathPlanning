@@ -1,0 +1,46 @@
+{
+  "description": "A calibration straight forward .",
+  "title": "A calibration program that should drive the robot forward exactly 20 ft in 3 seconds.",
+  "controlPoints": [
+    {
+      "field_dX": 0.0,
+      "fieldY": 0.762,
+      "field_dY": 0.0,
+      "fieldX": 1.524,
+      "fieldHeading": 0.0,
+      "time": 0.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.0,
+      "fieldY": 2.286,
+      "field_dY": 3.0,
+      "fieldX": 1.524,
+      "fieldHeading": 0.0,
+      "time": 1.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.0,
+      "fieldY": 5.334,
+      "field_dY": 3.0,
+      "fieldX": 1.524,
+      "fieldHeading": 0.0,
+      "time": 2.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.0,
+      "fieldY": 6.858,
+      "field_dY": 0.0,
+      "fieldX": 1.524,
+      "fieldHeading": 0.0,
+      "time": 3.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    }
+  ]
+}

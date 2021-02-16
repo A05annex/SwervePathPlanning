@@ -1,0 +1,36 @@
+{
+  "description": "10ft diameter test circle.",
+  "title": "The path for a 10 foot diameter test circle with the robot facing the center of the circle.",
+  "controlPoints": [
+    {
+      "fieldY": 0.762,
+      "fieldX": 2.286,
+      "fieldHeading": 0.0,
+      "time": 0.0
+    },
+    {
+      "fieldY": 2.286,
+      "fieldX": 3.810,
+      "fieldHeading": -1.5708,
+      "time": 1.0
+    },
+    {
+      "fieldY": 3.810,
+      "fieldX": 2.286,
+      "fieldHeading": -3.1416,
+      "time": 2.0
+    },
+    {
+      "fieldY": 2.286,
+      "fieldX": 0.762,
+      "fieldHeading": -4.7124,
+      "time": 3.0
+    },
+    {
+      "fieldY": 0.762,
+      "fieldX": 2.286,
+      "fieldHeading": -6.2832,
+      "time": 4.0
+    }
+  ]
+}

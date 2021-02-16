@@ -1,1 +1,126 @@
-{"description":"No description provided.","title":"untitled","controlPoints":[{"field_dX":0.018061167747914553,"fieldY":1.0455569972196486,"field_dY":2.8536645041705295,"fieldX":2.2905152919369787,"fieldHeading":0.0,"time":0.0,"field_dHeading":0.0,"derivativesEdited":true},{"field_dX":0.018061167747914553,"fieldY":3.763762743280817,"field_dY":2.8175421686747004,"fieldX":2.2905152919369787,"fieldHeading":0.0,"time":1.0,"field_dHeading":1.7278759594743864,"derivativesEdited":true},{"field_dX":0.0,"fieldY":3.7998850787766463,"field_dY":-3.341316033364226,"fieldX":3.79862279888786,"fieldHeading":3.141592653589793,"time":2.0,"field_dHeading":3.455751918948773,"derivativesEdited":true},{"field_dX":0.018061167747914553,"fieldY":3.763762743280817,"field_dY":2.3479518072289167,"fieldX":2.2814847080630214,"fieldHeading":6.283185307179586,"time":3.0,"field_dHeading":1.7382520867863052,"derivativesEdited":true},{"field_dX":0.036122335495829105,"fieldY":6.12074513438369,"field_dY":3.5761112140871187,"fieldX":2.3176070435588505,"fieldHeading":6.302050993201257,"time":4.0,"field_dHeading":-1.7323474056733554,"derivativesEdited":true},{"field_dX":-0.036122335495829105,"fieldY":6.0936533827618184,"field_dY":-3.720600556070437,"fieldX":0.7462854494902684,"fieldHeading":3.133462751409849,"time":5.0,"field_dHeading":-3.083464750368913,"derivativesEdited":true},{"field_dX":1.8603002780352185,"fieldY":5.7866135310472675,"field_dY":1.8964226135310476,"fieldX":2.751075069508805,"fieldHeading":0.6957514470759611,"time":6.0,"field_dHeading":-1.7234045132754172,"derivativesEdited":true},{"field_dX":0.018061167747914553,"fieldY":7.719158480074145,"field_dY":2.2757071362372567,"fieldX":3.7895922150139025,"fieldHeading":0.0,"time":7.0,"field_dHeading":-2.11850971185219,"derivativesEdited":true},{"field_dX":0.036122335495829105,"fieldY":7.655944392956443,"field_dY":-2.6369304911955513,"fieldX":2.2905152919369787,"fieldHeading":-3.156084392655293,"time":8.0,"field_dHeading":-1.7216964442325071,"derivativesEdited":true},{"field_dX":-0.022607888631089423,"fieldY":5.261540603248261,"field_dY":-2.3060046403712295,"fieldX":2.2973039443155443,"fieldHeading":-3.130357171331831,"time":9.0,"field_dHeading":0.014014169261528188,"derivativesEdited":true},{"field_dX":-0.04521577726218062,"fieldY":2.4581624129930404,"field_dY":-2.9390255220417654,"fieldX":2.30860788863109,"fieldHeading":-3.13060408490706,"time":10.0,"field_dHeading":-0.006179515241879163,"derivativesEdited":true},{"field_dX":0.0,"fieldY":0.5364918793503488,"field_dY":-0.3391183294663591,"fieldX":2.2859999999999987,"fieldHeading":-3.141592653589793,"time":11.0,"field_dHeading":-0.012087425551006437,"derivativesEdited":true}]}
+{
+  "description": "Barrel Racing.",
+  "title": "2021 Infinite Recharge at Home - Barrel Racing obstacle course.",
+  "controlPoints": [
+    {
+      "field_dX": 0.018061167747914553,
+      "fieldY": 1.0455569972196486,
+      "field_dY": 2.8536645041705295,
+      "fieldX": 2.2905152919369787,
+      "fieldHeading": 0.0,
+      "time": 0.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.018061167747914553,
+      "fieldY": 3.763762743280817,
+      "field_dY": 2.8175421686747004,
+      "fieldX": 2.2905152919369787,
+      "fieldHeading": 0.0,
+      "time": 1.0,
+      "field_dHeading": 1.7278759594743864,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.0,
+      "fieldY": 3.7998850787766463,
+      "field_dY": -3.341316033364226,
+      "fieldX": 3.79862279888786,
+      "fieldHeading": 3.141592653589793,
+      "time": 2.0,
+      "field_dHeading": 3.455751918948773,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.018061167747914553,
+      "fieldY": 3.763762743280817,
+      "field_dY": 2.3479518072289167,
+      "fieldX": 2.2814847080630214,
+      "fieldHeading": 6.283185307179586,
+      "time": 3.0,
+      "field_dHeading": 1.7382520867863052,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.036122335495829105,
+      "fieldY": 6.12074513438369,
+      "field_dY": 3.5761112140871187,
+      "fieldX": 2.3176070435588505,
+      "fieldHeading": 6.302050993201257,
+      "time": 4.0,
+      "field_dHeading": -1.7323474056733554,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": -0.036122335495829105,
+      "fieldY": 6.0936533827618184,
+      "field_dY": -3.720600556070437,
+      "fieldX": 0.7462854494902684,
+      "fieldHeading": 3.133462751409849,
+      "time": 5.0,
+      "field_dHeading": -3.083464750368913,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 1.8603002780352185,
+      "fieldY": 5.7866135310472675,
+      "field_dY": 1.8964226135310476,
+      "fieldX": 2.751075069508805,
+      "fieldHeading": 0.6957514470759611,
+      "time": 6.0,
+      "field_dHeading": -1.7234045132754172,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.018061167747914553,
+      "fieldY": 7.719158480074145,
+      "field_dY": 2.2757071362372567,
+      "fieldX": 3.7895922150139025,
+      "fieldHeading": 0.0,
+      "time": 7.0,
+      "field_dHeading": -2.11850971185219,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.036122335495829105,
+      "fieldY": 7.655944392956443,
+      "field_dY": -2.6369304911955513,
+      "fieldX": 2.2905152919369787,
+      "fieldHeading": -3.156084392655293,
+      "time": 8.0,
+      "field_dHeading": -1.7216964442325071,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": -0.022607888631089423,
+      "fieldY": 5.261540603248261,
+      "field_dY": -2.3060046403712295,
+      "fieldX": 2.2973039443155443,
+      "fieldHeading": -3.130357171331831,
+      "time": 9.0,
+      "field_dHeading": 0.014014169261528188,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": -0.04521577726218062,
+      "fieldY": 2.4581624129930404,
+      "field_dY": -2.9390255220417654,
+      "fieldX": 2.30860788863109,
+      "fieldHeading": -3.13060408490706,
+      "time": 10.0,
+      "field_dHeading": -0.006179515241879163,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.0,
+      "fieldY": 0.5364918793503488,
+      "field_dY": -0.3391183294663591,
+      "fieldX": 2.2859999999999987,
+      "fieldHeading": -3.141592653589793,
+      "time": 11.0,
+      "field_dHeading": -0.012087425551006437,
+      "derivativesEdited": true
+    }
+  ]
+}

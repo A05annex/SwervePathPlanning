@@ -1,5 +1,5 @@
 plugins {
-    id 'java'
+    id 'java-library'
 }
 
 repositories {
@@ -7,13 +7,14 @@ repositories {
 }
 
 dependencies {
-    compile 'org.a05annex:a05annexUtil:0.8.5'
-    compile 'org.jetbrains:annotations:17.0.0'
-    compile 'com.googlecode.json-simple:json-simple:1.1.1'
-    compile 'net.sourceforge.argparse4j:argparse4j:0.8.1'
-    testCompile('org.junit.platform:junit-platform-runner:1.4.2')
-    testCompile('org.junit.jupiter:junit-jupiter-api:5.4.2')
-    testRuntime('org.junit.jupiter:junit-jupiter-engine:5.4.2')
+
+    implementation 'org.a05annex:a05annexUtil:0.8.6'
+    implementation 'org.jetbrains:annotations:17.0.0'
+    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+    implementation 'net.sourceforge.argparse4j:argparse4j:0.8.1'
+    testImplementation('org.junit.platform:junit-platform-runner:1.4.2')
+    testImplementation('org.junit.jupiter:junit-jupiter-api:5.4.2')
+    testImplementation('org.junit.jupiter:junit-jupiter-engine:5.4.2')
 }
 
 test {
@@ -22,8 +23,8 @@ test {
     }
 }
 
-sourceCompatibility = '1.9'
-targetCompatibility = '1.9'
+sourceCompatibility = '11'
+targetCompatibility = '11'
 version = '1.0.0'
 
 
