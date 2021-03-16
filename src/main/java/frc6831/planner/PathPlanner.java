@@ -5,6 +5,7 @@ import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
+import org.a05annex.util.Utl;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -34,6 +35,7 @@ public class PathPlanner extends JFrame implements ActionListener, MenuListener,
     private final JMenuItem m_menuPathSaveAsPath;       // the menu path save-as button
     // - animating the path
     private final JMenuItem m_menuPathPlay;             // play an animation of the current path
+    private final JMenuItem m_menuSpeedMultiplier;             // play an animation of the current path
     // - path clear and start again - clearing and starting a new path (severe)
     private final JMenuItem m_menuPathClearPath;        // the menu edit - clear the current path and reset to
 
@@ -105,6 +107,7 @@ public class PathPlanner extends JFrame implements ActionListener, MenuListener,
         m_menuPathSaveAsPath = createMenuItem(m_menuPath, "Save As ...", this);
         m_menuPath.addSeparator();
         m_menuPathPlay = createMenuItem(m_menuPath, "Play Path", this);
+        m_menuSpeedMultiplier = createMenuItem(m_menuPath, "Speed Multiplier", this);
         m_menuPath.addSeparator();
         m_menuPathClearPath = createMenuItem(m_menuPath, "Clear Path", this);
 
@@ -250,6 +253,14 @@ public class PathPlanner extends JFrame implements ActionListener, MenuListener,
             m_canvas.clearPath();
         } else if (src == m_menuPathPlay) {
             m_canvas.animatePath();
+        } else if (src == m_menuSpeedMultiplier) {
+            String m = JOptionPane.showInputDialog(this, "Speed Multiplier:",
+                    String.format("%.2f", m_canvas.getPath().getSpeedMultiplier()));
+            try {
+                m_canvas.getPath().setSpeedMultiplier(Utl.clip(Double.valueOf(m), 0.1, 5.0));
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, String.format("'%s' is not a valid number.", m));
+            }
         }
     }
 

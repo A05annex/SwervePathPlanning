@@ -1,0 +1,137 @@
+{
+  "description": "No description provided.",
+  "title": "untitled",
+  "speedMultiplier": 2.0,
+  "controlPoints": [
+    {
+      "field_dX": -0.03676981132075596,
+      "fieldY": 1.0972528301886815,
+      "field_dY": 1.9120301886792461,
+      "fieldX": 3.8762943396226412,
+      "fieldHeading": -0.01922839909970785,
+      "time": 0.0,
+      "field_dHeading": -0.0047423618649346504,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": -0.4044679245283014,
+      "fieldY": 2.0532679245283036,
+      "field_dY": 0.5515471698113217,
+      "fieldX": 3.765984905660377,
+      "fieldHeading": -0.02353963715873935,
+      "time": 1.0,
+      "field_dHeading": -0.0029972097483406345,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": -1.560541667866917,
+      "fieldY": 2.340549618320612,
+      "field_dY": -0.17009546305631495,
+      "fieldX": 3.0019236641221374,
+      "fieldHeading": -0.024677871369418094,
+      "time": 2.0,
+      "field_dHeading": 0.007615947164012495,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": -0.2520026386864478,
+      "fieldY": 2.512890566037738,
+      "field_dY": 0.29099607627826973,
+      "fieldX": 2.184883018867924,
+      "fieldHeading": -0.009692460496898451,
+      "time": 3.0,
+      "field_dHeading": 0.013572829253179952,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": -0.03676981132075596,
+      "fieldY": 3.4689056603773603,
+      "field_dY": 1.17663396226415,
+      "fieldX": 2.0929584905660374,
+      "fieldHeading": 0.0,
+      "time": 4.0,
+      "field_dHeading": 0.0010972563932210764,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.21142641509435478,
+      "fieldY": 4.406535849056606,
+      "field_dY": 0.22981132075473276,
+      "fieldX": 2.1481132075471696,
+      "fieldHeading": -0.0076974488728601305,
+      "time": 5.0,
+      "field_dHeading": -0.008870198613999798,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 1.544332075471699,
+      "fieldY": 4.719079245283021,
+      "field_dY": -0.03676981132075419,
+      "fieldX": 3.0122037735849054,
+      "fieldHeading": -0.016127633843635997,
+      "time": 6.0,
+      "field_dHeading": -0.004200246081418185,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.4412377358490547,
+      "fieldY": 4.4616905660377375,
+      "field_dY": -0.8089358490566045,
+      "fieldX": 3.8762943396226412,
+      "fieldHeading": -0.015334259929984103,
+      "time": 7.0,
+      "field_dHeading": -0.012273225897653298,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": -0.07353962264150837,
+      "fieldY": 3.5056754716981153,
+      "field_dY": -0.9192452830188671,
+      "fieldX": 3.9498339622641505,
+      "fieldHeading": -0.038442590021187446,
+      "time": 8.0,
+      "field_dHeading": 0.0049204556265827525,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": -0.22052694339623802,
+      "fieldY": 2.5920973358490746,
+      "field_dY": -0.23195316226418328,
+      "fieldX": 3.894633283018873,
+      "fieldHeading": -0.006387976972560917,
+      "time": 9.0,
+      "field_dHeading": 0.021143424511653096,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": -1.4340226415094346,
+      "fieldY": 2.3290415094339645,
+      "field_dY": 0.03676981132075419,
+      "fieldX": 3.0305886792452825,
+      "fieldHeading": 0.0,
+      "time": 10.0,
+      "field_dHeading": 0.003997809839308683,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": -0.4184588377358667,
+      "fieldY": 2.0164981132075486,
+      "field_dY": -0.29922353207551966,
+      "fieldX": 2.3687320754716974,
+      "fieldHeading": 8.807681898185057E-4,
+      "time": 11.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.03676981132075419,
+      "fieldY": 1.0972528301886815,
+      "field_dY": -1.1398641509433958,
+      "fieldX": 2.221652830188679,
+      "fieldHeading": 0.0,
+      "time": 12.0,
+      "field_dHeading": -9.688450088003564E-4,
+      "derivativesEdited": true
+    }
+  ]
+}

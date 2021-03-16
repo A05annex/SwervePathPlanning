@@ -1,0 +1,422 @@
+{
+  "title": "Barrel Racing 2020-2021",
+  "description": "The Infinite Recharge at Home field grid",
+  "components": [
+    {
+      "name": "marker",
+      "lineColor": "yellow",
+      "fillColor": "yellow",
+      "shapes": [
+        {
+          "type": "circle",
+          "center": [
+            0.0,
+            0.0
+          ],
+          "radius": 0.0508
+        }
+      ]
+    },
+    {
+      "name": "target",
+      "lineColor": "green",
+      "fillColor": "green",
+      "shapes": [
+        {
+          "type": "circle",
+          "center": [
+            0.0,
+            0.0
+          ],
+          "radius": 0.0508
+        }
+      ]
+    },
+    {
+      "name": "red zone",
+      "lineColor": "red-zone",
+      "fillColor": "red-zone",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [
+            1.524,
+            7.620
+          ],
+          "upper right": [
+            3.048,
+            9.144
+          ]
+        }
+      ]
+    },
+    {
+      "name": "green zone",
+      "lineColor": "green-zone",
+      "fillColor": "green-zone",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [
+            1.524,
+            0.0
+          ],
+          "upper right": [
+            3.048,
+            1.524
+          ]
+        }
+      ]
+    },
+    {
+      "name": "game grid",
+      "lineColor": "gray",
+      "fillColor": "gray",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [
+            0.759,
+            0.0
+          ],
+          "upper right": [
+            0.765,
+            9.144
+          ]
+        },
+        {
+          "type": "rect",
+          "lower left": [
+            1.521,
+            0.0
+          ],
+          "upper right": [
+            1.527,
+            9.144
+          ]
+        },
+        {
+          "type": "rect",
+          "lower left": [
+            2.283,
+            0.0
+          ],
+          "upper right": [
+            2.289,
+            9.144
+          ]
+        },
+        {
+          "type": "rect",
+          "lower left": [
+            3.045,
+            0.0
+          ],
+          "upper right": [
+            3.051,
+            9.144
+          ]
+        },
+        {
+          "type": "rect",
+          "lower left": [
+            3.807,
+            0.0
+          ],
+          "upper right": [
+            3.813,
+            9.144
+          ]
+        },
+        {
+          "type": "rect",
+          "lower left": [
+            0.0,
+            0.759
+          ],
+          "upper right": [
+            4.572,
+            0.765
+          ]
+        },
+        {
+          "type": "rect",
+          "lower left": [
+            0.0,
+            1.521
+          ],
+          "upper right": [
+            4.572,
+            1.527
+          ]
+        },
+        {
+          "type": "rect",
+          "lower left": [
+            0.0,
+            2.283
+          ],
+          "upper right": [
+            4.572,
+            2.289
+          ]
+        },
+        {
+          "type": "rect",
+          "lower left": [
+            0.0,
+            3.045
+          ],
+          "upper right": [
+            4.572,
+            3.051
+          ]
+        },
+        {
+          "type": "rect",
+          "lower left": [
+            0.0,
+            3.807
+          ],
+          "upper right": [
+            4.572,
+            3.813
+          ]
+        },
+        {
+          "type": "rect",
+          "lower left": [
+            0.0,
+            4.569
+          ],
+          "upper right": [
+            4.572,
+            4.575
+          ]
+        },
+        {
+          "type": "rect",
+          "lower left": [
+            0.0,
+            5.331
+          ],
+          "upper right": [
+            4.572,
+            5.337
+          ]
+        },
+        {
+          "type": "rect",
+          "lower left": [
+            0.0,
+            6.093
+          ],
+          "upper right": [
+            4.572,
+            6.099
+          ]
+        },
+        {
+          "type": "rect",
+          "lower left": [
+            0.0,
+            6.855
+          ],
+          "upper right": [
+            4.572,
+            6.861
+          ]
+        },
+        {
+          "type": "rect",
+          "lower left": [
+            0.0,
+            7.617
+          ],
+          "upper right": [
+            4.572,
+            7.623
+          ]
+        },
+        {
+          "type": "rect",
+          "lower left": [
+            0.0,
+            8.379
+          ],
+          "upper right": [
+            4.572,
+            8.385
+          ]
+        }
+      ]
+    }
+  ],
+  "field": {
+    "components": [
+      {
+        "component": "game grid"
+      },
+      {
+        "component": "green zone"
+      },
+      {
+        "component": "red zone"
+      },
+      {
+        "component": "marker",
+        "translate": [
+          0.762,
+          2.286
+        ]
+      },
+      {
+        "component": "marker",
+        "translate": [
+          0.762,
+          4.572
+        ]
+      },
+      {
+        "component": "marker",
+        "translate": [
+          0.762,
+          6.858
+        ]
+      },
+      {
+        "component": "marker",
+        "translate": [
+          1.524,
+          0.762
+        ]
+      },
+      {
+        "component": "marker",
+        "translate": [
+          1.524,
+          1.524
+        ]
+      },
+      {
+        "component": "marker",
+        "translate": [
+          1.524,
+          3.048
+        ]
+      },
+      {
+        "component": "marker",
+        "translate": [
+          1.524,
+          3.810
+        ]
+      },
+      {
+        "component": "marker",
+        "translate": [
+          1.524,
+          5.334
+        ]
+      },
+      {
+        "component": "marker",
+        "translate": [
+          1.524,
+          6.096
+        ]
+      },
+      {
+        "component": "marker",
+        "translate": [
+          1.524,
+          7.620
+        ]
+      },
+      {
+        "component": "marker",
+        "translate": [
+          1.524,
+          8.382
+        ]
+      },
+      {
+        "component": "marker",
+        "translate": [
+          3.048,
+          0.762
+        ]
+      },
+      {
+        "component": "marker",
+        "translate": [
+          3.048,
+          1.524
+        ]
+      },
+      {
+        "component": "marker",
+        "translate": [
+          4.572,
+          0.762
+        ]
+      },
+      {
+        "component": "marker",
+        "translate": [
+          4.572,
+          1.524
+        ]
+      },
+      {
+        "component": "marker",
+        "translate": [
+          3.048,
+          2.286
+        ]
+      },
+      {
+        "component": "marker",
+        "translate": [
+          3.048,
+          3.810
+        ]
+      },
+      {
+        "component": "marker",
+        "translate": [
+          3.048,
+          5.334
+        ]
+      },
+      {
+        "component": "marker",
+        "translate": [
+          3.048,
+          6.096
+        ]
+      },
+      {
+        "component": "marker",
+        "translate": [
+          3.048,
+          7.620
+        ]
+      },
+      {
+        "component": "marker",
+        "translate": [
+          3.048,
+          8.382
+        ]
+      },
+      {
+        "component": "marker",
+        "translate": [
+          3.810,
+          2.286
+        ]
+      }
+    ]
+  }
+}
