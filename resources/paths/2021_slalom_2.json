@@ -1,5 +1,5 @@
 {
-  "speedMultiplier": 1.0,
+  "speedMultiplier": 2.0,
   "description": "No description provided.",
   "title": "untitled",
   "controlPoints": [
@@ -45,8 +45,8 @@
     },
     {
       "field_dX": 0.0,
-      "fieldY": 2.9285042016806724,
-      "field_dY": 2.1055462184873956,
+      "fieldY": 3.048,
+      "field_dY": 1.524,
       "fieldX": 2.286,
       "fieldHeading": 0.0,
       "time": 4.0,
@@ -55,8 +55,8 @@
     },
     {
       "field_dX": 0.0,
-      "fieldY": 4.624638655462185,
-      "field_dY": 2.082151260504201,
+      "fieldY": 4.572,
+      "field_dY": 1.524,
       "fieldX": 2.286,
       "fieldHeading": 0.0,
       "time": 5.0,
@@ -65,8 +65,8 @@
     },
     {
       "field_dX": 0.0,
-      "fieldY": 6.100,
-      "field_dY": 1.123,
+      "fieldY": 6.096,
+      "field_dY": 1.524,
       "fieldX": 2.286,
       "fieldHeading": 0.0,
       "time": 6.0,
@@ -154,7 +154,7 @@
       "derivativesEdited": true
     },
     {
-      "field_dX": 0.480,
+      "field_dX": 0.48,
       "fieldY": 6.858,
       "field_dY": 0.0,
       "fieldX": 2.591,
@@ -164,80 +164,80 @@
       "derivativesEdited": true
     },
     {
-      "field_dX": 0.480,
+      "field_dX": 0.48,
       "fieldY": 6.858,
       "field_dY": 0.0,
       "fieldX": 3.505,
       "fieldHeading": 0.0,
       "time": 16.0,
       "field_dHeading": 0.0,
-      "derivativesEdited": false
+      "derivativesEdited": true
     },
     {
       "field_dX": 0.0,
-      "fieldY": 6.100,
-      "field_dY": -1.123,
-      "fieldX": 3.810,
+      "fieldY": 6.096,
+      "field_dY": -1.524,
+      "fieldX": 3.81,
       "fieldHeading": 0.0,
       "time": 17.0,
       "field_dHeading": 0.0,
-      "derivativesEdited": false
+      "derivativesEdited": true
     },
     {
       "field_dX": 0.0,
       "fieldY": 4.572,
-      "field_dY": -3.320914285714286,
-      "fieldX": 3.8066722689075636,
+      "field_dY": -1.524,
+      "fieldX": 3.81,
       "fieldHeading": 0.0,
       "time": 18.0,
       "field_dHeading": 0.0,
-      "derivativesEdited": false
-    },
-    {
-      "field_dX": -0.23862857142857144,
-      "fieldY": 2.530789915966386,
-      "field_dY": -1.958742857142858,
-      "fieldX": 3.794974789915967,
-      "fieldHeading": 0.0,
-      "time": 19.0,
-      "field_dHeading": 0.0,
-      "derivativesEdited": false
-    },
-    {
-      "field_dX": -1.0837714285714288,
-      "fieldY": 2.2500504201680664,
-      "field_dY": -0.23862857142857144,
-      "fieldX": 3.5259327731092442,
-      "fieldHeading": 0.0,
-      "time": 20.0,
-      "field_dHeading": 0.0,
-      "derivativesEdited": false
-    },
-    {
-      "field_dX": -1.0738285714285711,
-      "fieldY": 2.2500504201680664,
-      "field_dY": -0.3281142857142851,
-      "fieldX": 2.519949579831933,
-      "fieldHeading": 0.0,
-      "time": 21.0,
-      "field_dHeading": 0.0,
-      "derivativesEdited": false
-    },
-    {
-      "field_dX": -0.2187428571428567,
-      "fieldY": 1.864033613445378,
-      "field_dY": -1.421828571428571,
-      "fieldX": 2.2626050420168076,
-      "fieldHeading": 0.0,
-      "time": 22.0,
-      "field_dHeading": 0.0,
-      "derivativesEdited": false
+      "derivativesEdited": true
     },
     {
       "field_dX": 0.0,
-      "fieldY": 0.5773109243697476,
-      "field_dY": -1.497277310924371,
-      "fieldX": 2.2626050420168076,
+      "fieldY": 3.048,
+      "field_dY": -1.524,
+      "fieldX": 3.81,
+      "fieldHeading": 0.0,
+      "time": 19.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": -0.48,
+      "fieldY": 2.286,
+      "field_dY": 0.0,
+      "fieldX": 3.505,
+      "fieldHeading": 0.0,
+      "time": 20.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": -0.48,
+      "fieldY": 2.286,
+      "field_dY": 0.0,
+      "fieldX": 2.5976,
+      "fieldHeading": 0.0,
+      "time": 21.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.0,
+      "fieldY": 1.981,
+      "field_dY": -0.48,
+      "fieldX": 2.286,
+      "fieldHeading": 0.0,
+      "time": 22.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.0,
+      "fieldY": 1.033,
+      "field_dY": -0.1,
+      "fieldX": 2.286,
       "fieldHeading": 0.0,
       "time": 23.0,
       "field_dHeading": 0.0,
