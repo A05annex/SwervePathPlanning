@@ -1,0 +1,167 @@
+{
+  "speedMultiplier": 1.0,
+  "description": "2021 at home - slalom. This path was hand tuned using our best path design methods.",
+  "title": "2021 at home - slalom",
+  "controlPoints": [
+    {
+      "field_dX": 0.0,
+      "fieldY": 1.033,
+      "field_dY": 0.1,
+      "fieldX": 3.81,
+      "fieldHeading": 0.0,
+      "time": 0.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": -0.562,
+      "fieldY": 2.159,
+      "field_dY": 0.562,
+      "fieldX": 3.683,
+      "fieldHeading": 0.0,
+      "time": 1.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": -0.562,
+      "fieldY": 2.413,
+      "field_dY": 0.562,
+      "fieldX": 2.413,
+      "fieldHeading": 0.0,
+      "time": 2.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.0,
+      "fieldY": 3.810,
+      "field_dY": 1.524,
+      "fieldX": 2.186,
+      "fieldHeading": 0.0,
+      "time": 3.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.0,
+      "fieldY": 5.334,
+      "field_dY": 1.524,
+      "fieldX": 2.186,
+      "fieldHeading": 0.0,
+      "time": 4.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.562,
+      "fieldY": 6.731,
+      "field_dY": 0.562,
+      "fieldX": 2.413,
+      "fieldHeading": 0.0,
+      "time": 5.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.562,
+      "fieldY": 6.985,
+      "field_dY": 0.562,
+      "fieldX": 3.683,
+      "fieldHeading": 0.0,
+      "time": 6.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": -0.562,
+      "fieldY": 8.255,
+      "field_dY": 0.562,
+      "fieldX": 3.683,
+      "fieldHeading": 0.0,
+      "time": 7.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": -0.562,
+      "fieldY": 8.255,
+      "field_dY": -0.562,
+      "fieldX": 2.413,
+      "fieldHeading": 0.0,
+      "time": 8.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.562,
+      "fieldY": 6.985,
+      "field_dY": -0.562,
+      "fieldX": 2.413,
+      "fieldHeading": 0.0,
+      "time": 9.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.562,
+      "fieldY": 6.731,
+      "field_dY": -0.562,
+      "fieldX": 3.683,
+      "fieldHeading": 0.0,
+      "time": 10.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.0,
+      "fieldY": 5.334,
+      "field_dY": -1.524,
+      "fieldX": 3.91,
+      "fieldHeading": 0.0,
+      "time": 11.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.0,
+      "fieldY": 3.810,
+      "field_dY": -1.524,
+      "fieldX": 3.91,
+      "fieldHeading": 0.0,
+      "time": 12.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": -0.562,
+      "fieldY": 2.413,
+      "field_dY": -0.562,
+      "fieldX": 3.683,
+      "fieldHeading": 0.0,
+      "time": 13.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": -0.562,
+      "fieldY": 2.159,
+      "field_dY": -0.562,
+      "fieldX": 2.413,
+      "fieldHeading": 0.0,
+      "time": 14.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.0,
+      "fieldY": 0.5330748091603059,
+      "field_dY": -0.1,
+      "fieldX": 2.286,
+      "fieldHeading": 0.0,
+      "time": 15.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    }
+  ]
+}
