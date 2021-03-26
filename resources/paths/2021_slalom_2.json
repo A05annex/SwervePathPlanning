@@ -1,7 +1,7 @@
 {
   "speedMultiplier": 2.0,
-  "description": "No description provided.",
-  "title": "untitled",
+  "description": "Hand edited slalom using 8 control points to circle a pylon.",
+  "title": "2021 at Home; Improved Slalom",
   "controlPoints": [
     {
       "field_dX": 0.0,
