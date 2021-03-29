@@ -1,7 +1,7 @@
 {
   "speedMultiplier": 2.0,
-  "description": "Hand edited slalom course, 8 control points per pylon circle",
-  "title": "slalom-2",
+  "description": "Hand edited slalom using 8 control points to circle a pylon.",
+  "title": "2021 at Home; Improved Slalom",
   "controlPoints": [
     {
       "field_dX": 0.0,
