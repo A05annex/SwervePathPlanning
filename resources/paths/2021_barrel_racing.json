@@ -1,1 +1,177 @@
-{"speedMultiplier":0.6,"description":"No description provided.","title":"untitled","controlPoints":[{"field_dX":-0.11877127855156606,"fieldY":1.0095580865603662,"field_dY":2.9408393562570905,"fieldX":2.374783599088839,"fieldHeading":0.0,"time":0.0,"field_dHeading":0.0,"derivativesEdited":false},{"field_dX":-0.0188665148063774,"fieldY":2.907307517084285,"field_dY":2.943176309794989,"fieldX":2.3303917995444197,"fieldHeading":0.0,"time":1.0,"field_dHeading":0.0,"derivativesEdited":false},{"field_dX":0.5105056947608233,"fieldY":4.472118451025059,"field_dY":0.5770933940774476,"fieldX":2.35258769931663,"fieldHeading":0.0,"time":2.0,"field_dHeading":0.0,"derivativesEdited":true},{"field_dX":0.46611389521640234,"fieldY":4.461020501138955,"field_dY":-0.7324646924829157,"fieldX":3.717635535307518,"fieldHeading":0.0,"time":3.0,"field_dHeading":0.0,"derivativesEdited":true},{"field_dX":-0.4883097949886128,"fieldY":3.1736583143507993,"field_dY":-0.5548974943052407,"fieldX":3.684341685649204,"fieldHeading":0.0,"time":4.0,"field_dHeading":0.0,"derivativesEdited":true},{"field_dX":-0.46611389521640234,"fieldY":3.1403644646924853,"field_dY":0.5992892938496581,"fieldX":2.385881548974944,"fieldHeading":0.0,"time":5.0,"field_dHeading":0.0,"derivativesEdited":true},{"field_dX":-0.11319908883826892,"fieldY":5.44873804100228,"field_dY":3.169574487471526,"fieldX":2.35258769931663,"fieldHeading":0.0,"time":6.0,"field_dHeading":0.0,"derivativesEdited":false},{"field_dX":-0.6214851936218686,"fieldY":6.8692756264236925,"field_dY":0.5770933940774476,"fieldX":2.2527061503416865,"fieldHeading":0.0,"time":7.0,"field_dHeading":0.0,"derivativesEdited":true},{"field_dX":-0.6880728929384965,"fieldY":6.791589977220959,"field_dY":-0.6436810933940773,"fieldX":0.8321685649202735,"fieldHeading":0.0,"time":8.0,"field_dHeading":0.0,"derivativesEdited":true},{"field_dX":0.48830979498861105,"fieldY":5.348856492027338,"field_dY":-0.3773302961275622,"fieldX":0.7877767653758552,"fieldHeading":0.0,"time":9.0,"field_dHeading":0.0,"derivativesEdited":true},{"field_dX":0.6880728929384965,"fieldY":5.404346241457861,"field_dY":0.48830979498860927,"fieldX":2.2083143507972673,"fieldHeading":0.0,"time":10.0,"field_dHeading":0.0,"derivativesEdited":true},{"field_dX":0.48830979498860927,"fieldY":6.924765375854216,"field_dY":0.3995261958997727,"fieldX":3.7065375854214127,"fieldHeading":0.0,"time":11.0,"field_dHeading":0.0,"derivativesEdited":true},{"field_dX":-0.5992892938496581,"fieldY":8.334205011389525,"field_dY":0.44391799544419186,"fieldX":3.762027334851937,"fieldHeading":0.0,"time":12.0,"field_dHeading":0.0,"derivativesEdited":true},{"field_dX":-0.5992892938496599,"fieldY":8.25651936218679,"field_dY":-0.7768564920273331,"fieldX":2.3969794988610493,"fieldHeading":0.0,"time":13.0,"field_dHeading":0.0,"derivativesEdited":true},{"field_dX":-0.06658769931662789,"fieldY":6.4253576309795015,"field_dY":-2.752291571753986,"fieldX":2.341489749430525,"fieldHeading":0.0,"time":14.0,"field_dHeading":0.0,"derivativesEdited":true},{"field_dX":-0.022195899772208705,"fieldY":4.0392984054669725,"field_dY":-3.0408382687927116,"fieldX":2.3303917995444197,"fieldHeading":0.0,"time":15.0,"field_dHeading":0.0,"derivativesEdited":true},{"field_dX":0.13317539863325578,"fieldY":1.7975125284738063,"field_dY":-1.8644555808656023,"fieldX":2.2970979498861057,"fieldHeading":0.0,"time":16.0,"field_dHeading":0.0,"derivativesEdited":true}]}
+{
+  "speedMultiplier": 0.6,
+  "description": "No description provided.",
+  "title": "untitled",
+  "controlPoints": [
+    {
+      "field_dX": -0.11877127855156606,
+      "fieldY": 1.0095580865603662,
+      "field_dY": 2.9408393562570905,
+      "fieldX": 2.374783599088839,
+      "fieldHeading": 0.0,
+      "time": 0.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": false
+    },
+    {
+      "field_dX": -0.0188665148063774,
+      "fieldY": 2.907307517084285,
+      "field_dY": 2.943176309794989,
+      "fieldX": 2.3303917995444197,
+      "fieldHeading": 0.0,
+      "time": 1.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": false
+    },
+    {
+      "field_dX": 0.5105056947608233,
+      "fieldY": 4.472118451025059,
+      "field_dY": 0.5770933940774476,
+      "fieldX": 2.35258769931663,
+      "fieldHeading": 0.0,
+      "time": 2.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.46611389521640234,
+      "fieldY": 4.461020501138955,
+      "field_dY": -0.7324646924829157,
+      "fieldX": 3.717635535307518,
+      "fieldHeading": 0.0,
+      "time": 3.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": -0.4883097949886128,
+      "fieldY": 3.1736583143507993,
+      "field_dY": -0.5548974943052407,
+      "fieldX": 3.684341685649204,
+      "fieldHeading": 0.0,
+      "time": 4.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": -0.46611389521640234,
+      "fieldY": 3.1403644646924853,
+      "field_dY": 0.5992892938496581,
+      "fieldX": 2.385881548974944,
+      "fieldHeading": 0.0,
+      "time": 5.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": -0.11319908883826892,
+      "fieldY": 5.44873804100228,
+      "field_dY": 3.169574487471526,
+      "fieldX": 2.35258769931663,
+      "fieldHeading": 0.0,
+      "time": 6.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": false
+    },
+    {
+      "field_dX": -0.6214851936218686,
+      "fieldY": 6.8692756264236925,
+      "field_dY": 0.5770933940774476,
+      "fieldX": 2.2527061503416865,
+      "fieldHeading": 0.0,
+      "time": 7.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": -0.6880728929384965,
+      "fieldY": 6.791589977220959,
+      "field_dY": -0.6436810933940773,
+      "fieldX": 0.8321685649202735,
+      "fieldHeading": 0.0,
+      "time": 8.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.48830979498861105,
+      "fieldY": 5.348856492027338,
+      "field_dY": -0.3773302961275622,
+      "fieldX": 0.7877767653758552,
+      "fieldHeading": 0.0,
+      "time": 9.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.6880728929384965,
+      "fieldY": 5.404346241457861,
+      "field_dY": 0.48830979498860927,
+      "fieldX": 2.2083143507972673,
+      "fieldHeading": 0.0,
+      "time": 10.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.48830979498860927,
+      "fieldY": 6.924765375854216,
+      "field_dY": 0.3995261958997727,
+      "fieldX": 3.7065375854214127,
+      "fieldHeading": 0.0,
+      "time": 11.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": -0.5992892938496581,
+      "fieldY": 8.334205011389525,
+      "field_dY": 0.44391799544419186,
+      "fieldX": 3.762027334851937,
+      "fieldHeading": 0.0,
+      "time": 12.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": -0.5992892938496599,
+      "fieldY": 8.25651936218679,
+      "field_dY": -0.7768564920273331,
+      "fieldX": 2.3969794988610493,
+      "fieldHeading": 0.0,
+      "time": 13.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": -0.06658769931662789,
+      "fieldY": 6.4253576309795015,
+      "field_dY": -2.752291571753986,
+      "fieldX": 2.341489749430525,
+      "fieldHeading": 0.0,
+      "time": 14.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": -0.022195899772208705,
+      "fieldY": 4.0392984054669725,
+      "field_dY": -3.0408382687927116,
+      "fieldX": 2.3303917995444197,
+      "fieldHeading": 0.0,
+      "time": 15.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.13317539863325578,
+      "fieldY": 1.7975125284738063,
+      "field_dY": -1.8644555808656023,
+      "fieldX": 2.2970979498861057,
+      "fieldHeading": 0.0,
+      "time": 16.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    }
+  ]
+}

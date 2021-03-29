@@ -1,7 +1,7 @@
 {
   "speedMultiplier": 2.0,
-  "description": "No description provided.",
-  "title": "untitled",
+  "description": "Hand edited slalom course, 8 control points per pylon circle",
+  "title": "slalom-2",
   "controlPoints": [
     {
       "field_dX": 0.0,
