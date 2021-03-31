@@ -31,6 +31,7 @@ public class PathPlanner extends JFrame implements ActionListener, MenuListener,
     // - file IO for the path
     private final JMenuItem m_menuPathNewPath;          // the menu start a new path
     private final JMenuItem m_menuPathLoadPath;         // the menu file-load path button
+    private final JMenuItem m_menuPathReloadPath;       // the menu file-reload path button
     private final JMenuItem m_menuPathSavePath;         // the menu path save button
     private final JMenuItem m_menuPathSaveAsPath;       // the menu path save-as button
     // - animating the path
@@ -103,6 +104,7 @@ public class PathPlanner extends JFrame implements ActionListener, MenuListener,
         m_menuPath.addMenuListener(this);
         m_menuPathNewPath = createMenuItem(m_menuPath, "New ...", this);
         m_menuPathLoadPath = createMenuItem(m_menuPath, "Load ...", this);
+        m_menuPathReloadPath = createMenuItem(m_menuPath, "Reload", this);
         m_menuPathSavePath = createMenuItem(m_menuPath, "Save", this);
         m_menuPathSaveAsPath = createMenuItem(m_menuPath, "Save As ...", this);
         m_menuPath.addSeparator();
@@ -219,6 +221,7 @@ public class PathPlanner extends JFrame implements ActionListener, MenuListener,
         if (e.getSource() == m_menuPath) {
             //enable-disable before showing the menu
             System.out.println("Path Menu enable/disable");
+            m_menuPathReloadPath.setEnabled(null != m_canvas.getPathFile());
             m_menuPathSavePath.setEnabled(null != m_canvas.getPathFile());
         }
     }
@@ -241,6 +244,8 @@ public class PathPlanner extends JFrame implements ActionListener, MenuListener,
             loadGameField();
         } else if (src == m_menuPathLoadPath) {
             m_canvas.loadPath();
+        } else if (src == m_menuPathReloadPath) {
+            m_canvas.reloadPath();
         } else if (src == m_menuContextLoadRobot) {
             loadRobot();
         } else if (src == m_menuPathSavePath) {

@@ -690,6 +690,7 @@ public class PathCanvas extends Canvas implements ActionListener {
     public void clearPath() {
         m_path.clearPath();
         setExtendMode();
+        m_pathFile = null;
         m_modifiedSinceSave = true;
         repaint();
     }
@@ -713,6 +714,17 @@ public class PathCanvas extends Canvas implements ActionListener {
         } else {
             System.out.println("Load path command cancelled by user.");
         }
+        setEditMode();
+        repaint();
+    }
+
+    /**
+     * The menu action to reload a path. Very useful if you are hand editing a path.
+     */
+    public void reloadPath() {
+        System.out.println("Reloading path from: " + m_pathFile.getAbsolutePath());
+        m_path.loadPath(m_pathFile.getAbsolutePath());
+        m_modifiedSinceSave = false;
         setEditMode();
         repaint();
     }

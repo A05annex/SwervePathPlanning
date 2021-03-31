@@ -1,5 +1,5 @@
 {
-  "speedMultiplier": 1.6,
+  "speedMultiplier": 1.55,
   "description": "2021 at home - barrel racing. This path was hand tuned using 4 points per pylon circle.",
   "title": "2021 at home - barrel racing",
   "controlPoints": [
@@ -25,8 +25,8 @@
     },
     {
       "field_dX": 0.895,
-      "fieldY": 4.235,
-      "field_dY": 1.195,
+      "fieldY": 4.305,
+      "field_dY": 1.300,
       "fieldX": 2.286,
       "fieldHeading": 0.0,
       "time": 2.0,
@@ -34,9 +34,9 @@
       "derivativesEdited": true
     },
     {
-      "field_dX": 0.562,
+      "field_dX": 0.65,
       "fieldY": 4.445,
-      "field_dY": -0.562,
+      "field_dY": -0.65,
       "fieldX": 3.683,
       "fieldHeading": 0.0,
       "time": 3.0,
@@ -44,9 +44,9 @@
       "derivativesEdited": true
     },
     {
-      "field_dX": -0.562,
+      "field_dX": -0.65,
       "fieldY": 3.175,
-      "field_dY": -0.562,
+      "field_dY": -0.65,
       "fieldX": 3.683,
       "fieldHeading": 0.0,
       "time": 4.0,
@@ -55,7 +55,7 @@
     },
     {
       "field_dX": -0.895,
-      "fieldY": 3.285,
+      "fieldY": 3.215,
       "field_dY": 0.895,
       "fieldX": 2.286,
       "fieldHeading": 0.0,
@@ -75,7 +75,7 @@
     },
     {
       "field_dX": -0.895,
-      "fieldY": 6.621,
+      "fieldY": 6.691,
       "field_dY": 0.895,
       "fieldX": 2.286,
       "fieldHeading": 0.0,
@@ -84,9 +84,9 @@
       "derivativesEdited": true
     },
     {
-      "field_dX": -0.562,
+      "field_dX": -0.65,
       "fieldY": 6.731,
-      "field_dY": -0.562,
+      "field_dY": -0.65,
       "fieldX": 0.889,
       "fieldHeading": 0.0,
       "time": 8.0,
@@ -94,9 +94,9 @@
       "derivativesEdited": true
     },
     {
-      "field_dX": 0.562,
-      "fieldY": 5.461,
-      "field_dY": -0.562,
+      "field_dX": 0.70,
+      "fieldY": 5.450,
+      "field_dY": -0.70,
       "fieldX": 0.889,
       "fieldHeading": 0.0,
       "time": 9.0,
@@ -104,19 +104,19 @@
       "derivativesEdited": true
     },
     {
-      "field_dX": 1.0,
+      "field_dX": 1.1,
       "fieldY": 5.594,
-      "field_dY": 1.0,
-      "fieldX": 2.286,
+      "field_dY": 1.1,
+      "fieldX": 2.386,
       "fieldHeading": 0.0,
       "time": 10.0,
       "field_dHeading": 0.0,
       "derivativesEdited": true
     },
     {
-      "field_dX": 1.0,
-      "fieldY": 6.858,
-      "field_dY": 1.0,
+      "field_dX": 1.1,
+      "fieldY": 6.758,
+      "field_dY": 1.1,
       "fieldX": 3.550,
       "fieldHeading": 0.0,
       "time": 11.0,
@@ -124,9 +124,9 @@
       "derivativesEdited": true
     },
     {
-      "field_dX": -0.562,
-      "fieldY": 8.225,
-      "field_dY": 0.562,
+      "field_dX": -0.75,
+      "fieldY": 8.275,
+      "field_dY": 0.75,
       "fieldX": 3.683,
       "fieldHeading": 0.0,
       "time": 12.0,
@@ -135,8 +135,8 @@
     },
     {
       "field_dX": -0.900,
-      "fieldY": 8.068,
-      "field_dY": -1.300,
+      "fieldY": 8.118,
+      "field_dY": -1.400,
       "fieldX": 2.286,
       "fieldHeading": 0.0,
       "time": 13.0,
@@ -144,40 +144,40 @@
       "derivativesEdited": true
     },
     {
-      "field_dX": 0.0,
+      "field_dX": 0.1,
       "fieldY": 6.501,
       "field_dY": -1.967,
-      "fieldX": 2.286,
+      "fieldX": 2.386,
       "fieldHeading": 0.0,
       "time": 14.0,
-      "field_dHeading": -0.0021825282264682764,
+      "field_dHeading": 0.0,
       "derivativesEdited": true
     },
     {
-      "field_dX": 0.0,
+      "field_dX": -0.1,
       "fieldY": 4.534,
       "field_dY": -1.967,
-      "fieldX": 2.286,
-      "fieldHeading": -0.003968233139033229,
+      "fieldX": 2.186,
+      "fieldHeading": 0.0,
       "time": 15.0,
       "field_dHeading": 0.0,
       "derivativesEdited": true
     },
     {
-      "field_dX": 0.0,
+      "field_dX": -0.05,
       "fieldY": 2.567,
       "field_dY": -1.967,
-      "fieldX": 2.286,
+      "fieldX": 2.086,
       "fieldHeading": 0.0,
       "time": 16.0,
-      "field_dHeading": 0.0021825282264682764,
+      "field_dHeading": 0.0,
       "derivativesEdited": true
     },
     {
-      "field_dX": 0.0,
-      "fieldY": 0.800,
-      "field_dY": -0.5,
-      "fieldX": 2.286,
+      "field_dX": 0.00,
+      "fieldY": 1.033,
+      "field_dY": -0.2,
+      "fieldX": 2.086,
       "fieldHeading": 0.0,
       "time": 17.0,
       "field_dHeading": 0.0,
