@@ -1,5 +1,6 @@
 package frc6831.planner;
 
+import org.a05annex.util.Utl;
 import org.a05annex.util.geo2d.KochanekBartelsSpline;
 import org.jetbrains.annotations.NotNull;
 
@@ -239,6 +240,13 @@ public class PathCanvas extends Canvas implements ActionListener {
             }
         }
 
+        /**
+         * Display the right mouse context menu. Appropriately enable/disable menu items based on the
+         * current context.
+         *
+         * @param e The mouse event requesting this display - really used to determine where the context menu
+         *          will be displayed.
+         */
         private void displayContextMenu(MouseEvent e) {
             // check the current state of the path and editing state and enable choices that are valid in the
             // the current state; disable choices that are invalid in the current state.
@@ -248,8 +256,8 @@ public class PathCanvas extends Canvas implements ActionListener {
             boolean controlPointSelected = (null != m_overControlPoint) && (m_overWhat == OVER_CONTROL_POINT);
             m_menuItemDelete.setEnabled(controlPointSelected);
             m_menuItemResetTangent.setEnabled(controlPointSelected && m_overControlPoint.getDerivativesManuallyEdited());
-            m_menuItemSetTime.setEnabled(false);
-            m_menuItemInfo.setEnabled(false);
+            m_menuItemSetTime.setEnabled(controlPointSelected && (null != m_overControlPoint.getLast()));
+            m_menuItemInfo.setEnabled(controlPointSelected);
 
             m_menuItemInsert.setEnabled((null != m_overPathPoint) && (m_overWhat == OVER_PATH_POINT));
 
@@ -382,12 +390,112 @@ public class PathCanvas extends Canvas implements ActionListener {
             m_modifiedSinceSave = true;
             repaint();
         } else if (src == m_menuItemSetTime) {
-
+            controlPointTimeDialog();
+            repaint();
         } else if (src == m_menuItemInfo) {
-
+            controlPointDialog();
+            repaint();
         }
     }
 
+    void controlPointTimeDialog() {
+        JPanel p = new JPanel(new BorderLayout(5, 5));
+
+        JPanel labels = new JPanel(new GridLayout(0, 1, 2, 2));
+        labels.add(new JLabel("Time", SwingConstants.TRAILING));
+        p.add(labels, BorderLayout.LINE_START);
+
+        JPanel controls = new JPanel(new GridLayout(0, 1, 2, 2));
+        JTextField time = new JTextField(String.format("%.2f", m_overControlPoint.getTime()));
+        controls.add(time);
+        p.add(controls, BorderLayout.CENTER);
+
+        int status = JOptionPane.showConfirmDialog(
+                this, p, "Control Point Time:", JOptionPane.OK_CANCEL_OPTION);
+        if (status == JOptionPane.OK_OPTION) {
+            try {
+                m_overControlPoint.setTime(Utl.clip(Double.valueOf(time.getText()),
+                        m_overControlPoint.getLast().getTime() + 0.1,
+                        (null == m_overControlPoint.getNext()) ?
+                                Double.MAX_VALUE : (m_overControlPoint.getNext().getTime() - 0.1)),
+                        true);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this,
+                        String.format("'%s' is not a valid number.", time.getText()));
+            }
+        }
+
+    }
+
+    void controlPointDialog() {
+        JPanel p = new JPanel(new BorderLayout(5, 5));
+
+        JPanel labels = new JPanel(new GridLayout(0, 1, 2, 2));
+        JLabel labelX = loadAndAddLabel(labels, "Field X");
+        JLabel labelY = loadAndAddLabel(labels, "Field X");
+        JLabel label_dX = loadAndAddLabel(labels, "Field dX");
+        JLabel label_dY = loadAndAddLabel(labels, "Field dY");
+        JLabel labelHeading = loadAndAddLabel(labels, "Heading");
+        JLabel labelTime = loadAndAddLabel(labels, "Time");
+        labels.add(new JLabel("Time", SwingConstants.TRAILING));
+        p.add(labels, BorderLayout.LINE_START);
+
+        JPanel controls = new JPanel(new GridLayout(0, 1, 2, 2));
+        JTextField fieldX = loadAndAddField(controls, m_overControlPoint.getFieldX(),"%.3f");
+        JTextField fieldY = loadAndAddField(controls, m_overControlPoint.getFieldY(),"%.3f");
+        JTextField field_dX = loadAndAddField(controls, m_overControlPoint.getRawTangentX(),"%.3f");
+        JTextField field_dY = loadAndAddField(controls, m_overControlPoint.getRawTangentY(),"%.3f");
+        JTextField heading = loadAndAddField(controls, m_overControlPoint.getFieldHeading(),"%.3f");
+        JTextField time = loadAndAddField(controls, m_overControlPoint.getTime(),"%.2f");controls.add(time);
+
+        p.add(controls, BorderLayout.CENTER);
+
+        int status = JOptionPane.showConfirmDialog(
+                this, p, "Control Point Info:", JOptionPane.OK_CANCEL_OPTION);
+        if (status == JOptionPane.OK_OPTION) {
+            m_overControlPoint.setFieldLocation(
+                    getDoubleFromTextField(fieldX, labelX, m_overControlPoint.getFieldX()),
+                    getDoubleFromTextField(fieldY, labelY, m_overControlPoint.getFieldY())
+            );
+            m_overControlPoint.setTangent(
+                    getDoubleFromTextField(field_dX, label_dX, m_overControlPoint.getRawTangentX()),
+                    getDoubleFromTextField(field_dY, label_dY, m_overControlPoint.getRawTangentY())
+            );
+            m_overControlPoint.setFieldHeading(
+                    getDoubleFromTextField(heading, labelHeading, m_overControlPoint.getFieldHeading())
+            );
+            if (m_overControlPoint.getLast() != null) {
+                m_overControlPoint.setTime(Utl.clip(
+                        getDoubleFromTextField(time, labelTime, m_overControlPoint.getTime()),
+                        m_overControlPoint.getLast().getTime() + 0.1,
+                        (null == m_overControlPoint.getNext()) ?
+                                Double.MAX_VALUE : (m_overControlPoint.getNext().getTime() - 0.1)),
+                        true);
+            }
+        }
+    }
+
+    JLabel loadAndAddLabel(JPanel labels, String name) {
+        JLabel label = new JLabel(name, SwingConstants.TRAILING);
+        labels.add(label);
+        return label;
+    }
+    JTextField loadAndAddField(JPanel controls, double value, String format) {
+        String str = String.format(format, value);
+        JTextField field = new JTextField(str);
+        controls.add(field);
+        return field;
+    }
+
+    Double getDoubleFromTextField(JTextField field, JLabel label, double defaultValue) {
+        try {
+            return Double.valueOf(field.getText());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this,
+                    String.format("In '%s': '%s' is not a valid number.", field.getText()));
+        }
+        return defaultValue;
+    }
     /**
      * This override does not do anything other than call {@link #paint(Graphics)}. The overridden method assumed
      * the update was drawing to the displayed video buffer, so it cleared the buffer and then drew the new content,
@@ -478,7 +586,7 @@ public class PathCanvas extends Canvas implements ActionListener {
             g2d.drawString(
                     String.format("angular vel = %.3f", m_currentPathPoint.speedRotation), 10, 65);
             boolean tooFast = !m_robot.canRobotAchieve(m_currentPathPoint.speedForward,
-                    m_currentPathPoint.speedStrafe,m_currentPathPoint.speedRotation);
+                    m_currentPathPoint.speedStrafe, m_currentPathPoint.speedRotation);
             System.out.printf("%10.3f, %10.3f, %10.3f, %10.3f      %b %n",
                     m_currentPathTime, m_currentPathPoint.speedForward,
                     m_currentPathPoint.speedStrafe, m_currentPathPoint.speedRotation, tooFast);
@@ -512,7 +620,7 @@ public class PathCanvas extends Canvas implements ActionListener {
             lastPt = thisPt;
             thisPathPoint = pathPoint;
             boolean tooFast = !m_robot.canRobotAchieve(pathPoint.speedForward,
-                    pathPoint.speedStrafe,pathPoint.speedRotation);
+                    pathPoint.speedStrafe, pathPoint.speedRotation);
 
             g2d.setPaint(isRobotInside(pathPoint.fieldPt, pathPoint.fieldHeading) ?
                     (tooFast ? Color.RED : Color.WHITE) : Color.ORANGE);
