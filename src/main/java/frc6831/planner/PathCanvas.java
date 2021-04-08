@@ -437,7 +437,6 @@ public class PathCanvas extends Canvas implements ActionListener {
         JLabel label_dY = loadAndAddLabel(labels, "Field dY");
         JLabel labelHeading = loadAndAddLabel(labels, "Heading");
         JLabel labelTime = loadAndAddLabel(labels, "Time");
-        labels.add(new JLabel("Time", SwingConstants.TRAILING));
         p.add(labels, BorderLayout.LINE_START);
 
         JPanel controls = new JPanel(new GridLayout(0, 1, 2, 2));
