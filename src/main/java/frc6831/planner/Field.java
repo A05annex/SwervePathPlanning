@@ -163,32 +163,16 @@ public class Field {
      *
      */
     public static class MinMax {
-        protected double m_minX;
-        protected double m_minY;
-        protected double m_maxX;
-        protected double m_maxY;
+        public final double m_minX;
+        public final double m_minY;
+        public final double m_maxX;
+        public final double m_maxY;
 
         public MinMax(double minX, double minY, double maxX, double maxY) {
             m_minX = minX;
             m_minY = minY;
             m_maxX = maxX;
             m_maxY = maxY;
-        }
-
-        public double getMinX() {
-            return m_minX;
-        }
-
-        public double getMinY() {
-            return m_minY;
-        }
-
-        public double getMaxX() {
-            return m_maxX;
-        }
-
-        public double getMaxY() {
-            return m_maxY;
         }
     }
 
@@ -242,7 +226,7 @@ public class Field {
 
     private static class FieldRect extends FieldShape {
         Point2D m_LL;
-        Point2D m_UR;
+        final Point2D m_UR;
 
         FieldRect(JSONObject shapeDesc) {
             m_LL = parsePoint(shapeDesc, RECT_LOWER_LEFT);
@@ -283,8 +267,8 @@ public class Field {
     }
 
     private static class FieldPolygon extends FieldShape {
-        Point2D[] m_pts;
-        Point2D[] m_xfmPts;
+        final Point2D[] m_pts;
+        final Point2D[] m_xfmPts;
 
         FieldPolygon(JSONObject shapeDesc) {
             JSONArray ptList = getJSONArray(shapeDesc, POINTS);
@@ -373,9 +357,9 @@ public class Field {
      * optionally alliance color coded.
      */
     class FieldDraw {
-        FieldComponent m_component;
-        AffineTransform m_xfm;
-        Color m_allianceColor;
+        final FieldComponent m_component;
+        final AffineTransform m_xfm;
+        final Color m_allianceColor;
 
         public FieldDraw(FieldComponent component, AffineTransform xfm, Color allianceColor) {
             m_component = component;
@@ -587,7 +571,7 @@ public class Field {
      * @return {@code false} if any point tests closer than {@code tolerance} to the field
      * boundary, {@code true} otherwise.
      */
-    public boolean isInsideField(@NotNull Point2D pts[], double tolerance) {
+    public boolean isInsideField(@NotNull Point2D[] pts, double tolerance) {
         for (Point2D pt : pts) {
             for (Plane2d plane : fieldPlanes[useField]) {
                 if (!plane.isIn(pt, tolerance)) {

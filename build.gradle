@@ -7,9 +7,7 @@ repositories {
 }
 
 dependencies {
-
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-//    implementation 'org.a05annex:a05annexUtil:0.8.6'
+    implementation 'org.a05annex:a05annexUtil:0.8.7'
     implementation 'org.jetbrains:annotations:17.0.0'
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
     implementation 'net.sourceforge.argparse4j:argparse4j:0.8.1'

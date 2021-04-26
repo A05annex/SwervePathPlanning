@@ -262,7 +262,7 @@ public class PathPlanner extends JFrame implements ActionListener, MenuListener,
             String m = JOptionPane.showInputDialog(this, "Speed Multiplier:",
                     String.format("%.2f", m_canvas.getPath().getSpeedMultiplier()));
             try {
-                m_canvas.getPath().setSpeedMultiplier(Utl.clip(Double.valueOf(m), 0.1, 5.0));
+                m_canvas.getPath().setSpeedMultiplier(Utl.clip(Double.parseDouble(m), 0.1, 5.0));
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(this, String.format("'%s' is not a valid number.", m));
             }
