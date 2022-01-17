@@ -56,15 +56,15 @@ public class Field {
     private static final String ROTATE = "rotate";
 
     // -------------------------------------------------------------------------------------------
-    // The default standard field axes and outline
-    private final double X_AXIS_MIN = -4.5;
-    private final double X_AXIS_MAX = 4.5;
-    private final double Y_AXIS_MIN = -8.5;
-    private final double Y_AXIS_MAX = 8.5;
-    private final double X_FIELD_MIN = -4.105;
-    private final double X_FIELD_MAX = 4.105;
-    private final double Y_FIELD_MIN = -7.99;
-    private final double Y_FIELD_MAX = 7.99;
+    // The default standard field axes and outline (2022 field)
+    private final double X_AXIS_MIN = -4.6;
+    private final double X_AXIS_MAX = 4.6;
+    private final double Y_AXIS_MIN = -8.6;
+    private final double Y_AXIS_MAX = 8.6;
+    private final double X_FIELD_MIN = -4.115;
+    private final double X_FIELD_MAX = 4.115;
+    private final double Y_FIELD_MIN = -8.23;
+    private final double Y_FIELD_MAX = 8.23;
 
     // -------------------------------------------------------------------------------------------
     // The 2021 at home field axes and outline

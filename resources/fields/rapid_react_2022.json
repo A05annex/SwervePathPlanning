@@ -1,0 +1,159 @@
+{
+  "title": "Infinite Recharge 2019-2020",
+  "description": "The Infinite Recharge arena with only start lines, trenches, pickup, and scoring.",
+  "components": [
+    {
+      "name": "cargo",
+      "lineColor": "alliance",
+      "fillColor": "alliance",
+      "shapes": [
+        {
+          "type": "circle",
+          "center": [0.0, 0.0],
+          "radius": 0.2413
+        }
+      ]
+    },
+    {
+      "name": "terminal",
+      "lineColor": "gray",
+      "fillColor": "gray",
+      "shapes": [
+        {
+          "type": "polygon",
+          "points": [
+            [-4.115, 6.513],
+            [-2.3687, 8.23],
+            [-2.0454, 8.23],
+            [-4.115,6.1897]
+          ]
+        }
+      ]
+    },
+    {
+      "name": "hangar",
+      "lineColor": "alliance",
+      "fillColor": "alliance",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [1.165, 4.960],
+          "upper right": [4.115, 5.0108]
+        },
+        {
+          "type": "rect",
+          "lower left": [1.165, 4.960],
+          "upper right": [1.2158, 8.23]
+        }
+      ]
+    },
+    {
+      "name": "centerline",
+      "lineColor": "white",
+      "fillColor": "white",
+      "shapes": [
+        {
+          "type": "polygon",
+          "points": [
+            [-4.115,-1.8043 ],
+            [4.115,1.8599],
+            [4.115,1.8043],
+            [-4.115,-1.8599]
+          ]
+        }
+      ]
+    },
+    {
+      "name": "lowerHub",
+      "lineColor": "gray",
+      "fillColor": "dark-gray",
+      "shapes": [
+        {
+          "type": "polygon",
+          "points": [
+            [-1.36, 0.1928],
+            [-1.02, 0.1928],
+            [-0.1928, 1.02],
+            [-0.1928, 1.36],
+            [0.1928, 1.36],
+            [0.1928, 1.02],
+            [1.02, 0.1928],
+            [1.36, 0.1928],
+            [1.36,-0.1928],
+            [1.02,-0.1928],
+            [0.1928, -1.02],
+            [0.1928, -1.36],
+            [-0.1928, -1.36],
+            [-0.1928, -1.02],
+            [-1.02, -0.1928],
+            [-1.36,-0.1928]
+          ]
+        }
+      ]
+    },
+    {
+      "name": "tarmac",
+      "lineColor": "alliance",
+      "fillColor": "alliance",
+      "shapes": [
+        {
+          "type": "polygon",
+          "points": [
+            [0.1928, 1.02],
+            [0.1928, 2.9268],
+            [2.1265, 2.1265],
+            [2.9268, 0.1928],
+            [1.02, 0.1928]
+          ]
+        }
+      ]
+    }
+  ],
+  "field": {
+    "components": [
+      {
+        "component": "centerline"
+      },
+      {
+        "component": "terminal"
+      },
+      {
+        "component": "terminal",
+        "rotate": 3.1416
+      },
+      {
+        "component": "hangar",
+        "alliance": "blue"
+      },
+      {
+        "component": "hangar",
+        "alliance": "red",
+        "rotate": 3.1416
+      },
+      {
+        "component": "lowerHub",
+        "rotate": 0.4189
+      },
+      {
+        "component": "tarmac",
+        "alliance": "blue",
+        "rotate": 0.4189
+      },
+      {
+        "component": "tarmac",
+        "alliance": "blue",
+        "rotate": 1.9897
+      },
+      {
+        "component": "tarmac",
+        "alliance": "red",
+        "rotate": 3.5605
+      },
+      {
+        "component": "tarmac",
+        "alliance": "red",
+        "rotate": 5.1313
+      }
+    ]
+  }
+}
