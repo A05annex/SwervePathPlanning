@@ -815,7 +815,7 @@ public class PathCanvas extends Canvas implements ActionListener {
         m_path.clearPath();
         pkgSetExtendMode();
         m_pathFile = null;
-        m_modifiedSinceSave = true;
+        m_modifiedSinceSave = false;
         repaint();
     }
 
