@@ -10,7 +10,44 @@
         {
           "type": "circle",
           "center": [0.0, 0.0],
-          "radius": 0.2413
+          "radius": 0.12065
+        }
+      ]
+    },
+    {
+      "name": "radial cargo",
+      "lineColor": "alliance",
+      "fillColor": "alliance",
+      "shapes": [
+        {
+          "type": "circle",
+          "center": [3.8021,0.7635],
+          "radius": 0.12065
+        },
+        {
+          "type": "circle",
+          "center": [0.7635,3.8021],
+          "radius": 0.12065
+        },
+        {
+          "type": "circle",
+          "center": [-3.8021,0.7635],
+          "radius": 0.12065
+        },
+        {
+          "type": "circle",
+          "center": [3.2267,-2.1293],
+          "radius": 0.12065
+        },
+        {
+          "type": "circle",
+          "center": [-3.2267,-2.1293],
+          "radius": 0.12065
+        },
+        {
+          "type": "circle",
+          "center": [0.7635,-3.8021],
+          "radius": 0.12065
         }
       ]
     },
@@ -44,6 +81,33 @@
           "type": "rect",
           "lower left": [1.165, 4.960],
           "upper right": [1.2158, 8.23]
+        }
+      ]
+    },
+    {
+      "name": "hangar tower",
+      "lineColor": "gray",
+      "fillColor": "dark-gray",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [1.2158, 5.0108],
+          "upper right": [1.5358,5.3308]
+        },
+        {
+          "type": "rect",
+          "lower left": [3.6658, 5.0108],
+          "upper right": [3.9858,5.3308]
+        },
+        {
+          "type": "rect",
+          "lower left": [1.2158, 7.7608],
+          "upper right": [1.5358,8.0808]
+        },
+        {
+          "type": "rect",
+          "lower left": [3.6658, 7.7608],
+          "upper right": [3.9858,8.0808]
         }
       ]
     },
@@ -99,11 +163,18 @@
         {
           "type": "polygon",
           "points": [
+            [0.2436, 2.8524],
+            [0.2436, 1.0394],
             [0.1928, 1.02],
             [0.1928, 2.9268],
             [2.1265, 2.1265],
             [2.9268, 0.1928],
-            [1.02, 0.1928]
+            [1.02, 0.1928],
+            [0.1928, 1.02],
+            [0.2436, 1.0394],
+            [1.0394, 0.2436],
+            [2.8524, 0.2436],
+            [2.0876, 2.0876]
           ]
         }
       ]
@@ -126,8 +197,15 @@
         "alliance": "blue"
       },
       {
+        "component": "hangar tower"
+      },
+      {
         "component": "hangar",
         "alliance": "red",
+        "rotate": 3.1416
+      },
+      {
+        "component": "hangar tower",
         "rotate": 3.1416
       },
       {
@@ -153,6 +231,26 @@
         "component": "tarmac",
         "alliance": "red",
         "rotate": 5.1313
+      },
+      {
+        "component": "radial cargo",
+        "alliance": "red",
+        "rotate": 0.4189
+      },
+      {
+        "component": "radial cargo",
+        "alliance": "blue",
+        "rotate": 3.5605
+      },
+      {
+        "component": "cargo",
+        "alliance": "blue",
+        "translate": [-3.0523,7.1830]
+      },
+      {
+        "component": "cargo",
+        "alliance": "red",
+        "translate": [3.0523,-7.1830]
       }
     ]
   }
