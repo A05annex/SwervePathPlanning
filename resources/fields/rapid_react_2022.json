@@ -178,6 +178,54 @@
           ]
         }
       ]
+    },
+    {
+      "name": "lower goal",
+      "lineColor": "light-gray",
+      "fillColor": "gray",
+      "shapes": [
+        {
+          "type": "circle",
+          "center": [0.0, 0.0],
+          "radius": 0.800
+        }
+      ]
+    },
+    {
+      "name": "lower goal center",
+      "lineColor": "black",
+      "fillColor": "black",
+      "shapes": [
+        {
+          "type": "circle",
+          "center": [0.0, 0.0],
+          "radius": 0.762
+        }
+      ]
+    },
+    {
+      "name": "upper goal",
+      "lineColor": "light-gray",
+      "fillColor": "gray",
+      "shapes": [
+        {
+          "type": "circle",
+          "center": [0.0, 0.0],
+          "radius": 0.678
+        }
+      ]
+    },
+    {
+      "name": "upper goal center",
+      "lineColor": "black",
+      "fillColor": "black",
+      "shapes": [
+        {
+          "type": "circle",
+          "center": [0.0, 0.0],
+          "radius": 0.601
+        }
+      ]
     }
   ],
   "field": {
@@ -211,6 +259,18 @@
       {
         "component": "lowerHub",
         "rotate": 0.4189
+      },
+      {
+        "component": "lower goal"
+      },
+      {
+        "component": "lower goal center"
+      },
+      {
+        "component": "upper goal"
+      },
+      {
+        "component": "upper goal center"
       },
       {
         "component": "tarmac",
