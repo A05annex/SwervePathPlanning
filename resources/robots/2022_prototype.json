@@ -1,0 +1,17 @@
+{
+  "title": "2022 prototype base (programming robot",
+  "description": "This is the prototype (programming) base for 2022 A05 annex, FRC 6831",
+  "drive": {
+    "length": 0.5842,
+    "width": 0.5842,
+    "maxSpeed": 3.2
+  },
+  "chassis": {
+    "length": 0.762,
+    "width": 0.762
+  },
+  "bumpers": {
+    "length": 0.9144,
+    "width": 0.9144
+  }
+}
