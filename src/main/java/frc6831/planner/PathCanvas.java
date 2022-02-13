@@ -4,6 +4,9 @@ import org.a05annex.util.AngleConstantD;
 import org.a05annex.util.AngleD;
 import org.a05annex.util.Utl;
 import org.a05annex.util.geo2d.KochanekBartelsSpline;
+import org.a05annex.util.geo2d.KochanekBartelsSpline.ControlPoint;
+import org.a05annex.util.geo2d.KochanekBartelsSpline.PathPoint;
+import org.a05annex.util.geo2d.KochanekBartelsSpline.RobotActionType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -75,9 +78,9 @@ public class PathCanvas extends Canvas implements ActionListener {
             {new Point2D.Double(), new Point2D.Double(), new Point2D.Double(), new Point2D.Double()};
 
     // controlling the user interaction with the path
-    private KochanekBartelsSpline.ControlPoint newControlPoint = null;
-    private KochanekBartelsSpline.ControlPoint overControlPoint = null;
-    private KochanekBartelsSpline.PathPoint overPathPoint = null;
+    private ControlPoint newControlPoint = null;
+    private ControlPoint overControlPoint = null;
+    private PathPoint overPathPoint = null;
     private int mode = MODE_ADD;
     private int overWhat = OVER_NOTHING;
     private final Stroke highlightStroke = new BasicStroke(2.0f);
@@ -87,10 +90,16 @@ public class PathCanvas extends Canvas implements ActionListener {
     private Timer timer = null;
     private long pathStartTime = -1;
     private Double currentPathTime = 0.0;
-    private KochanekBartelsSpline.PathPoint currentPathPoint = null;
+    private long stopAndRunEndTime = -1;
+    private String stopAndRunDescription = null;
+    private long stopAndRunDuration = 0;
+    private PathPoint currentPathPoint = null;
     private KochanekBartelsSpline.PathFollower pathFollower = null;
     private boolean animate = false;
 
+    // The symbol for a stop and run action
+    private int[] robotStopAndRunActionX = {0,  5,  5,  0, -5, -5};
+    private int[] robotStopAndRunActionY = {6,  3, -3, -6, -3,  3};
 
     /**
      * This is the handler for resizing. The main thing in resizing is that we scale the
@@ -130,7 +139,9 @@ public class PathCanvas extends Canvas implements ActionListener {
     }
 
     /**
-     * This is the handler for mouse actions on the path planning canvas.
+     * This is the handler for mouse actions on the path planning canvas. It handles highlighting
+     * what the mouse is over, selection of editable targets (like control point location of tangent
+     * and heading handles), and dragging things around on the game canvas.
      */
     private class MouseHandler extends MouseAdapter {
         @Override
@@ -212,7 +223,13 @@ public class PathCanvas extends Canvas implements ActionListener {
         }
 
         /**
-         * Determine whether the mouse is over anything that is significant for path editing.
+         * Determine whether the mouse is over anything that is significant for path editing. Significant
+         * for path editing are:
+         * <ul>
+         *     <li>Control Points - control point tangent and heading handles, as well as control point
+         *     field position</li>
+         *     <li></li>
+         * </ul>
          *
          * @param pt (Point2D, not null) The position of the mouse transformed to field coordinates.
          */
@@ -220,10 +237,19 @@ public class PathCanvas extends Canvas implements ActionListener {
             overControlPoint = null;
             overPathPoint = null;
             overWhat = OVER_NOTHING;
-            for (KochanekBartelsSpline.ControlPoint point : path.getControlPoints()) {
-                if (point.testOveTangentPoint(pt.getX(), pt.getY(), OVER_TOL / scale)) {
+            // loop through the control points and see is we are over a control point handle. These are tested
+            // first as they are most important in controlling the path
+            for (ControlPoint point : path.getControlPoints()) {
+                // Normally we test the tangent point first, because it is rare that the tangents would be 0,
+                // which would make the tangent point coincident with the control point and would stop the
+                // robot at that point. The notable exception is when the robot stops to do something. In
+                // that case the tangent is explicitly set to 0.0, and cannot be changed unless the stop and
+                // do something action is removed.
+                if ((null == point.getRobotAction()) &&
+                        point.testOveTangentPoint(pt.getX(), pt.getY(), OVER_TOL / scale)) {
                     overControlPoint = point;
                     overWhat = OVER_TANGENT_POINT;
+
                 } else if (point.testOverControlPoint(pt.getX(), pt.getY(), OVER_TOL / scale)) {
                     overControlPoint = point;
                     overWhat = OVER_CONTROL_POINT;
@@ -233,9 +259,12 @@ public class PathCanvas extends Canvas implements ActionListener {
                     overWhat = OVER_HEADING_POINT;
                 }
             }
+            // If we are not over any  control point handle, then test path points to see if we are over
+            // a path point. There are few actions for path points, however, sometimes we want something
+            // to happen along the path.
             if (OVER_NOTHING == overWhat) {
                 // Draw the path as a set of segments uniformly spaced in time.
-                for (KochanekBartelsSpline.PathPoint pathPoint : path.getCurveSegments()) {
+                for (PathPoint pathPoint : path.getCurveSegments()) {
                     if (pathPoint.testOverPathPoint(pt.getX(), pt.getY(), OVER_TOL / scale)) {
                         overPathPoint = pathPoint;
                         overWhat = OVER_PATH_POINT;
@@ -253,7 +282,7 @@ public class PathCanvas extends Canvas implements ActionListener {
          *          will be displayed.
          */
         private void displayContextMenu(MouseEvent e) {
-            // check the current state of the path and editing state and enable choices that are valid in the
+            // check the current state of the path and editing state and enable choices that are valid in
             // the current state; disable choices that are invalid in the current state.
             menuItemExtendPath.setEnabled(mode != MODE_ADD);
             menuItemEndPath.setEnabled(mode == MODE_ADD);
@@ -360,19 +389,30 @@ public class PathCanvas extends Canvas implements ActionListener {
         if ((event.getSource() == timer) && (null != pathFollower)) {
             // This is a timer event while there is a path follower.
             if (pathStartTime == -1) {
-                //  This is the start of the animation. The robot is currently drawn at the start position
-                // so the only action is to record the start time.
-                pathStartTime = event.getWhen();
-            } else {
+                 pathStartTime = event.getWhen();
+            }
+            if (stopAndRunEndTime < event.getWhen()) {
+                if (null != stopAndRunDescription) {
+                    stopAndRunEndTime = -1;
+                    stopAndRunDescription = null;
+                }
                 // This is a point at some time on the path
-                currentPathTime = (event.getWhen() - pathStartTime) / 1000.0;
+                currentPathTime = (event.getWhen() - pathStartTime - stopAndRunDuration) / 1000.0;
                 currentPathPoint = pathFollower.getPointAt(currentPathTime);
                 if (null == currentPathPoint) {
                     pkgStopAnimation();
                     // reached the end of the path
+                } else {
+                    if ((null != currentPathPoint.action) &&
+                            (RobotActionType.STOP_AND_RUN_COMMAND == currentPathPoint.action.actionType)) {
+                        stopAndRunEndTime = event.getWhen() + (long) (currentPathPoint.action.approxDuration * 1000.0);
+                        stopAndRunDescription = "Stop and Run: " + currentPathPoint.action.command;
+                        stopAndRunDuration += (long) (currentPathPoint.action.approxDuration * 1000.0);
+                        System.out.printf("    stopping to run: " + currentPathPoint.action.command + "%n");
+                    }
                 }
-                repaint();
             }
+            repaint();
         } else if (src == menuItemClearPath) {
             clearPath();
         } else if (src == menuItemAnimatePath) {
@@ -408,7 +448,7 @@ public class PathCanvas extends Canvas implements ActionListener {
     }
 
     /**
-     *
+     * This is a dialog that only displays and edits the time for  control point.
      */
     private void pkgControlPointTimeDialog() {
         JPanel p = new JPanel(new BorderLayout(5, 5));
@@ -587,7 +627,7 @@ public class PathCanvas extends Canvas implements ActionListener {
     }
 
     /**
-     * Paint the panel, which it the double buffer context means:
+     * Paint the panel, which in the double buffer context means:
      * <ul>
      *     <li>make sure there is a back buffer that is the size of the panel.</li>
      *     <li>clear the back buffer</li>
@@ -656,13 +696,19 @@ public class PathCanvas extends Canvas implements ActionListener {
         // other control point editing handles.
         if (animate) {
             g2d.drawString(
-                    String.format("time = %.3f", currentPathTime), 10, 20);
+                    String.format("elapsed time = %.3f", (System.currentTimeMillis() - pathStartTime)/1000.0),
+                    10, 20);
             g2d.drawString(
-                    String.format("forward = %.3f", currentPathPoint.speedForward), 10, 35);
+                    String.format("path time = %.3f", currentPathTime), 10, 35);
             g2d.drawString(
-                    String.format("strafe = %.3f", currentPathPoint.speedStrafe), 10, 50);
+                    String.format("forward = %.3f", currentPathPoint.speedForward), 10, 50);
             g2d.drawString(
-                    String.format("angular vel = %.3f", currentPathPoint.speedRotation), 10, 65);
+                    String.format("strafe = %.3f", currentPathPoint.speedStrafe), 10, 65);
+            g2d.drawString(
+                    String.format("angular vel = %.3f", currentPathPoint.speedRotation), 10, 80);
+            if (null != stopAndRunDescription) {
+                g2d.drawString(stopAndRunDescription, 10, 95);
+            }
             boolean tooFast = !robot.canRobotAchieve(currentPathPoint.speedForward,
                     currentPathPoint.speedStrafe, currentPathPoint.speedRotation);
             System.out.printf("%10.3f, %10.3f, %10.3f, %10.3f      %b %n",
@@ -682,18 +728,18 @@ public class PathCanvas extends Canvas implements ActionListener {
             g2d.drawOval((int) dirPt.getX() - 3, (int) dirPt.getY() - 3, 6, 6);
 
         } else {
-            for (KochanekBartelsSpline.ControlPoint point : path.getControlPoints()) {
+            for (ControlPoint point : path.getControlPoints()) {
                 pkgPaintRobot(g2d, point);
             }
         }
         g2d.setPaint(Color.WHITE);
 
         // Draw the path as a set of segments uniformly spaced in time.
-        KochanekBartelsSpline.PathPoint lastPathPoint;
+        PathPoint lastPathPoint;
         Point2D.Double lastPt;
-        KochanekBartelsSpline.PathPoint thisPathPoint = null;
+        PathPoint thisPathPoint = null;
         Point2D.Double thisPt = null;
-        for (KochanekBartelsSpline.PathPoint pathPoint : path.getCurveSegments()) {
+        for (PathPoint pathPoint : path.getCurveSegments()) {
             lastPathPoint = thisPathPoint;
             lastPt = thisPt;
             thisPathPoint = pathPoint;
@@ -713,16 +759,28 @@ public class PathCanvas extends Canvas implements ActionListener {
 
         if (!animate) {
             // draw the control point editing handles.
-            for (KochanekBartelsSpline.ControlPoint point : path.getControlPoints()) {
+            for (ControlPoint point : path.getControlPoints()) {
                 g2d.setPaint(Color.RED);
+                KochanekBartelsSpline.RobotAction robotAction = point.getRobotAction();
                 Point2D.Double fieldPt = (Point2D.Double) drawXfm.transform(
                         new Point2D.Double(point.getFieldX(), point.getFieldY()), null);
-                Point2D.Double tangentPt = (Point2D.Double) drawXfm.transform(
-                        new Point2D.Double(point.getTangentX(), point.getTangentY()), null);
-                g2d.drawOval((int) fieldPt.getX() - 3, (int) fieldPt.getY() - 3, 6, 6);
-                g2d.fillOval((int) fieldPt.getX() - 3, (int) fieldPt.getY() - 3, 6, 6);
-                g2d.drawLine((int) fieldPt.getX(), (int) fieldPt.getY(), (int) tangentPt.getX(), (int) tangentPt.getY());
-                g2d.drawOval((int) tangentPt.getX() - 3, (int) tangentPt.getY() - 3, 6, 6);
+
+                // draw the control point
+                if (null == robotAction) {
+                    g2d.drawOval((int) fieldPt.getX() - 3, (int) fieldPt.getY() - 3, 6, 6);
+                    g2d.fillOval((int) fieldPt.getX() - 3, (int) fieldPt.getY() - 3, 6, 6);
+                } else {
+                    pkgDrawStopAndRunRobotAction(g2d, fieldPt, true);
+                }
+                // draw the tangent handle
+                if (null == robotAction) {
+                    Point2D.Double tangentPt = (Point2D.Double) drawXfm.transform(
+                            new Point2D.Double(point.getTangentX(), point.getTangentY()), null);
+                    g2d.drawLine((int) fieldPt.getX(), (int) fieldPt.getY(),
+                            (int) tangentPt.getX(), (int) tangentPt.getY());
+                    g2d.drawOval((int) tangentPt.getX() - 3, (int) tangentPt.getY() - 3, 6, 6);
+                }
+                // draw the heading handle
                 Point2D.Double headingPt = (Point2D.Double) drawXfm.transform(
                         new Point2D.Double(point.getHeadingX(), point.getHeadingY()), null);
                 g2d.setPaint(Color.MAGENTA);
@@ -737,18 +795,21 @@ public class PathCanvas extends Canvas implements ActionListener {
                 g2d.setPaint(overWhat == OVER_PATH_POINT ? Color.ORANGE : Color.GREEN);
                 switch (overWhat) {
                     case OVER_CONTROL_POINT:
-                        pkgDrawFieldPointHighlight(g2d, overControlPoint.getFieldX(), overControlPoint.getFieldY());
+                        pkgDrawFieldPointHighlight(g2d,
+                                overControlPoint.getFieldX(), overControlPoint.getFieldY(),
+                                overControlPoint.getRobotAction());
                         break;
                     case OVER_TANGENT_POINT:
                         pkgDrawFieldPointHighlight(g2d,
-                                overControlPoint.getTangentX(), overControlPoint.getTangentY());
+                                overControlPoint.getTangentX(), overControlPoint.getTangentY(), null);
                         break;
                     case OVER_HEADING_POINT:
                         pkgDrawFieldPointHighlight(g2d,
-                                overControlPoint.getHeadingX(), overControlPoint.getHeadingY());
+                                overControlPoint.getHeadingX(), overControlPoint.getHeadingY(), null);
                         break;
                     case OVER_PATH_POINT:
-                        pkgDrawFieldPointHighlight(g2d, overPathPoint.fieldPt.getX(), overPathPoint.fieldPt.getY());
+                        pkgDrawFieldPointHighlight(g2d,
+                                overPathPoint.fieldPt.getX(), overPathPoint.fieldPt.getY(), null);
                         break;
 
                 }
@@ -762,25 +823,45 @@ public class PathCanvas extends Canvas implements ActionListener {
                 g2d.setPaint(Color.WHITE);
                 Point2D screenMouse = drawXfm.transform(mouse, null);
                 g2d.drawString(
-                        String.format("(%.4f,%.4f)", mouse.getX(), mouse.getY()),
+                        String.format(" (%.4f,%.4f)", mouse.getX(), mouse.getY()),
                         (int) screenMouse.getX(), (int) screenMouse.getY());
             }
         }
     }
 
-    private void pkgDrawFieldPointHighlight(Graphics2D g2d, double fieldX, double fieldY) {
+    private void pkgDrawFieldPointHighlight(Graphics2D g2d, double fieldX, double fieldY,
+                                            KochanekBartelsSpline.RobotAction robotAction) {
         Point2D.Double fieldPt = (Point2D.Double) drawXfm.transform(
                 new Point2D.Double(fieldX, fieldY), null);
-        g2d.drawOval((int) fieldPt.getX() - 4, (int) fieldPt.getY() - 4, 8, 8);
+        if (null == robotAction) {
+            g2d.drawOval((int) fieldPt.getX() - 4, (int) fieldPt.getY() - 4, 8, 8);
+        } else if (RobotActionType.STOP_AND_RUN_COMMAND == robotAction.actionType) {
+            pkgDrawStopAndRunRobotAction(g2d, fieldPt, false);
+        } else if (RobotActionType.SCHEDULE_COMMAND == robotAction.actionType) {
+
+        }
     }
 
-    private void pkgPaintRobot(Graphics2D g2d, KochanekBartelsSpline.ControlPoint controlPoint) {
+    private void pkgDrawStopAndRunRobotAction(Graphics2D g2d, Point2D.Double fieldPt, boolean fill) {
+        int[] tmpX = new int[6];
+        int[] tmpY = new int[6];
+        for (int i = 0; i < 6; i++) {
+            tmpX[i] = robotStopAndRunActionX[i] + (int)fieldPt.getX();
+            tmpY[i] = robotStopAndRunActionY[i] + (int)fieldPt.getY();
+        }
+        g2d.drawPolygon(tmpX, tmpY, 6);
+        if (fill) {
+            g2d.fillPolygon(tmpX, tmpY, 6);
+        }
+    }
+
+    private void pkgPaintRobot(Graphics2D g2d, ControlPoint controlPoint) {
         pkgPaintRobot(g2d, new Point2D.Double(controlPoint.getFieldX(), controlPoint.getFieldY()),
                 controlPoint.getFieldHeading(), false);
 
     }
 
-    private void pkgPaintRobot(Graphics2D g2d, KochanekBartelsSpline.PathPoint pathPoint, boolean tooFast) {
+    private void pkgPaintRobot(Graphics2D g2d, PathPoint pathPoint, boolean tooFast) {
         pkgPaintRobot(g2d, pathPoint.fieldPt, pathPoint.fieldHeading, tooFast);
 
 
@@ -972,13 +1053,16 @@ public class PathCanvas extends Canvas implements ActionListener {
         animate = true;
         pathStartTime = -1;
         currentPathTime = 0.0;
+        stopAndRunEndTime = -1;
+        stopAndRunDescription = null;
+        stopAndRunDuration = 0;
         pathFollower = path.getPathFollower();
-        currentPathPoint = pathFollower.getPointAt(currentPathTime);
+//        currentPathPoint = pathFollower.getPointAt(currentPathTime);
         System.out.printf("    seconds     forward      strafe     angular    too fast!%n");
-        if (null == currentPathPoint) {
-            pkgStopAnimation();
-        }
-        repaint();
+//        if (null == currentPathPoint) {
+//            pkgStopAnimation();
+//        }
+//        repaint();
     }
 
     /**
@@ -987,8 +1071,12 @@ public class PathCanvas extends Canvas implements ActionListener {
     private void pkgStopAnimation() {
         timer.stop();
         animate = false;
-        pathFollower = null;
-        currentPathTime = 0.0;
         pathStartTime = -1;
+        currentPathTime = 0.0;
+        stopAndRunEndTime = -1;
+        stopAndRunDescription = null;
+        stopAndRunDuration = 0;
+        pathFollower = null;
+        currentPathPoint = null;
     }
 }
