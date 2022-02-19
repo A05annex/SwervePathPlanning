@@ -98,8 +98,11 @@ public class PathCanvas extends Canvas implements ActionListener {
     private boolean animate = false;
 
     // The symbol for a stop and run action
-    private int[] robotStopAndRunActionX = {0,  5,  5,  0, -5, -5};
-    private int[] robotStopAndRunActionY = {6,  3, -3, -6, -3,  3};
+    private final int[] robotStopAndRunActionX = {0,  5,  5,  0, -5, -5};
+    private final int[] robotStopAndRunActionY = {6,  3, -3, -6, -3,  3};
+    // The symbol for schedule action
+    private final int[] robotScheduleActionX = {0,  7,  0, -7};
+    private final int[] robotScheduleActionY = {7,  0, -7,  0};
 
     /**
      * This is the handler for resizing. The main thing in resizing is that we scale the
@@ -284,18 +287,19 @@ public class PathCanvas extends Canvas implements ActionListener {
         private void displayContextMenu(MouseEvent e) {
             // check the current state of the path and editing state and enable choices that are valid in
             // the current state; disable choices that are invalid in the current state.
+            menuItemStopAnimate.setEnabled(animate);
+
             menuItemExtendPath.setEnabled(mode != MODE_ADD);
             menuItemEndPath.setEnabled(mode == MODE_ADD);
 
-            menuItemStopAnimate.setEnabled(animate);
+            boolean pathPointSelected = (null != overPathPoint) && (overWhat == OVER_PATH_POINT);
+            menuItemInsert.setEnabled(pathPointSelected);
 
             boolean controlPointSelected = (null != overControlPoint) && (overWhat == OVER_CONTROL_POINT);
             menuItemDelete.setEnabled(controlPointSelected && (null != overControlPoint.getLast()));
             menuItemResetTangent.setEnabled(controlPointSelected && overControlPoint.getDerivativesManuallyEdited());
             menuItemSetTime.setEnabled(controlPointSelected && (null != overControlPoint.getLast()));
-            menuItemInfo.setEnabled(controlPointSelected);
-
-            menuItemInsert.setEnabled((null != overPathPoint) && (overWhat == OVER_PATH_POINT));
+            menuItemInfo.setEnabled(controlPointSelected || pathPointSelected);
 
             contextMenu.show(e.getComponent(), e.getX(), e.getY());
         }
@@ -442,7 +446,11 @@ public class PathCanvas extends Canvas implements ActionListener {
             pkgControlPointTimeDialog();
             repaint();
         } else if (src == menuItemInfo) {
-            pkgControlPointDialog();
+            if (overWhat == OVER_CONTROL_POINT) {
+                pkgControlPointDialog();
+            } else if (overWhat == OVER_PATH_POINT) {
+                pkgPathPointDialog();
+            }
             repaint();
         }
     }
@@ -492,7 +500,7 @@ public class PathCanvas extends Canvas implements ActionListener {
         JTextField field_dX = pkgLoadAndAddField(controls, overControlPoint.getRawTangentX(),"%.3f");
         JTextField field_dY = pkgLoadAndAddField(controls, overControlPoint.getRawTangentY(),"%.3f");
         JTextField heading = pkgLoadAndAddField(controls, overControlPoint.getFieldHeading(),"%.3f");
-        JTextField time = pkgLoadAndAddField(controls, overControlPoint.getTime(),"%.2f");controls.add(time);
+        JTextField time = pkgLoadAndAddField(controls, overControlPoint.getTime(),"%.2f");
         time.setEditable(null != overControlPoint.getLast());
         p.add(controls, BorderLayout.CENTER);
 
@@ -549,6 +557,61 @@ public class PathCanvas extends Canvas implements ActionListener {
         }
     }
 
+    private void pkgPathPointDialog() {
+        JPanel p = new JPanel(new BorderLayout(5, 5));
+
+        JPanel labels = new JPanel(new GridLayout(0, 1, 2, 2));
+        JLabel labelX = pkgLoadAndAddLabel(labels, "Field X");
+        JLabel labelY = pkgLoadAndAddLabel(labels, "Field Y");
+        JLabel labelHeading = pkgLoadAndAddLabel(labels, "Heading");
+        JLabel labelTime = pkgLoadAndAddLabel(labels, "At Time");
+        p.add(labels, BorderLayout.LINE_START);
+
+        JPanel controls = new JPanel(new GridLayout(0, 1, 2, 2));
+        JLabel fieldX = pkgLoadAndAddLabel(controls, overPathPoint.fieldPt.getX(),"  %.3f");
+        JLabel fieldY = pkgLoadAndAddLabel(controls, overPathPoint.fieldPt.getX(),"  %.3f");
+        JLabel heading = pkgLoadAndAddLabel(controls, overPathPoint.fieldHeading.getRadians(),"  %.3f");
+        JLabel time = pkgLoadAndAddLabel(controls, overPathPoint.time,"  %.2f");controls.add(time);
+        p.add(controls, BorderLayout.CENTER);
+
+        JPanel scheduleAction = new JPanel(new BorderLayout(5, 5));
+        JPanel scheduleOnOff = new JPanel(new GridLayout(0, 1, 2, 2));
+        scheduleOnOff.add(new JSeparator(SwingConstants.HORIZONTAL));
+        JCheckBox hasScheduledAction = new JCheckBox("schedule command");
+        KochanekBartelsSpline.RobotAction robotAction = overPathPoint.action;
+        hasScheduledAction.setSelected(null != robotAction);
+        scheduleOnOff.add(hasScheduledAction);
+        scheduleAction.add(scheduleOnOff, BorderLayout.PAGE_START);
+        JPanel stopLabels = new JPanel(new GridLayout(0, 1, 2, 2));
+        JLabel labelScheduleCommand = pkgLoadAndAddLabel(stopLabels, "Command");
+        scheduleAction.add(stopLabels, BorderLayout.LINE_START);
+        JPanel stopControls = new JPanel(new GridLayout(0, 1, 2, 2));
+        JTextField fieldScheduleCommand = pkgLoadAndAddField(
+                stopControls, (null == robotAction) ? "" : robotAction.command);
+        scheduleAction.add(stopControls, BorderLayout.CENTER);
+        p.add(scheduleAction, BorderLayout.PAGE_END);
+
+        Object[] buttons = {"apply", "dismiss" };
+        int status = JOptionPane.showOptionDialog(
+                this, p, "Control Point Info:", JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE,null, buttons, buttons[1]);
+        if (status == JOptionPane.OK_OPTION) {
+             if (hasScheduledAction.isSelected()) {
+                 if ((null != robotAction) && !fieldScheduleCommand.getText().equals(robotAction.command)) {
+                     // the command name has changed - delete the old action
+                     path.deleteScheduledCommand(robotAction);
+                 }
+                 if ((null == robotAction) || !fieldScheduleCommand.getText().equals(robotAction.command)) {
+                     // there is no old action, of the command has changed and the old action was deleted,
+                     // so schedule a new one.
+                     path.scheduleCommand(overPathPoint.time, fieldScheduleCommand.getText());
+                 }
+            } else if (null != robotAction) {
+                 path.deleteScheduledCommand(robotAction);
+            }
+        }
+    }
+
     private void pkgSetTime(JTextField time, JLabel labelTime) {
         if (null != overControlPoint.getLast()) {
             overControlPoint.setTime(Utl.clip(
@@ -560,8 +623,15 @@ public class PathCanvas extends Canvas implements ActionListener {
         }
     }
 
-    private JLabel pkgLoadAndAddLabel(JPanel labels, String name) {
+    private @NotNull JLabel pkgLoadAndAddLabel(@NotNull JPanel labels, String name) {
         JLabel label = new JLabel(name, SwingConstants.TRAILING);
+        labels.add(label);
+        return label;
+    }
+
+    private @NotNull JLabel pkgLoadAndAddLabel(JPanel labels, double value, String format) {
+        String str = String.format(format, value);
+        JLabel label = new JLabel(str, SwingConstants.LEADING);
         labels.add(label);
         return label;
     }
@@ -754,7 +824,11 @@ public class PathCanvas extends Canvas implements ActionListener {
                 g2d.drawLine((int) lastPt.getX(), (int) lastPt.getY(),
                         (int) thisPt.getX(), (int) thisPt.getY());
             }
-            g2d.drawOval((int) thisPt.getX() - 2, (int) thisPt.getY() - 2, 4, 4);
+            if (null == pathPoint.action) {
+                g2d.drawOval((int) thisPt.getX() - 2, (int) thisPt.getY() - 2, 4, 4);
+            } else {
+                pkgDrawScheduledRobotAction(g2d, thisPt, true);
+            }
         }
 
         if (!animate) {
@@ -809,7 +883,8 @@ public class PathCanvas extends Canvas implements ActionListener {
                         break;
                     case OVER_PATH_POINT:
                         pkgDrawFieldPointHighlight(g2d,
-                                overPathPoint.fieldPt.getX(), overPathPoint.fieldPt.getY(), null);
+                                overPathPoint.fieldPt.getX(), overPathPoint.fieldPt.getY(),
+                                overPathPoint.action);
                         break;
 
                 }
@@ -838,7 +913,7 @@ public class PathCanvas extends Canvas implements ActionListener {
         } else if (RobotActionType.STOP_AND_RUN_COMMAND == robotAction.actionType) {
             pkgDrawStopAndRunRobotAction(g2d, fieldPt, false);
         } else if (RobotActionType.SCHEDULE_COMMAND == robotAction.actionType) {
-
+            pkgDrawScheduledRobotAction(g2d, fieldPt, false);
         }
     }
 
@@ -852,6 +927,19 @@ public class PathCanvas extends Canvas implements ActionListener {
         g2d.drawPolygon(tmpX, tmpY, 6);
         if (fill) {
             g2d.fillPolygon(tmpX, tmpY, 6);
+        }
+    }
+
+    private void pkgDrawScheduledRobotAction(Graphics2D g2d, Point2D.Double fieldPt, boolean fill) {
+        int[] tmpX = new int[4];
+        int[] tmpY = new int[4];
+        for (int i = 0; i < 4; i++) {
+            tmpX[i] = robotScheduleActionX[i] + (int)fieldPt.getX();
+            tmpY[i] = robotScheduleActionY[i] + (int)fieldPt.getY();
+        }
+        g2d.drawPolygon(tmpX, tmpY, 4);
+        if (fill) {
+            g2d.fillPolygon(tmpX, tmpY, 4);
         }
     }
 
