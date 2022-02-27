@@ -1,0 +1,17 @@
+{
+  "title": "2022 competition base - with sweeper.",
+  "description": "This is the competition base for 2022 A05 annex, FRC 6831 - with sweeper",
+  "drive": {
+    "length": 0.5461,
+    "width": 0.5461,
+    "maxSpeed": 3.2
+  },
+  "chassis": {
+    "length": 0.7112,
+    "width": 0.7493
+  },
+  "bumpers": {
+    "length": 0.8636,
+    "width": 0.9017
+  }
+}
