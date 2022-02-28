@@ -593,7 +593,7 @@ public class PathCanvas extends Canvas implements ActionListener {
 
         Object[] buttons = {"apply", "dismiss" };
         int status = JOptionPane.showOptionDialog(
-                this, p, "Control Point Info:", JOptionPane.OK_CANCEL_OPTION,
+                this, p, "Path Point Info:", JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.PLAIN_MESSAGE,null, buttons, buttons[1]);
         if (status == JOptionPane.OK_OPTION) {
              if (hasScheduledAction.isSelected()) {
