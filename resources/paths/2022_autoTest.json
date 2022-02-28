@@ -1,0 +1,119 @@
+{
+  "speedMultiplier": 1.0,
+  "description": "No description provided.",
+  "robotScheduledActions": [
+    {
+      "robotActionCommand": "SweeperOn",
+      "robotScheduledActionTime": 0.49999999999999994
+    },
+    {
+      "robotActionCommand": "SweeperOn",
+      "robotScheduledActionTime": 1.7500000000000009
+    },
+    {
+      "robotActionCommand": "SweeperOn",
+      "robotScheduledActionTime": 4.149999999999993
+    }
+  ],
+  "title": "untitled",
+  "controlPoints": [
+    {
+      "robotActionCommand": "AimAndShoot",
+      "field_dX": 0.0,
+      "fieldY": -0.038,
+      "field_dY": 0.0,
+      "fieldX": -2.257,
+      "fieldHeading": -1.583,
+      "time": 0.0,
+      "field_dHeading": 0.33087013860909953,
+      "derivativesEdited": true,
+      "robotActionDuration": 3.0
+    },
+    {
+      "field_dX": -1.4342399999999995,
+      "fieldY": 0.2900293255131956,
+      "field_dY": 0.85392,
+      "fieldX": -2.5850439882697946,
+      "fieldHeading": -1.2822089649008186,
+      "time": 0.39999999999999997,
+      "field_dHeading": 0.09625000000000003,
+      "derivativesEdited": true
+    },
+    {
+      "robotActionCommand": "AimAndShoot",
+      "field_dX": 0.0,
+      "fieldY": 0.555,
+      "field_dY": 0.0,
+      "fieldX": -3.253,
+      "fieldHeading": -1.408,
+      "time": 1.0,
+      "field_dHeading": 1.0619682791120493,
+      "derivativesEdited": true,
+      "robotActionDuration": 3.0
+    },
+    {
+      "field_dX": 1.17895,
+      "fieldY": 2.6985337243401757,
+      "field_dY": 1.7679999999999996,
+      "fieldX": -2.5976539589442815,
+      "fieldHeading": 0.6486424516665437,
+      "time": 2.0,
+      "field_dHeading": 0.34759999999999996,
+      "derivativesEdited": false
+    },
+    {
+      "robotActionCommand": "AimAndShoot",
+      "field_dX": 0.0,
+      "fieldY": 2.635,
+      "field_dY": 0.0,
+      "fieldX": -1.866,
+      "fieldHeading": -0.776,
+      "time": 3.0,
+      "field_dHeading": -0.6587874448900546,
+      "derivativesEdited": true,
+      "robotActionDuration": 3.0
+    },
+    {
+      "field_dX": -0.6052785923753659,
+      "fieldY": 4.817008797653958,
+      "field_dY": 2.774193548387096,
+      "fieldX": -1.9293255131964813,
+      "fieldHeading": -0.5491529026790101,
+      "time": 4.0,
+      "field_dHeading": 0.09020000000000003,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.09646627565982425,
+      "fieldY": 6.696,
+      "field_dY": 0.27868035190615853,
+      "fieldX": -2.711,
+      "fieldHeading": -0.612,
+      "time": 5.0,
+      "field_dHeading": 0.05589811013701197,
+      "derivativesEdited": false
+    },
+    {
+      "field_dX": 0.807038123167156,
+      "fieldY": 5.1448680351906155,
+      "field_dY": -2.975953079178886,
+      "fieldX": -1.8158357771260998,
+      "fieldHeading": -0.4475199751571701,
+      "time": 6.0,
+      "field_dHeading": -0.05169999999999999,
+      "derivativesEdited": true
+    },
+    {
+      "robotActionCommand": "AimAndShoot",
+      "field_dX": 0.0,
+      "fieldY": 2.724,
+      "field_dY": 0.0,
+      "fieldX": -1.715,
+      "fieldHeading": -0.706,
+      "time": 7.0,
+      "field_dHeading": -0.2843280273271128,
+      "derivativesEdited": true,
+      "robotActionDuration": 3.0
+    }
+  ]
+}
