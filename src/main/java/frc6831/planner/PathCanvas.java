@@ -826,8 +826,10 @@ public class PathCanvas extends Canvas implements ActionListener {
             }
             if (null == pathPoint.action) {
                 g2d.drawOval((int) thisPt.getX() - 2, (int) thisPt.getY() - 2, 4, 4);
-            } else {
+            } else if (RobotActionType.SCHEDULE_COMMAND == pathPoint.action.actionType) {
                 pkgDrawScheduledRobotAction(g2d, thisPt, true);
+            } else {
+                pkgDrawStopAndRunRobotAction(g2d, thisPt, true);
             }
         }
 
