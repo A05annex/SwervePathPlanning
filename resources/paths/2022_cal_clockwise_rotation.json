@@ -1,0 +1,38 @@
+{
+  "speedMultiplier": 1.0,
+  "description": "No description provided.",
+  "robotScheduledActions": [],
+  "title": "untitled",
+  "controlPoints": [
+    {
+      "field_dX": 0.0,
+      "fieldY": 0.0,
+      "field_dY": 0.0,
+      "fieldX": 0.0,
+      "fieldHeading": 0.0,
+      "time": 0.0,
+      "field_dHeading": 3.45576,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.0,
+      "fieldY": 0.0,
+      "field_dY": 0.0,
+      "fieldX": 0.0,
+      "fieldHeading": 3.1416,
+      "time": 1.0,
+      "field_dHeading": 3.45576,
+      "derivativesEdited": false
+    },
+    {
+      "field_dX": 0.0,
+      "fieldY": 0.0,
+      "field_dY": 0.0,
+      "fieldX": 0.0,
+      "fieldHeading": 6.2832,
+      "time": 2.0,
+      "field_dHeading": 3.4557599999999997,
+      "derivativesEdited": true
+    }
+  ]
+}
