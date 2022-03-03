@@ -42,6 +42,7 @@ public class PathCanvas extends Canvas implements ActionListener {
 
     private final PopupMenu contextMenu;
     private final MenuItem menuItemClearPath;
+    private final MenuItem menuSwitchAlliance;
     private final MenuItem menuItemAnimatePath;
     private final MenuItem menuItemStopAnimate;
     private final MenuItem menuItemExtendPath;
@@ -289,6 +290,8 @@ public class PathCanvas extends Canvas implements ActionListener {
             // the current state; disable choices that are invalid in the current state.
             menuItemStopAnimate.setEnabled(animate);
 
+            menuSwitchAlliance.setEnabled(true);
+
             menuItemExtendPath.setEnabled(mode != MODE_ADD);
             menuItemEndPath.setEnabled(mode == MODE_ADD);
 
@@ -331,6 +334,9 @@ public class PathCanvas extends Canvas implements ActionListener {
         menuItemClearPath = pkgCreateMenuItem(contextMenu, "Clear Path", this);
         menuItemAnimatePath = pkgCreateMenuItem(contextMenu, "Play Path", this);
         menuItemStopAnimate = pkgCreateMenuItem(contextMenu, "Stop Play", this);
+        contextMenu.addSeparator();
+        menuSwitchAlliance = pkgCreateMenuItem(contextMenu, "Switch Alliance", this);
+        contextMenu.addSeparator();
         menuItemExtendPath = pkgCreateMenuItem(contextMenu, "Extend Path", this);
         menuItemEndPath = pkgCreateMenuItem(contextMenu, "End Path", this);
         contextMenu.addSeparator();
@@ -424,6 +430,8 @@ public class PathCanvas extends Canvas implements ActionListener {
         } else if (src == menuItemStopAnimate) {
             pkgStopAnimation();
             repaint();
+        } else if (src == menuSwitchAlliance) {
+            switchAlliance();
         } else if (src == menuItemEndPath) {
             pkgSetEditMode();
         } else if (src == menuItemExtendPath) {
@@ -1147,12 +1155,7 @@ public class PathCanvas extends Canvas implements ActionListener {
         stopAndRunDescription = null;
         stopAndRunDuration = 0;
         pathFollower = path.getPathFollower();
-//        currentPathPoint = pathFollower.getPointAt(currentPathTime);
         System.out.printf("    seconds     forward      strafe     angular    too fast!%n");
-//        if (null == currentPathPoint) {
-//            pkgStopAnimation();
-//        }
-//        repaint();
     }
 
     /**
@@ -1168,5 +1171,23 @@ public class PathCanvas extends Canvas implements ActionListener {
         stopAndRunDuration = 0;
         pathFollower = null;
         currentPathPoint = null;
+    }
+
+    /**
+     * Flip the alliance of the path. Practically this means go through all the control points adn flip ths
+     * sign of X and X components.
+     */
+     void switchAlliance() {
+        // So, the deal here is that we have built a path for the opposing alliance rather than
+        // ours, and we want to flip it. we do that by going through the control points and flipping
+        // the sign of anything X and Y (which is a 180deg rotation).
+        for (ControlPoint cp : path.getControlPoints()) {
+            if (cp.getDerivativesManuallyEdited()) {
+                cp.setTangent(-cp.getRawTangentX(),-cp.getRawTangentY());
+            }
+            cp.setFieldLocation(-cp.getFieldX(), -cp.getFieldY());
+            cp.setFieldHeading(cp.getFieldHeading().add(AngleD.PI));
+        }
+        repaint();
     }
 }

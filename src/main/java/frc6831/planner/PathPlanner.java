@@ -36,7 +36,9 @@ public class PathPlanner extends JFrame implements ActionListener, MenuListener,
     private final JMenuItem m_menuPathSaveAsPath;       // the menu path save-as button
     // - animating the path
     private final JMenuItem m_menuPathPlay;             // play an animation of the current path
-    private final JMenuItem m_menuSpeedMultiplier;             // play an animation of the current path
+    private final JMenuItem m_menuSpeedMultiplier;      // globally change the speed of a path
+    // - path - switch alliance - in case you drew the path at the wrong end.
+    private final JMenuItem m_menuSwitchAlliance;       // switch the alliance for the path
     // - path clear and start again - clearing and starting a new path (severe)
     private final JMenuItem m_menuPathClearPath;        // the menu edit - clear the current path and reset to
 
@@ -110,6 +112,8 @@ public class PathPlanner extends JFrame implements ActionListener, MenuListener,
         m_menuPath.addSeparator();
         m_menuPathPlay = createMenuItem(m_menuPath, "Play Path", this);
         m_menuSpeedMultiplier = createMenuItem(m_menuPath, "Speed Multiplier", this);
+        m_menuPath.addSeparator();
+        m_menuSwitchAlliance = createMenuItem(m_menuPath, "Switch Alliance", this);
         m_menuPath.addSeparator();
         m_menuPathClearPath = createMenuItem(m_menuPath, "Clear Path", this);
 
@@ -266,7 +270,10 @@ public class PathPlanner extends JFrame implements ActionListener, MenuListener,
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(this, String.format("'%s' is not a valid number.", m));
             }
+        } else if (src == m_menuSwitchAlliance) {
+            m_canvas.switchAlliance();
         }
+
     }
 
     @Override
