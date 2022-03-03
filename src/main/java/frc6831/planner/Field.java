@@ -60,11 +60,13 @@ public class Field {
     private final double X_AXIS_MIN = -4.6;
     private final double X_AXIS_MAX = 4.6;
     private final double Y_AXIS_MIN = -8.6;
-    private final double Y_AXIS_MAX = 8.6;
+    private final double Y_AXIS_MAX = 2.0;
+    //private final double Y_AXIS_MAX = 8.6;
     private final double X_FIELD_MIN = -4.115;
     private final double X_FIELD_MAX = 4.115;
     private final double Y_FIELD_MIN = -8.23;
-    private final double Y_FIELD_MAX = 8.23;
+    private final double Y_FIELD_MAX = 2.0;
+//    private final double Y_FIELD_MAX = 8.23;
 
     // -------------------------------------------------------------------------------------------
     // The 2021 at home field axes and outline
