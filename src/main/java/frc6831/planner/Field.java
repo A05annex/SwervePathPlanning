@@ -22,21 +22,27 @@ import static org.a05annex.util.JsonSupport.*;
  */
 public class Field {
 
-    public static final int DEFAULT_FIELD = 0;
-    public static final int AT_HOME_FIELD = 1;
-
     // -------------------------------------------------------------------------------------------
     // Parsing the field file
+    // -------------------------------------------------------------------------------------------
+    // primary keys (sections) in the field description
     private static final String TITLE = "title";
     private static final String DESCRIPTION = "description";
+    private static final String ARENA = "arena";
     private static final String COMPONENTS = "components";
     private static final String FIELD = "field";
 
+    // elements in the arena
+    private static final String EXTENT = "extent";
+    private static final String VIEW = "view";
+
+    // elements in th description of components for the game
     private static final String NAME = "name";
     private static final String LINE_COLOR = "lineColor";
     private static final String FILL_COLOR = "fillColor";
     private static final String SHAPES = "shapes";
 
+    // The elements in the definition of a shapes
     private static final String TYPE = "type";
 
     private static final String TYPE_CIRCLE = "circle";
@@ -56,105 +62,65 @@ public class Field {
     private static final String ROTATE = "rotate";
 
     // -------------------------------------------------------------------------------------------
-    // The default standard field axes and outline (2022 field)
-    private final double X_AXIS_MIN = -4.6;
-    private final double X_AXIS_MAX = 4.6;
-    private final double Y_AXIS_MIN = -8.6;
-    private final double Y_AXIS_MAX = 2.0;
-    //private final double Y_AXIS_MAX = 8.6;
-    private final double X_FIELD_MIN = -4.115;
-    private final double X_FIELD_MAX = 4.115;
-    private final double Y_FIELD_MIN = -8.23;
-    private final double Y_FIELD_MAX = 2.0;
-//    private final double Y_FIELD_MAX = 8.23;
+    // The field outline (extent) and view. Note that this is set to the 2022 Rapid React field
+    // and view by default unless specified in the field description file.
+    private final double AXIS_MARGIN = 0.4;
+    // The 2022 field boundary - this may be overwritten by the field description
+    private double X_FIELD_MIN = -4.115;
+    private double Y_FIELD_MIN = -8.23;
+    private double X_FIELD_MAX = 4.115;
+    private double Y_FIELD_MAX = 8.23;
+    // The 2022 valid autonomous path view - this may be overwritten by the field description
+    private double X_VIEW_MIN = -4.115;
+    private double Y_VIEW_MIN = -8.23;
+    private double X_VIEW_MAX = 4.115;
+    private double Y_VIEW_MAX = 1.75;
 
-    // -------------------------------------------------------------------------------------------
-    // The 2021 at home field axes and outline
-    private final double AT_HOME_X_AXIS_MIN = -0.3;
-    private final double AT_HOME_X_AXIS_MAX = 4.872;
-    private final double AT_HOME_Y_AXIS_MIN = -0.3;
-    private final double AT_HOME_Y_AXIS_MAX = 9.444;
-    private final double AT_HOME_X_FIELD_MIN = 0.0;
-    private final double AT_HOME_X_FIELD_MAX = 4.572;
-    private final double AT_HOME_Y_FIELD_MIN = 0.0;
-    private final double AT_HOME_Y_FIELD_MAX = 9.144;
+    private final String m_default_title = "2022 field";
+    private final String m_default_description = "The 2022 field outline with no game elements.";
 
-    // Additional colors
+    // Additional colors - for 2021 Infinite Recharge at home
     private static final Color GREEN_ZONE = new Color(118, 215, 196);
     private static final Color YELLOW_ZONE = new Color(247, 220, 111);
     private static final Color BLUE_ZONE = new Color(133, 193, 233);
     private static final Color PURPLE_ZONE = new Color(187, 143, 206);
     private static final Color RED_ZONE = new Color(236, 112, 99);
 
-    // the axis lines
-    private final Point2D.Double[] X_AXIS_START = {
-            new Point2D.Double(X_AXIS_MIN, 0.0),
-            new Point2D.Double(AT_HOME_X_AXIS_MIN, 0.0)
-    };
-    private final Point2D.Double[] X_AXIS_END = {
-            new Point2D.Double(X_AXIS_MAX, 0.0),
-            new Point2D.Double(AT_HOME_X_AXIS_MAX, 0.0)
-    };
-    private final Point2D.Double[] Y_AXIS_START = {
-            new Point2D.Double(0.0, Y_AXIS_MIN),
-            new Point2D.Double(0.0, AT_HOME_Y_AXIS_MIN)
-    };
-    private final Point2D.Double[] Y_AXIS_END = {
-            new Point2D.Double(0.0, Y_AXIS_MAX),
-            new Point2D.Double(0.0, AT_HOME_Y_AXIS_MAX)
-    };
+    // the axis lines - probably resized whenever a field description is read.
+    private final Point2D.Double X_AXIS_START = new Point2D.Double(X_VIEW_MIN - AXIS_MARGIN, 0.0);
+    private final Point2D.Double X_AXIS_END = new Point2D.Double(X_VIEW_MAX + AXIS_MARGIN, 0.0);
+    private final Point2D.Double Y_AXIS_START = new Point2D.Double(0.0, Y_VIEW_MIN - AXIS_MARGIN);
+    private final Point2D.Double Y_AXIS_END = new Point2D.Double(0.0, Y_VIEW_MAX + AXIS_MARGIN);
 
     // the un-transformed field outline.
-    private final Point2D.Double[][] FIELD_OUTLINE = {{
+    private final Point2D.Double[] FIELD_OUTLINE = {
             new Point2D.Double(X_FIELD_MIN, Y_FIELD_MIN),
             new Point2D.Double(X_FIELD_MIN, Y_FIELD_MAX),
             new Point2D.Double(X_FIELD_MAX, Y_FIELD_MAX),
             new Point2D.Double(X_FIELD_MAX, Y_FIELD_MIN)
-    }, {
-            new Point2D.Double(AT_HOME_X_FIELD_MIN, AT_HOME_Y_FIELD_MIN),
-            new Point2D.Double(AT_HOME_X_FIELD_MIN, AT_HOME_Y_FIELD_MAX),
-            new Point2D.Double(AT_HOME_X_FIELD_MAX, AT_HOME_Y_FIELD_MAX),
-            new Point2D.Double(AT_HOME_X_FIELD_MAX, AT_HOME_Y_FIELD_MIN)
-    }};
+    };
 
     // the transformed (to screen coordinate) field outline.
-    private final Point2D.Double[][] m_xfmField = {{
+    private final Point2D.Double[] m_xfmField = {
             new Point2D.Double(X_FIELD_MIN, Y_FIELD_MIN),
             new Point2D.Double(X_FIELD_MIN, Y_FIELD_MAX),
             new Point2D.Double(X_FIELD_MAX, Y_FIELD_MAX),
             new Point2D.Double(X_FIELD_MAX, Y_FIELD_MIN)
-    }, {
-            new Point2D.Double(AT_HOME_X_FIELD_MIN, AT_HOME_Y_FIELD_MIN),
-            new Point2D.Double(AT_HOME_X_FIELD_MIN, AT_HOME_Y_FIELD_MAX),
-            new Point2D.Double(AT_HOME_X_FIELD_MAX, AT_HOME_Y_FIELD_MAX),
-            new Point2D.Double(AT_HOME_X_FIELD_MAX, AT_HOME_Y_FIELD_MIN)
-    }};
+    };
 
-    private final Plane2d[][] fieldPlanes = {{
+    private final Plane2d[] fieldPlanes = {
             new Plane2d(1.0, 0.0, -X_FIELD_MAX),
             new Plane2d(-1.0, 0.0, X_FIELD_MIN),
             new Plane2d(0.0, 1.0, -Y_FIELD_MAX),
             new Plane2d(0.0, -1.0, Y_FIELD_MIN)
-    }, {
-            new Plane2d(1.0, 0.0, -AT_HOME_X_FIELD_MAX),
-            new Plane2d(-1.0, 0.0, AT_HOME_X_FIELD_MIN),
-            new Plane2d(0.0, 1.0, -AT_HOME_Y_FIELD_MAX),
-            new Plane2d(0.0, -1.0, AT_HOME_Y_FIELD_MIN)
-    }};
-
-    private final String[] m_default_title = {"default field", "at Home field"};
-    private final String[] m_default_description = {
-            "The competition field outline with no game elements.",
-            "The at Home field outline with no game elements."
-    };
-    private final MinMax[] m_minMax = {
-            new MinMax(X_AXIS_MIN, Y_AXIS_MIN, X_AXIS_MAX, Y_AXIS_MAX),
-            new MinMax(AT_HOME_X_AXIS_MIN, AT_HOME_Y_AXIS_MIN, AT_HOME_X_AXIS_MAX, AT_HOME_Y_AXIS_MAX)
     };
 
-    private int useField = DEFAULT_FIELD;
-    private String m_title = m_default_title[useField];
-    private String m_description = m_default_description[useField];
+    private final MinMax m_minMax =
+            new MinMax(X_VIEW_MIN - AXIS_MARGIN, Y_VIEW_MIN - AXIS_MARGIN,
+                    X_VIEW_MAX + AXIS_MARGIN, Y_VIEW_MAX + AXIS_MARGIN);
+
+    private String m_title = m_default_title;
+    private String m_description = m_default_description;
     private final HashMap<String, FieldComponent> m_components = new HashMap();
     private final ArrayList<FieldDraw> m_drawList = new ArrayList();
 
@@ -165,16 +131,33 @@ public class Field {
      *
      */
     public static class MinMax {
-        public final double m_minX;
-        public final double m_minY;
-        public final double m_maxX;
-        public final double m_maxY;
+        private double m_minX;
+        private double m_minY;
+        private double m_maxX;
+        private double m_maxY;
 
         public MinMax(double minX, double minY, double maxX, double maxY) {
+            setValue(minX, minY, maxX, maxY);
+        }
+
+        public void setValue(double minX, double minY, double maxX, double maxY) {
             m_minX = minX;
             m_minY = minY;
             m_maxX = maxX;
             m_maxY = maxY;
+        }
+
+        double getMinX() {
+            return m_minX;
+        }
+        double getMinY() {
+            return m_minY;
+        }
+        double getMaxX() {
+            return m_maxX;
+        }
+        double getMaxY() {
+            return m_maxY;
         }
     }
 
@@ -382,16 +365,6 @@ public class Field {
     // Field - the actual implementation of the field class
     // ====================================================================================================
     // ====================================================================================================
-    public int getFieldType() {
-        return useField;
-    }
-
-    public void setFieldType(int fieldType) {
-        useField = fieldType;
-        m_title = m_default_title[useField];
-        m_description = m_default_description[useField];
-    }
-
     public String getTitle() {
         return m_title;
     }
@@ -407,24 +380,87 @@ public class Field {
      * @return The field min-max
      */
     public @NotNull MinMax getMinMax() {
-        return m_minMax[useField];
+        return m_minMax;
     }
 
     // ----------------------------------------------------------------------------------------------------
     // Loading from a JSON file
     // ----------------------------------------------------------------------------------------------------
+    private void setDefaultEmptyField()
+    {
+        m_title = m_default_title;
+        m_description = m_default_description;
+        m_components.clear();
+        m_drawList.clear();
 
+        // 2022 Rapid React field and view
+        X_FIELD_MIN = -4.115;
+        Y_FIELD_MIN = -8.23;
+        X_FIELD_MAX = 4.115;
+        Y_FIELD_MAX = 8.23;
+
+        X_VIEW_MIN = -4.115;
+        Y_VIEW_MIN = -8.23;
+        X_VIEW_MAX = 4.115;
+        Y_VIEW_MAX = 1.75;
+
+    }
+
+    private void resetExtentAndViewDependencies()
+    {
+        // reset the axis endpoints
+        X_AXIS_START.setLocation(X_VIEW_MIN - AXIS_MARGIN, 0.0);
+        X_AXIS_END.setLocation(X_VIEW_MAX + AXIS_MARGIN, 0.0);
+        Y_AXIS_START.setLocation(0.0, Y_VIEW_MIN - AXIS_MARGIN);
+        Y_AXIS_END.setLocation(0.0, Y_VIEW_MAX + AXIS_MARGIN);
+        // field outline
+        FIELD_OUTLINE[0].setLocation(X_FIELD_MIN, Y_FIELD_MIN);
+        FIELD_OUTLINE[1].setLocation(X_FIELD_MIN, Y_FIELD_MAX);
+        FIELD_OUTLINE[2].setLocation(X_FIELD_MAX, Y_FIELD_MAX);
+        FIELD_OUTLINE[3].setLocation(X_FIELD_MAX, Y_FIELD_MIN);
+        // field transformation
+        m_xfmField[0].setLocation(X_FIELD_MIN, Y_FIELD_MIN);
+        m_xfmField[1].setLocation(X_FIELD_MIN, Y_FIELD_MAX);
+        m_xfmField[2].setLocation(X_FIELD_MAX, Y_FIELD_MAX);
+        m_xfmField[3].setLocation(X_FIELD_MAX, Y_FIELD_MIN);
+        // the transformed (to screen coordinate) field outline.
+        fieldPlanes[0].setValue(1.0, 0.0, -X_FIELD_MAX);
+        fieldPlanes[1].setValue(-1.0, 0.0, X_FIELD_MIN);
+        fieldPlanes[2].setValue(0.0, 1.0, -Y_FIELD_MAX);
+        fieldPlanes[3].setValue(0.0, -1.0, Y_FIELD_MIN);
+        // The field min-max used in resizing.
+        m_minMax .setValue(X_VIEW_MIN - AXIS_MARGIN, Y_VIEW_MIN - AXIS_MARGIN,
+                        X_VIEW_MAX + AXIS_MARGIN, Y_VIEW_MAX + AXIS_MARGIN);
+    }
     /**
      * @param filename
      */
     public void loadField(@NotNull String filename) {
-        m_components.clear();
-        m_drawList.clear();
+        setDefaultEmptyField();
         try {
             JSONObject dict = readJsonFileAsJSONObject(filename);
             // title and description
             m_title = parseString(dict, TITLE, "untitled");
             m_description = parseString(dict, DESCRIPTION, "No description provided.");
+            // Arena - the basic field extent and view.
+            JSONObject arena = getJSONObject(dict, ARENA,false);
+            if (null != arena) {
+                JSONArray extentList = getJSONArray(arena, EXTENT);
+                if (4 == extentList.size()) {
+                    X_FIELD_MIN = X_VIEW_MIN = (double)extentList.get(0);
+                    Y_FIELD_MIN = Y_VIEW_MIN = (double)extentList.get(1);
+                    X_FIELD_MAX = X_VIEW_MAX = (double)extentList.get(2);
+                    Y_FIELD_MAX = Y_VIEW_MAX = (double)extentList.get(3);
+                }
+                JSONArray viewList = getJSONArray(arena, VIEW, false);
+                if ((null != viewList) && (4 == viewList.size())) {
+                    X_VIEW_MIN = (double)viewList.get(0);
+                    Y_VIEW_MIN = (double)viewList.get(1);
+                    X_VIEW_MAX = (double)viewList.get(2);
+                    Y_VIEW_MAX = (double)viewList.get(3);
+                }
+            }
+            resetExtentAndViewDependencies();
             // Read the field components
             JSONArray componentList = getJSONArray(dict, COMPONENTS, false);
             if (null != componentList) {
@@ -469,6 +505,10 @@ public class Field {
             }
 
         } catch (IOException | ParseException | ClassCastException | NullPointerException e) {
+            // TODO - do something better (like a meaningful error message dialog) for a bad
+            // TODO - field description file.
+            setDefaultEmptyField();
+            resetExtentAndViewDependencies();
             e.printStackTrace();
         }
     }
@@ -548,12 +588,12 @@ public class Field {
 
         // draw the axis
         g2d.setPaint(Color.ORANGE);
-        drawLine(g2d, drawXfm, X_AXIS_START[useField], X_AXIS_END[useField]);
-        drawLine(g2d, drawXfm, Y_AXIS_START[useField], Y_AXIS_END[useField]);
+        drawLine(g2d, drawXfm, X_AXIS_START, X_AXIS_END);
+        drawLine(g2d, drawXfm, Y_AXIS_START, Y_AXIS_END);
 
         // draw the field outline as a dotted line
         g2d.setPaint(Color.WHITE);
-        drawPolyLine(g2d, drawXfm, FIELD_OUTLINE[useField], m_xfmField[useField], true);
+        drawPolyLine(g2d, drawXfm, FIELD_OUTLINE, m_xfmField, true);
 
         // now draw the field that was read in from the field data file.
         for (FieldDraw fieldDraw : m_drawList) {
@@ -575,7 +615,7 @@ public class Field {
      */
     public boolean isInsideField(@NotNull Point2D[] pts, double tolerance) {
         for (Point2D pt : pts) {
-            for (Plane2d plane : fieldPlanes[useField]) {
+            for (Plane2d plane : fieldPlanes) {
                 if (!plane.isIn(pt, tolerance)) {
                     return false;
                 }

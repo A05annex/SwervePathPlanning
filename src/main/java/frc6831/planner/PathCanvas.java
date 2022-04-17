@@ -115,31 +115,8 @@ public class PathCanvas extends Canvas implements ActionListener {
             float width = comp.getWidth();
             float height = comp.getHeight();
             System.out.printf("Size Changed %d,%d%n", (int) width, (int) height);
-            // OK, so here we pick whether we scale X or Y to fill the window, reverse Y,
-            // and, translate 0,0 to center screen.
-            Field.MinMax fieldMinMax = field.getMinMax();
-            // this is the scale that fits the X into the window
-            double scaleX = width / (fieldMinMax.m_maxX - fieldMinMax.m_minX);
-            // this is the scale that fits y into the window
-            double scaleY = height / (fieldMinMax.m_maxY - fieldMinMax.m_minY);
-            // this is the scale that fits them both into the window
-            scale = Math.min(scaleX, scaleY);
-            // OK, what is happening here?? Magic - well, not really. The width/2.0 and height/2.0 bits of the
-            // m02 and m12 shift the origin to the center of the screen window. For the default competition field
-            // this is great because we adopted 0,0 as center field. For the 2021 at home field, the 0.0 is at
-            // a corner of the field - the next term is the shift of the 0,0 for the field from center window,
-            // scaled by the field to window scale.
-            drawXfm = new AffineTransform(scale, 0.0f, 0.0f, -scale,
-                    (width / 2.0) - (scale * (((fieldMinMax.m_maxX - fieldMinMax.m_minX) / 2.0) + fieldMinMax.m_minX)),
-                    (height / 2.0) + (scale * (((fieldMinMax.m_maxY - fieldMinMax.m_minY) / 2.0) + fieldMinMax.m_minY)));
-            mouseXfm = new AffineTransform(drawXfm);
-            try {
-                mouseXfm.invert();
-            } catch (NoninvertibleTransformException ex) {
-                System.out.println("  -- can't invert draw transform");
-            }
+            ((PathCanvas)comp).resetFieldGeometry();
         }
-
     }
 
     /**
@@ -384,6 +361,37 @@ public class PathCanvas extends Canvas implements ActionListener {
         robotCorners[2].y = robot.getBumperLength() / 2.0;
         robotCorners[3].x = robot.getBumperWidth() / 2.0;
         robotCorners[3].y = -robot.getBumperLength() / 2.0;
+
+    }
+
+    public void resetFieldGeometry() {
+        float width = this.getWidth();
+        float height = this.getHeight();
+        // OK, so here we pick whether we scale X or Y to fill the window, reverse Y,
+        // and, translate 0,0 to center screen.
+        Field.MinMax fieldMinMax = field.getMinMax();
+        // this is the scale that fits the X into the window
+        double scaleX = width / (fieldMinMax.getMaxX() - fieldMinMax.getMinX());
+        // this is the scale that fits y into the window
+        double scaleY = height / (fieldMinMax.getMaxY() - fieldMinMax.getMinY());
+        // this is the scale that fits them both into the window
+        scale = Math.min(scaleX, scaleY);
+        // OK, what is happening here?? Magic - well, not really. The width/2.0 and height/2.0 bits of the
+        // m02 and m12 shift the origin to the center of the screen window. For the default competition field
+        // this is great because we adopted 0,0 as center field. For the 2021 at home field, the 0.0 is at
+        // a corner of the field - the next term is the shift of the 0,0 for the field from center window,
+        // scaled by the field to window scale.
+        drawXfm = new AffineTransform(scale, 0.0f, 0.0f, -scale,
+                (width / 2.0) -
+                        (scale * (((fieldMinMax.getMaxX() - fieldMinMax.getMinX()) / 2.0) + fieldMinMax.getMinX())),
+                (height / 2.0) +
+                        (scale * (((fieldMinMax.getMaxY() - fieldMinMax.getMinY()) / 2.0) + fieldMinMax.getMinY())));
+        mouseXfm = new AffineTransform(drawXfm);
+        try {
+            mouseXfm.invert();
+        } catch (NoninvertibleTransformException ex) {
+            System.out.println("  -- can't invert draw transform");
+        }
 
     }
 

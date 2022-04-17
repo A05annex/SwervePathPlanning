@@ -56,25 +56,18 @@ public class PathPlanner extends JFrame implements ActionListener, MenuListener,
         parser.addArgument("-f", "--field")
                 .type(String.class)
                 .help("specify a robot description file");
-        parser.addArgument("-ah", "--atHome")
-                .action(Arguments.storeTrue())
-                .help("use the 20201 season at home field instead of the default competition field");
         String robotDescFile = null;
         String fieldDescFile = null;
-        int useField = Field.DEFAULT_FIELD;
         try {
             Namespace parsedArgs = parser.parseArgs(args);
             robotDescFile = parsedArgs.get("robot");
             fieldDescFile = parsedArgs.get("field");
-            if (parsedArgs.get("atHome")) {
-                useField = Field.AT_HOME_FIELD;
-            }
         } catch (ArgumentParserException e) {
             parser.handleError(e);
         }
         // start the path planning window
         try {
-            final PathPlanner pathPlanner = new PathPlanner(useField, robotDescFile, fieldDescFile);
+            final PathPlanner pathPlanner = new PathPlanner(robotDescFile, fieldDescFile);
             pathPlanner.setVisible(true);
         } catch (final Throwable t) {
             t.printStackTrace();
@@ -82,7 +75,7 @@ public class PathPlanner extends JFrame implements ActionListener, MenuListener,
         }
     }
 
-    private PathPlanner(int useField, String robotDescFile, String fieldDescFile) {
+    private PathPlanner(String robotDescFile, String fieldDescFile) {
         //------------------------------------------------------------------
         // setup the window for drawing the field and paths
         //------------------------------------------------------------------
@@ -125,7 +118,6 @@ public class PathPlanner extends JFrame implements ActionListener, MenuListener,
         //------------------------------------------------------------------
         // create a canvas to draw on
         //------------------------------------------------------------------
-        m_field.setFieldType(useField);
         if (null != robotDescFile) {
             m_robot.loadRobot(robotDescFile);
         }
@@ -178,6 +170,7 @@ public class PathPlanner extends JFrame implements ActionListener, MenuListener,
             System.out.println("Loading field from: " + file.getAbsolutePath());
             m_field.loadField(file.getAbsolutePath());
             titleChanged();
+            m_canvas.resetFieldGeometry();
             m_canvas.repaint();
         } else {
             System.out.println("Load field command cancelled by user.");

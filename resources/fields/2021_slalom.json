@@ -1,6 +1,9 @@
 {
   "title": "Slalom 2020-2021 Field",
   "description": "The Infinite Recharge at Home, 2020-2021, Slalom Field.",
+  "arena": {
+    "extent": [0.0, 0.0, 4.572, 9.144]
+  },
   "components": [
     {
       "name": "marker",

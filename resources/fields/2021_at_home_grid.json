@@ -1,6 +1,9 @@
 {
   "title": "Infinite Recharge at Home field grid 2020-2021",
   "description": "The Infinite Recharge at Home field grid",
+  "arena": {
+    "extent": [0.0, 0.0, 4.572, 9.144]
+  },
   "components": [
     {
       "name": "marker",

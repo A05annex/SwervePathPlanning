@@ -1,6 +1,10 @@
 {
-  "title": "Infinite Recharge 2019-2020",
-  "description": "The Infinite Recharge arena with only start lines, trenches, pickup, and scoring.",
+  "title": "2022 Rapid React",
+  "description": "The 2022 Rapid React arena with only the red half of the field.",
+  "arena": {
+    "extent": [-4.115, -8.23, 4.115, 8.23],
+    "view": [-4.115, -8.23, 4.115, 1.7]
+  },
   "components": [
     {
       "name": "cargo",

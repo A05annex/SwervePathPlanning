@@ -1,15 +1,16 @@
-* **version:** 0.8.0
-* **status:** testing with 2021 FRC at Home skills challenges
-* **comments:** We are using this for our 2021 skills autonomous path planning. Watch for updates as the
-  season progresses and we test and tune.
+* **version:** 0.9.0
+* **status:** used for FRC **2022 Rapid React**
+* **comments:** We are using this for our **2022 Rapid React** autonomous path planning, and **2021 Infinite
+  Recharge at home**. This release adds commands to be launched while to robot follows the path. Watch for
+  updates as the season progresses, and we test and tune.
 
 
-# Swerve Path Planning: 6831 A05annex
+# 6831 A05annex: Swerve Path Planning
 
 ![alt text](./resources/swerve-path-planner.jpg "Swerve Path Planner")
-This project is a visual 2D editor for path planning for a swerve drive FRC robot. Read a robot description
-and field description into this planner as a context for path planning, then draw, tune, and save a paths
-that can be used as a path input in the autonomous program.
+This project is a visual 2D editor for path planning for a swerve drive FRC robot. You read a field description
+and robot description into this planner as a context for path planning; then draw, tune, add commands, and
+save a paths that can be used as one of the autonomous programs for a match.
 
 A05annex is committed to using the internationally recognized SI units, so the field, robot, and path
 descriptions, and path points are in SI units. The +Y axis is always downfield from the driver (as Y is
@@ -17,6 +18,21 @@ the forward/backward axis of control sticks and the vertical or forward axis whe
 down in front of the driver). The +X axis is always to the right (common engineering convention). We adopted
 the convention that the center of the competition field is (0.0,0.0) for red-blue alliance symmetry; and
 that the left corner closest to the driver is 0,0 for the 2021 at Home field.
+
+## Change Log
+
+* version 0.8.0 to 0.9.0 (for **2022 Rapid React**);
+  * added *stop-and-run* commands for control points and *scheduled commands* for path points. See
+    [Running Commands Along The Path](#Running-Commands-Along-The-Path);
+  * robots often have *appendages*, like a collector or hangar, that extend past to robot periphery
+    and must be considered in path planning - appendages were added to
+    the [Robot Description](#Robot Description);
+  * while there is an 'FRC standard field', different competitions like **2020 Infinite Recharge**, 
+    **2021 At Home**, and **2022 Rapid React** have configured this to different sizes and/or
+    restricted the portion of the field where autonomous action can happen. Moved the field boundary
+    description from the *Swerve Path Planner* constants to the [Field Description](#Field Description)
+    as the <tt>"arena"</tt> description. The <tt>-ah</tt> command argument was removed because field
+    extents are now in the field description rather than programmed.
 
 ## Download and Run
 
@@ -29,7 +45,7 @@ When you run the program it will initialize with a default view of the competiti
 commandline arguments to the run target to get your desired view to load automatically. running with the `-h`
 or `--help` command line option to get program help:
 ```
-usage: PathPlanner [-h] [-r ROBOT] [-f FIELD] [-ah]
+usage: PathPlanner [-h] [-r ROBOT] [-f FIELD]
 
 Swerve Drive Path Planner
 
@@ -37,15 +53,7 @@ named arguments:
 -h, --help                  show this help message and exit
 -r ROBOT, --robot ROBOT     specify a robot description file
 -f FIELD, --field FIELD     specify a field description file
--ah, --atHome               use the 20201 season at Home field instead of the
-                            default competition field
 ```
-
-### FRC 2021 At Home Challenges
-
-We added the `-ah` flag to switch from the default competition field to the **2021 At Home Challenges** field. NOTE,
-for us, the +Y axis is downfield from the driver, and +X is always to the right. So our axis mapping
-is different than what is in the game manual.
 
 ## Path Spline
 
@@ -61,6 +69,13 @@ control points are computed using the [Cardinal-Spline](https://en.wikipedia.org
 formulation with the default tension specified by a program constant. The tangent is adjusted using a
 control handle which intuitively manipulates the shape of the spline at the control point to implicitly
 edit tension and bias.
+
+### Running Commands Along The Path
+
+In the **2021 At Home Challenges** the obstacle course challenges merely required a path. For the **2022
+Rapid React** competition it became obvious we needed the paths to include other actions (commands) that needed to
+run at various points on the path (like *start/stop-collector*, or *aim-and-shoot*).
+
 
 ### Path Description Format
 
@@ -141,7 +156,8 @@ between the robot and game elements.
 
 ### Robot Description Format
 
-The robot description is divided into 3 sections:
+The robot description has **<tt>"title"</tt>** and **<tt>"description"</tt>** elements, and the actual geometry
+of the robots is divided into 4 sections:
 - **<tt>"title"</tt>**: (optional, string) A title or name for the robot, primarily used as file documentation to refresh
   you on the robot this file represents.
 - **<tt>"description"</tt>**: (optional, string) A more verbose description if the robot, again primarily used as file
@@ -157,6 +173,7 @@ The robot description is divided into 3 sections:
 - **<tt>"bumpers"</tt>**: (optional, dictionary)
   - **<tt>"length"</tt>**: (optional, double, default=1.1) The length of robot with bumpers in meters.
   - **<tt>"width"</tt>**: (optional, double, default=0.7) The width of the robot with bumpers in meters.
+- **<tt>"appendages"</tt>**: (optional, dictionary)
 
 ### Example Robot Description file
 
@@ -185,13 +202,16 @@ This is a robot file which describes our 2020 prototype swerve base:
 ## Field Description
 
 The field is described in a <tt>.json</tt> file read into the path planner and displayed as the background
-field context during path planning. The Path Planner always displays the field axes ([0.0,0.0] is center field),
-and the standard field outline. The field description adds the game elements for the season-specific game.
+field context during path planning. The Path Planner initializes displaying the field axes ([0.0,0.0] is center field),
+and the standard field outline. The field description adds the game elements for the season-specific game, and
+may change the field outline and display the portion of the field that is of interest for path planning.
 
-To simplify field description there is a section of the description for
-game <tt>components</tt> where you describe game elements like the scoring pieces, scoring targets, scoring
-piece depots, etc; and a <tt>field</tt> section that lets you position components and describe which
-alliance (if any) they belong to.
+To simplify field description there is a section of the description for;
+- field <tt>arena</tt> where you describe field outline and the view that is of interest for autonomous path planning
+- game <tt>components</tt> where you describe game elements like the scoring pieces, scoring targets, scoring
+  piece depots, etc;
+- and a <tt>field</tt> section that lets you position components and describe which
+  alliance (if any) they belong to.
 
 ### Field Description Format
 
@@ -201,6 +221,15 @@ for planning move paths. The field description file has 4 main elements:
   to refresh you on the field this file represents.
 - **<tt>"description"</tt>**: (optional, string) A more verbose description if the field, again primarily used as file
   documentation to refresh you on the field this file represents.
+- **<tt>"arena"</tt>**: (optional, dictionary) a description of the arena bounds and view that is of interest. if 
+  not specified, the default *<tt>"field"</tt> is the 2022 field, and the default <tt>"view"</tt> is the
+  entire field.
+  - **<tt>"extent"</tt>**: (optional, list) The extent is specified by a list of 4 doubles that are the
+    min-X, min-Y, max-X and max-Y extents of the field. The default extent is the 2022 field as:
+    <tt>[-4.115, -8.23, 4.115, 8.23]</tt>. Past fields were the 2021 Infinite Recharge At Home as:
+    <tt>[0.0, 0.0, 4.572, 9.144]</tt>; and 2020 Infinite Recharge as: 
+    <tt>[-4.105, -7.99, 4.015, 7.99]</tt>.
+  - **<tt>"view"</tt>**: (optional, list) Autonomous activity is often restricted
 - **<tt>"components"</tt>**: (required, list) The list of field components (elements or assembles) that are
   generally specific to the competition for the year, and often appear multiple times on the field. Within
   this list are dictionaries describing the components as:
@@ -210,9 +239,10 @@ for planning move paths. The field description file has 4 main elements:
     no outline should be drawn, see [Color Description](#Color-Description) for valid color values.
   - **<tt>"fillColor"</tt>**:  (optional, string, default=<tt>null</tt>) The fill color or <tt>null</tt> if
     the geometry should not be filled, see [Color Description](#Color-Description).
-  - **<tt>"shapes"</tt>**: A list of shapes which will be rendered using the <tt>"lineColor"</tt> and
-    <tt>"fillColor"</tt> directives, see [Shapes Description](#Shapes-Descriptions) for the formats of the
-    shapes that are currently supported.
+  - **<tt>"shapes"</tt>**: (required, list) A list of shapes which will be rendered using the <tt>"lineColor"</tt> and
+    <tt>"fillColor"</tt> directives. Each shape is described by a dictionary that has a <tt>"type"</tt> specifier
+    and other keys specific to that type. See [Shapes Descriptions](#Shapes-Descriptions) for the formats of the
+    shape types that are currently supported.
 - **<tt>"field"</tt>**: The drawing of the field. By default, the path planner draws the field axes and outline.
   This section describes the things that should be drawn on the field, specifically: components as describes in
   the previous section and additional field geometry. Components are specified by name, an optional alliance color,
