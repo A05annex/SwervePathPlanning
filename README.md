@@ -35,7 +35,8 @@ that the left corner closest to the driver is 0,0 for the 2021 at Home field.
     restricted the portion of the field where autonomous action can happen. Moved the field boundary
     description from the *Swerve Path Planner* constants to the [Field Description](#Field-Description)
     as the <tt>"arena"</tt> description. The <tt>-ah</tt> command argument was removed because field
-    extents are now in the field description rather than programmed.
+    extents are now in the field description rather than programmed. All field descriptions
+    in <tt>./resources/fields</tt> have been updated to include and <tt>"arena"</tt> description.
 </details>
 
 ## Download and Run
@@ -63,11 +64,14 @@ Our fields, robots, and paths from previous years are in the <tt>resources</tt> 
 
 <details>
   <summary>The path planner uses an implementation of the
-  [Kochanek-Bartels Spline](https://en.wikipedia.org/wiki/Kochanek%E2%80%93Bartels_spline) modified
+  <a href="https://en.wikipedia.org/wiki/Kochanek%E2%80%93Bartels_spline">Kochanek-Bartels Spline</a> modified
   for interactive editing of the tangent vector to implicitly control bias and tension. There is no
   continuity control because we want our robot paths to be continuous. The original reference for this
   spline can be found at
-  [Interpolating Splines with Local Tension, Continuity, and Bias Control](https://www.engr.colostate.edu/ECE455/Readings/TCB.pdf).</summary>
+  <a href="https://www.engr.colostate.edu/ECE455/Readings/TCB.pdf">
+  Interpolating Splines with Local Tension, Continuity, and Bias Control</a>.
+  </summary>
+
 
 When control points are created the tangent (derivatives) at that control point and surrounding
 control points are computed using the [Cardinal-Spline](https://en.wikipedia.org/wiki/Cubic_Hermite_spline)
