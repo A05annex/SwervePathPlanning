@@ -95,8 +95,11 @@ run at various points on the path (like *start/stop-collector*, or *aim-and-shoo
 ### Path Description Format
 
 <details>
-  <summary>The path is saved as a list of control points:</summary>
+  <summary>Paths are saved in <code>.json</code> files that can be loaded to the robot for execution by the
+  <code>AutonomousPathCommand</code>.
+  </summary>
 
+The path is saved as a list of control points:
 - **<tt>"title"</tt>**: (optional, string) A title or name for the path, primarily used as file documentation
   to refresh you on the path this file represents.
 - **<tt>"description"</tt>**: (optional, string) A more verbose description if the path, again primarily used as file
@@ -108,8 +111,8 @@ run at various points on the path (like *start/stop-collector*, or *aim-and-shoo
   - **<tt>"fieldHeading"</tt>**: (optional, double, default=0.0) The field heading position in radians.
   - **<tt>"time"</tt>**: (optional, double, default=0.0) The time at which this control point should be reached.
   - **<tt>"derivativesEdited"</tt>**: (optional, boolean, default=<tt>false</tt>) Whether the derivatives of the
-    control point have been explicitly set. If <tt>false</tt>, then the X,Y velocities at the control point are set
-    algorithmically. If <tt>false</tt> then the X,Y velocities specified here are used for the point.
+    control point have been explicitly set. If <code>false</code>, then the X,Y velocities at the control point are set
+    algorithmically. If <code>true</code> then the X,Y velocities specified here are used for the point.
   - **<tt>"field_dX"</tt>**: (optional, double, default=0.0) The field X velocity in meters per second.
   - **<tt>"field_dY"</tt>**: (optional, double, default=0.0) The field Y velocity in meters per second.
   - **<tt>"field_dHeading"</tt>**: (optional, double, default=0.0) The field angular velocity in
@@ -170,9 +173,12 @@ This is the path description for a 2m diameter calibration path:
 
 ## Robot Description
 
-The robot is described in a <tt>.json</tt> file read into the path planner and displayed as the robot during
-the path planning, as well as providing the drive geometry and max speed for the modules of the swerve
-drive. Having a good description of the robot is helpful in identifying when the planned path exceeds the
+<details>
+  <summary>The robot is described in a <tt>.json</tt> file read into the path planner and displayed as the robot during
+  the path planning, as well as providing the drive geometry and max speed for the modules of the swerve
+  drive.
+  </summary>
+Having a good description of the robot is helpful in identifying when the planned path exceeds the
 capability of the robot (i.e. it just cannot go that fast), and detecting collisions or near collisions
 between the robot and game elements.
 
@@ -220,6 +226,7 @@ This is a robot file which describes our 2020 prototype swerve base:
   }
 }
 ```
+</details>
 
 ## Field Description
 
@@ -308,16 +315,16 @@ colored by the alliance it belongs to. The recognized colors are:
 - **<tt>"blue-zone"</tt>**: The color for the blue zone for Infinite Recharge at Home.
 - **<tt>"purple-zone"</tt>**: The color for the purple zone (reintroduction zone) for Infinite Recharge at Home.
 - **<tt>"red-zone"</tt>**: The color for the red zone for Infinite Recharge at Home.
-- </details>
+</details>
 
 
 #### Shapes Descriptions
 
 Shapes are generally very simple descriptions of different types of geometries. Shape representations are
-intended to be extended to be extended (i.e. new types of shapes added) if required to represent the game
+intended to be extended (i.e. new types of shapes added) if required to represent the game
 arena for the season's competition. Each shape is represented by a dictionary with a <tt>"type"</tt> key
 describing the shape type, and then type-specific keys and values. These are the shape types, and the
-corresponding keys that describe the shape:
+corresponding keys that describe the currently supported shapes:
 - **<tt>"circle"</tt>**: A circle
   - **<tt>"center"</tt>**: (required, [*x*,*y*]) The local X and Y coordinates, in meters, of the center
   of the circle.
