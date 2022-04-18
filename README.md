@@ -15,24 +15,28 @@ save a paths that can be used as one of the autonomous programs for a match.
 A05annex is committed to using the internationally recognized SI units, so the field, robot, and path
 descriptions, and path points are in SI units. The +Y axis is always downfield from the driver (as Y is
 the forward/backward axis of control sticks and the vertical or forward axis when the field map is laid
-down in front of the driver). The +X axis is always to the right (common engineering convention). We adopted
+down in front of the driver), Specifically, the driver is at the bottom of the screen. The +X axis is
+always to the right (common engineering convention). We adopted
 the convention that the center of the competition field is (0.0,0.0) for red-blue alliance symmetry; and
 that the left corner closest to the driver is 0,0 for the 2021 at Home field.
 
 ## Change Log
 
-* version 0.8.0 to 0.9.0 (for **2022 Rapid React**);
+<details>
+  <summary>version 0.8.0 to 0.9.0 (for <b>2022 Rapid React</b>):</summary>
+
   * added *stop-and-run* commands for control points and *scheduled commands* for path points. See
     [Running Commands Along The Path](#Running-Commands-Along-The-Path);
   * robots often have *appendages*, like a collector or hangar, that extend past to robot periphery
     and must be considered in path planning - appendages were added to
-    the [Robot Description](#Robot Description);
+    the [Robot Description](#Robot-Description);
   * while there is an 'FRC standard field', different competitions like **2020 Infinite Recharge**, 
     **2021 At Home**, and **2022 Rapid React** have configured this to different sizes and/or
     restricted the portion of the field where autonomous action can happen. Moved the field boundary
-    description from the *Swerve Path Planner* constants to the [Field Description](#Field Description)
+    description from the *Swerve Path Planner* constants to the [Field Description](#Field-Description)
     as the <tt>"arena"</tt> description. The <tt>-ah</tt> command argument was removed because field
     extents are now in the field description rather than programmed.
+</details>
 
 ## Download and Run
 
@@ -54,32 +58,41 @@ named arguments:
 -r ROBOT, --robot ROBOT     specify a robot description file
 -f FIELD, --field FIELD     specify a field description file
 ```
-
+Our fields, robots, and paths from previous years are in the <tt>resources</tt> folder of the project.
 ## Path Spline
 
-The path planner uses an implementation of the
-[Kochanek-Bartels Spline](https://en.wikipedia.org/wiki/Kochanek%E2%80%93Bartels_spline) modified
-for interactive editing of the tangent vector to implicitly control bias and tension. There is no
-continuity control because we want our robot paths to be continuous. The original reference for this
-spline can be found at
-[Interpolating Splines with Local Tension, Continuity, and Bias Control](https://www.engr.colostate.edu/ECE455/Readings/TCB.pdf).
+<details>
+  <summary>The path planner uses an implementation of the
+  [Kochanek-Bartels Spline](https://en.wikipedia.org/wiki/Kochanek%E2%80%93Bartels_spline) modified
+  for interactive editing of the tangent vector to implicitly control bias and tension. There is no
+  continuity control because we want our robot paths to be continuous. The original reference for this
+  spline can be found at
+  [Interpolating Splines with Local Tension, Continuity, and Bias Control](https://www.engr.colostate.edu/ECE455/Readings/TCB.pdf).</summary>
 
 When control points are created the tangent (derivatives) at that control point and surrounding
 control points are computed using the [Cardinal-Spline](https://en.wikipedia.org/wiki/Cubic_Hermite_spline)
 formulation with the default tension specified by a program constant. The tangent is adjusted using a
 control handle which intuitively manipulates the shape of the spline at the control point to implicitly
 edit tension and bias.
+</details>
+
+### Defining a Path
+
+*To be written.*
 
 ### Running Commands Along The Path
 
 In the **2021 At Home Challenges** the obstacle course challenges merely required a path. For the **2022
 Rapid React** competition it became obvious we needed the paths to include other actions (commands) that needed to
-run at various points on the path (like *start/stop-collector*, or *aim-and-shoot*).
+run at various points on the path (like *start/stop-collector*, or *aim-and-shoot*). So the
+<tt>AutonomousPathCommand</tt> run on the robot is really a dynamically configured Command Group.
 
 
 ### Path Description Format
 
-The path is saved as a list of control points:
+<details>
+  <summary>The path is saved as a list of control points:</summary>
+
 - **<tt>"title"</tt>**: (optional, string) A title or name for the path, primarily used as file documentation
   to refresh you on the path this file represents.
 - **<tt>"description"</tt>**: (optional, string) A more verbose description if the path, again primarily used as file
@@ -92,16 +105,19 @@ The path is saved as a list of control points:
   - **<tt>"time"</tt>**: (optional, double, default=0.0) The time at which this control point should be reached.
   - **<tt>"derivativesEdited"</tt>**: (optional, boolean, default=<tt>false</tt>) Whether the derivatives of the
     control point have been explicitly set. If <tt>false</tt>, then the X,Y velocities at the control point are set
-    algorithmically. If <tt>false</tt> then the X,Y valocities specified here are used for the point.
+    algorithmically. If <tt>false</tt> then the X,Y velocities specified here are used for the point.
   - **<tt>"field_dX"</tt>**: (optional, double, default=0.0) The field X velocity in meters per second.
   - **<tt>"field_dY"</tt>**: (optional, double, default=0.0) The field Y velocity in meters per second.
   - **<tt>"field_dHeading"</tt>**: (optional, double, default=0.0) The field angular velocity in
     radians per second. Currently, ignored as the derivative is always generated from the heading of the adjacent
     control points.
 
-### Path Description Example
+#### Path Description Examples
 
+<details>
+<summary>
 This is the path description for a 2m diameter calibration path:
+</summary>
 
 ```json
 {
@@ -141,6 +157,8 @@ This is the path description for a 2m diameter calibration path:
   ]
 }
 ```
+</details>
+</details>
 
 ### Using a Path Description in Your Autonomous
 
@@ -260,6 +278,10 @@ for planning move paths. The field description file has 4 main elements:
 
 #### Color Description
 
+<details>
+  <summary>Colors are defined by name. We use a combination of standard Java names and names adopted for
+  First-specific field artifacts.</summary>
+
 We could have built an interface for describing color by RGB components, but, instead we used the defined
 Java [Color](https://docs.oracle.com/en/java/javase/11/docs/api/java.desktop/java/awt/Color.html) names for
 simplicity and readability, and to allow us to use <tt>alliance</tt> as the name of a component
@@ -282,6 +304,7 @@ colored by the alliance it belongs to. The recognized colors are:
 - **<tt>"blue-zone"</tt>**: The color for the blue zone for Infinite Recharge at Home.
 - **<tt>"purple-zone"</tt>**: The color for the purple zone (reintroduction zone) for Infinite Recharge at Home.
 - **<tt>"red-zone"</tt>**: The color for the red zone for Infinite Recharge at Home.
+- </details>
 
 
 #### Shapes Descriptions
@@ -305,12 +328,25 @@ corresponding keys that describe the shape:
 
 ### Example Field Description file
 
-This is the part of the description of the Infinite Recharge 2020 field:
+The example description is the part of the description of the Infinite Recharge 2020 field. Things to note:
+* In the <tt>"arena"</tt> key, a <tt>"view"<\tt> is specified that will show only the far half of the
+  field. Remove the <tt>"view"<\tt> to see the entire field (as shown in th image after the example description).
+* The <tt>"start line"</tt> component is just a line across the field at the center of the field. When used
+  in the <tt>"field"</tt> description it is used once with a translation to the blue and of the field and
+  a second time with a translation to the red end of the field.
+* The <tt>"ball pickup"</tt> safe zone component is described by its position at the red end of the field, but 
+  is given the <tt>"alliance"</tt> color. When drawn on the <tt>"field"</tt> it is drawn once where the
+  <tt>"alliance"</tt> is <tt>"red"</tt>, and drawn again rotated at 90&deg;(3.1416 radians) where the
+  <tt>"alliance"</tt> is <tt>"blue"</tt> letting us define a single component used for both alliances.
 
 ```json
 {
   "title": "Infinite Recharge 2019-2020",
   "description": "The Infinite Recharge arena with only start lines, pickup, and some power cells.",
+  "arena": {
+    "extent": [-4.105, -7.99, 4.105, 7.99],
+    "view": [-4.105, 0.0, 4.105, 7.99]
+  },
   "components": [
     {
       "name": "power cell",

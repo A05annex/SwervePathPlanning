@@ -1,6 +1,10 @@
 {
   "title": "Infinite Recharge 2019-2020",
   "description": "The Infinite Recharge arena with only start lines, pickup, and some power cells.",
+  "arena": {
+    "extent": [-4.105, -7.99, 4.105, 7.99],
+    "view": [-4.105, 0.0, 4.105, 7.99]
+  },
   "components": [
     {
       "name": "power cell",
