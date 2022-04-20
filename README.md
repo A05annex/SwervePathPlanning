@@ -46,8 +46,10 @@ easiest way to run this is to clone the repository and open it in your favorite 
 Visual Studio) and create a run target for `PathPlanner`. The gradle build file will resolve the
 dependencies, build, and run the program.
 
-When you run the program it will initialize with a default view of the competition field. You can add some
-commandline arguments to the run target to get your desired view to load automatically. running with the `-h`
+When you run the program it will initialize with a default view of the most recent competition field
+without any field elements. You can add some
+commandline arguments to the run target to get your desired field and robot to load automatically.
+Run with the `-h`
 or `--help` command line option to get program help:
 ```
 usage: PathPlanner [-h] [-r ROBOT] [-f FIELD]
@@ -108,7 +110,7 @@ The path is saved as a list of control points:
   containing these fields.
   - **<tt>"fieldX"</tt>**: (optional, double, default=0.0) The field X position in meters.
   - **<tt>"fieldY"</tt>**: (optional, double, default=0.0) The field Y position in meters.
-  - **<tt>"fieldHeading"</tt>**: (optional, double, default=0.0) The field heading position in radians.
+  - **<tt>"fieldHeading"</tt>**: (optional, double, default=0.0) The field heading in radians.
   - **<tt>"time"</tt>**: (optional, double, default=0.0) The time at which this control point should be reached.
   - **<tt>"derivativesEdited"</tt>**: (optional, boolean, default=<tt>false</tt>) Whether the derivatives of the
     control point have been explicitly set. If <code>false</code>, then the X,Y velocities at the control point are set
@@ -116,7 +118,7 @@ The path is saved as a list of control points:
   - **<tt>"field_dX"</tt>**: (optional, double, default=0.0) The field X velocity in meters per second.
   - **<tt>"field_dY"</tt>**: (optional, double, default=0.0) The field Y velocity in meters per second.
   - **<tt>"field_dHeading"</tt>**: (optional, double, default=0.0) The field angular velocity in
-    radians per second. Currently, ignored as the derivative is always generated from the heading of the adjacent
+    radians per second. Currently, ignored as the derivative is always generated from the headings of the adjacent
     control points.
 
 #### Path Description Examples
@@ -167,7 +169,7 @@ This is the path description for a 2m diameter calibration path:
 </details>
 </details>
 
-### Using a Path Description in Your Autonomous
+### Using a Path Description in the Robot Autonomous
 
 *To be written.*
 
@@ -230,8 +232,12 @@ This is a robot file which describes our 2020 prototype swerve base:
 
 ## Field Description
 
-The field is described in a <tt>.json</tt> file read into the path planner and displayed as the background
-field context during path planning. The Path Planner initializes displaying the field axes ([0.0,0.0] is center field),
+<details>
+  <summary>
+  The field is described in a <tt>.json</tt> file read into the path planner and displayed as the background
+  field context during path planning.
+  </summary>
+The Path Planner initializes displaying the field axes ([0.0,0.0] is center field),
 and the standard field outline. The field description adds the game elements for the season-specific game, and
 may change the field outline and display the portion of the field that is of interest for path planning.
 
@@ -287,61 +293,12 @@ for planning move paths. The field description file has 4 main elements:
     - **<tt>"rotate"</tt>**: (optional, double, default=0.0) The rotation for this component (in radians). NOTE:
       rotations are applied before translations.
 
-#### Color Description
-
-<details>
-  <summary>Colors are defined by name. We use a combination of standard Java names and names adopted for
-  First-specific field artifacts.</summary>
-
-We could have built an interface for describing color by RGB components, but, instead we used the defined
-Java [Color](https://docs.oracle.com/en/java/javase/11/docs/api/java.desktop/java/awt/Color.html) names for
-simplicity and readability, and to allow us to use <tt>alliance</tt> as the name of a component
-colored by the alliance it belongs to. The recognized colors are:
-- **<tt>"alliance"</tt>**: Use the alliance color when the component is drawn or filled. This should be used
-  for any components that represent alliance specific field markings, goals, pieces, etc. When the
-  component is drawn into the field, the alliance color will be specified.
-- **<tt>"white"</tt>**: Use white when the component is drawn or filled.
-- **<tt>"red"</tt>**: Use red when the component is drawn or filled.
-- **<tt>"blue"</tt>**: Use blue when the component is drawn or filled.
-- **<tt>"light-gray"</tt>**: Use light gray when the component is drawn or filled.
-- **<tt>"gray"</tt>**: Use gray when the component is drawn or filled.
-- **<tt>"dark-gray"</tt>**: Use dark gray when the component is drawn or filled.
-- **<tt>"black"</tt>**: Use black gray when the component is drawn or filled.
-- **<tt>"orange"</tt>**: Use orange when the component is drawn or filled.
-- **<tt>"green"</tt>**: Use green when the component is drawn or filled.
-- **<tt>"cyan"</tt>**: Use cyan when the component is drawn or filled.
-- **<tt>"green-zone"</tt>**: The color for the green zone for Infinite Recharge at Home.
-- **<tt>"yellow-zone"</tt>**: The color for the yellow zone for Infinite Recharge at Home.
-- **<tt>"blue-zone"</tt>**: The color for the blue zone for Infinite Recharge at Home.
-- **<tt>"purple-zone"</tt>**: The color for the purple zone (reintroduction zone) for Infinite Recharge at Home.
-- **<tt>"red-zone"</tt>**: The color for the red zone for Infinite Recharge at Home.
-</details>
-
-
-#### Shapes Descriptions
-
-Shapes are generally very simple descriptions of different types of geometries. Shape representations are
-intended to be extended (i.e. new types of shapes added) if required to represent the game
-arena for the season's competition. Each shape is represented by a dictionary with a <tt>"type"</tt> key
-describing the shape type, and then type-specific keys and values. These are the shape types, and the
-corresponding keys that describe the currently supported shapes:
-- **<tt>"circle"</tt>**: A circle
-  - **<tt>"center"</tt>**: (required, [*x*,*y*]) The local X and Y coordinates, in meters, of the center
-  of the circle.
-  - **<tt>"radius"</tt>**: (required, double) The radius, in meters.
-- **<tt>"rect"</tt>**:
-  - **<tt>"lower left"</tt>**:
-  - **<tt>"upper right"</tt>**:
-- **<tt>"polygon"</tt>**:
-  - **<tt>"points"</tt>**: A list of points describing the polygon, each point is described as a list
-    containing the [*x*,*y*] local X and Y coordinates, in meters, of the point. The points describe a
-    path that will be automatically closed.
 
 ### Example Field Description file
 
 The example description is the part of the description of the Infinite Recharge 2020 field. Things to note:
-* In the <tt>"arena"</tt> key, a <tt>"view"<\tt> is specified that will show only the far half of the
-  field. Remove the <tt>"view"<\tt> to see the entire field (as shown in th image after the example description).
+* In the <tt>"arena"</tt> key, a <tt>"view"</tt> is specified that will show only the far half of the
+  field. Remove the <tt>"view"</tt> to see the entire field (as shown in th image after the example description).
 * The <tt>"start line"</tt> component is just a line across the field at the center of the field. When used
   in the <tt>"field"</tt> description it is used once with a translation to the blue and of the field and
   a second time with a translation to the red end of the field.
@@ -457,3 +414,58 @@ The ball pickup (power cell pickup) is alliance specific - i.e. only the specifi
 there, and it is a penalty for the opposing alliance to encroach on this space. **Note** that the component is defined
 relative to the red alliance side of the field, the color is specified as `alliance`, and when drawn, it is the `red`
 alliance when not transformed, and the `blue` alliance when rotated 3.14radian (180&deg;) to the blue alliance side.
+</details>
+
+## Color Description
+
+<details>
+  <summary>Colors are defined by name. We use a combination of standard Java names and names adopted for
+  First-specific field artifacts.</summary>
+
+We could have built an interface for describing color by RGB components, but, instead we used the defined
+Java [Color](https://docs.oracle.com/en/java/javase/11/docs/api/java.desktop/java/awt/Color.html) names for
+simplicity and readability, and to allow us to use <tt>alliance</tt> as the name of a component
+colored by the alliance it belongs to. The recognized colors are:
+- **<tt>"alliance"</tt>**: Use the alliance color when the component is drawn or filled. This should be used
+  for any components that represent alliance specific field markings, goals, pieces, etc. When the
+  component is drawn into the field, the alliance color will be specified.
+- **<tt>"white"</tt>**: Use white when the component is drawn or filled.
+- **<tt>"red"</tt>**: Use red when the component is drawn or filled.
+- **<tt>"blue"</tt>**: Use blue when the component is drawn or filled.
+- **<tt>"light-gray"</tt>**: Use light gray when the component is drawn or filled.
+- **<tt>"gray"</tt>**: Use gray when the component is drawn or filled.
+- **<tt>"dark-gray"</tt>**: Use dark gray when the component is drawn or filled.
+- **<tt>"black"</tt>**: Use black gray when the component is drawn or filled.
+- **<tt>"orange"</tt>**: Use orange when the component is drawn or filled.
+- **<tt>"green"</tt>**: Use green when the component is drawn or filled.
+- **<tt>"cyan"</tt>**: Use cyan when the component is drawn or filled.
+- **<tt>"green-zone"</tt>**: The color for the green zone for Infinite Recharge at Home.
+- **<tt>"yellow-zone"</tt>**: The color for the yellow zone for Infinite Recharge at Home.
+- **<tt>"blue-zone"</tt>**: The color for the blue zone for Infinite Recharge at Home.
+- **<tt>"purple-zone"</tt>**: The color for the purple zone (reintroduction zone) for Infinite Recharge at Home.
+- **<tt>"red-zone"</tt>**: The color for the red zone for Infinite Recharge at Home.
+</details>
+
+## Shape Descriptions
+
+<details>
+  <summary>Shapes are generally very simple descriptions of different types of geometries. Shape representations are
+  intended to be extended (i.e. new types of shapes added) if required to represent the game
+  arena for the season's competition.</summary>
+
+Each shape is represented by a dictionary with a <tt>"type"</tt> key
+describing the shape type, and then type-specific keys and values. These are the shape types, and the
+corresponding keys that describe the currently supported shapes:
+- **<tt>"circle"</tt>** - A circle of some radius centered at some location:
+  - **<tt>"center"</tt>**: (required, [*x*,*y*]) The local X and Y coordinates, in meters, of the center
+    of the circle.
+  - **<tt>"radius"</tt>**: (required, double) The radius, in meters.
+- **<tt>"rect"</tt>** - An axis-aligned rectangle defined by lower-left and upper-right coordinates:
+  - **<tt>"lower left"</tt>**:
+  - **<tt>"upper right"</tt>**:
+- **<tt>"polygon"</tt>** - An arbitrary closed polygon specified by a set of points. It is assumed that
+  there is a closing line segment between the first and last point:
+  - **<tt>"points"</tt>**: A list of points describing the polygon, each point is described as a list
+    containing the [*x*,*y*] local X and Y coordinates, in meters, of the point. The points describe a
+    path that will be automatically closed.
+</details>
