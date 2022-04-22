@@ -1,8 +1,7 @@
 * **version:** 0.9.0
-* **status:** used for FRC **2022 Rapid React**
-* **comments:** We are using this for our **2022 Rapid React** autonomous path planning, and **2021 Infinite
-  Recharge at home**. This release adds commands to be launched while to robot follows the path. Watch for
-  updates as the season progresses, and we test and tune.
+* **status:** used for FRC **2022 Rapid React**, and **2021 Infinite Recharge at home**
+* **comments:** We believe this is competition-ready code. This release adds commands to be launched while
+  to robot follows the path.
 
 
 # 6831 A05annex: Swerve Path Planning
@@ -10,7 +9,7 @@
 ![alt text](./resources/swerve-path-planner.jpg "Swerve Path Planner")
 This project is a visual 2D editor for path planning for a swerve drive FRC robot. You read a field description
 and robot description into this planner as a context for path planning; then draw, tune, add commands, and
-save a paths that can be used as one of the autonomous programs for a match.
+save a paths that can be used as the autonomous programs for a match.
 
 A05annex is committed to using the internationally recognized SI units, so the field, robot, and path
 descriptions, and path points are in SI units. The +Y axis is always downfield from the driver (as Y is
@@ -73,7 +72,6 @@ Our fields, robots, and paths from previous years are in the <tt>resources</tt> 
   <a href="https://www.engr.colostate.edu/ECE455/Readings/TCB.pdf">
   Interpolating Splines with Local Tension, Continuity, and Bias Control</a>.
   </summary>
-
 
 When control points are created the tangent (derivatives) at that control point and surrounding
 control points are computed using the [Cardinal-Spline](https://en.wikipedia.org/wiki/Cubic_Hermite_spline)
@@ -176,7 +174,7 @@ This is the path description for a 2m diameter calibration path:
 ## Robot Description
 
 <details>
-  <summary>The robot is described in a <tt>.json</tt> file read into the path planner and displayed as the robot during
+  <summary>The robot is described in a <code>.json</code> file read into the path planner and displayed as the robot during
   the path planning, as well as providing the drive geometry and max speed for the modules of the swerve
   drive.
   </summary>
@@ -207,7 +205,10 @@ of the robots is divided into 4 sections:
 
 ### Example Robot Description file
 
-This is a robot file which describes our 2020 prototype swerve base:
+<details>
+  <summary>
+  This is a robot file which describes our 2020 prototype swerve base:
+  </summary>
 
 ```json
 {
@@ -229,22 +230,23 @@ This is a robot file which describes our 2020 prototype swerve base:
 }
 ```
 </details>
+</details>
 
 ## Field Description
 
 <details>
   <summary>
-  The field is described in a <tt>.json</tt> file read into the path planner and displayed as the background
+  The field is described in a <code>.json</code> file read into the path planner and displayed as the background
   field context during path planning.
   </summary>
 The Path Planner initializes displaying the field axes ([0.0,0.0] is center field),
 and the standard field outline. The field description adds the game elements for the season-specific game, and
-may change the field outline and display the portion of the field that is of interest for path planning.
+may change the field outline and display the portion of the field that is of interest in path planning.
 
-To simplify field description there is a section of the description for;
-- field <tt>arena</tt> where you describe field outline and the view that is of interest for autonomous path planning
+To simplify field description there are sections of the description for;
+- field <tt>arena</tt> where you describe field outline and the view that is of interest in autonomous path planning
 - game <tt>components</tt> where you describe game elements like the scoring pieces, scoring targets, scoring
-  piece depots, etc;
+  piece depots, etc.;
 - and a <tt>field</tt> section that lets you position components and describe which
   alliance (if any) they belong to.
 
@@ -264,7 +266,9 @@ for planning move paths. The field description file has 4 main elements:
     <tt>[-4.115, -8.23, 4.115, 8.23]</tt>. Past fields were the 2021 Infinite Recharge At Home as:
     <tt>[0.0, 0.0, 4.572, 9.144]</tt>; and 2020 Infinite Recharge as: 
     <tt>[-4.105, -7.99, 4.015, 7.99]</tt>.
-  - **<tt>"view"</tt>**: (optional, list) Autonomous activity is often restricted
+  - **<tt>"view"</tt>**: (optional, list) Autonomous activity is often restricted to path of the field, and
+    this is the min-X, min-Y, max-X and max-Y of the part of the field you are interested in. This defaults
+  - to the full field if not specified.
 - **<tt>"components"</tt>**: (required, list) The list of field components (elements or assembles) that are
   generally specific to the competition for the year, and often appear multiple times on the field. Within
   this list are dictionaries describing the components as:
@@ -276,7 +280,7 @@ for planning move paths. The field description file has 4 main elements:
     the geometry should not be filled, see [Color Description](#Color-Description).
   - **<tt>"shapes"</tt>**: (required, list) A list of shapes which will be rendered using the <tt>"lineColor"</tt> and
     <tt>"fillColor"</tt> directives. Each shape is described by a dictionary that has a <tt>"type"</tt> specifier
-    and other keys specific to that type. See [Shapes Descriptions](#Shapes-Descriptions) for the formats of the
+    and other keys specific to that type. See [Shapes Descriptions](#Shape-Descriptions) for the formats of the
     shape types that are currently supported.
 - **<tt>"field"</tt>**: The drawing of the field. By default, the path planner draws the field axes and outline.
   This section describes the things that should be drawn on the field, specifically: components as describes in
@@ -285,7 +289,7 @@ for planning move paths. The field description file has 4 main elements:
   - **<tt>"components"</tt>**: The list of components to be drawn on the field. Within this list are
   dictionaries describing the field placement of components as:
     - **<tt>"component"</tt>**: (required, string) The name of the component which must have been defined in the
-      components section of the field.
+      <tt>"components"</tt> section of the field description.
     - **<tt>"alliance"</tt>**: (optional, string, default=<tt>null</tt>) If this component is being drawn as
       an alliance specific game element, specify the alliance as <tt>"red"</tt> or <tt>"blue"</tt>.
     - **<tt>"translate"</tt>**: (optional, [*x*,*y*], default=[0.0,0.0]) The translation for this component (in
@@ -296,7 +300,12 @@ for planning move paths. The field description file has 4 main elements:
 
 ### Example Field Description file
 
-The example description is the part of the description of the Infinite Recharge 2020 field. Things to note:
+<details>
+  <summary>
+  The example description is the part of the description of the 2020 Infinite Recharge field.
+  </summary>
+
+Things to note:
 * In the <tt>"arena"</tt> key, a <tt>"view"</tt> is specified that will show only the far half of the
   field. Remove the <tt>"view"</tt> to see the entire field (as shown in th image after the example description).
 * The <tt>"start line"</tt> component is just a line across the field at the center of the field. When used
@@ -415,12 +424,13 @@ there, and it is a penalty for the opposing alliance to encroach on this space. 
 relative to the red alliance side of the field, the color is specified as `alliance`, and when drawn, it is the `red`
 alliance when not transformed, and the `blue` alliance when rotated 3.14radian (180&deg;) to the blue alliance side.
 </details>
+</details>
 
 ## Color Description
 
 <details>
-  <summary>Colors are defined by name. We use a combination of standard Java names and names adopted for
-  First-specific field artifacts.</summary>
+  <summary>Colors are defined by name. We use a combination of standard Java names and custom
+  competition-specific colors defined for field artifacts.</summary>
 
 We could have built an interface for describing color by RGB components, but, instead we used the defined
 Java [Color](https://docs.oracle.com/en/java/javase/11/docs/api/java.desktop/java/awt/Color.html) names for

@@ -620,7 +620,8 @@ public class PathCanvas extends Canvas implements ActionListener {
                  if ((null == robotAction) || !fieldScheduleCommand.getText().equals(robotAction.command)) {
                      // there is no old action, of the command has changed and the old action was deleted,
                      // so schedule a new one.
-                     path.scheduleCommand(overPathPoint.time, fieldScheduleCommand.getText());
+                     path.scheduleCommand(overPathPoint.time * path.getSpeedMultiplier(),
+                             fieldScheduleCommand.getText());
                  }
             } else if (null != robotAction) {
                  path.deleteScheduledCommand(robotAction);
