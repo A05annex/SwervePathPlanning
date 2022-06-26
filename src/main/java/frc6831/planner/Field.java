@@ -70,11 +70,11 @@ public class Field {
     private double Y_FIELD_MIN = -8.23;
     private double X_FIELD_MAX = 4.115;
     private double Y_FIELD_MAX = 8.23;
-    // The 2022 valid autonomous path view - this may be overwritten by the field description
+    // The 2022 field boundary - this may be overwritten by the field description
     private double X_VIEW_MIN = -4.115;
     private double Y_VIEW_MIN = -8.23;
     private double X_VIEW_MAX = 4.115;
-    private double Y_VIEW_MAX = 1.75;
+    private double Y_VIEW_MAX = 8.23;
 
     private final String m_default_title = "2022 field";
     private final String m_default_description = "The 2022 field outline with no game elements.";
@@ -394,15 +394,15 @@ public class Field {
         m_drawList.clear();
 
         // 2022 Rapid React field and view
-        X_FIELD_MIN = -4.115;
-        Y_FIELD_MIN = -8.23;
-        X_FIELD_MAX = 4.115;
-        Y_FIELD_MAX = 8.23;
+        X_FIELD_MIN = X_FIELD_MIN;
+        Y_FIELD_MIN = Y_FIELD_MIN;
+        X_FIELD_MAX = X_FIELD_MAX;
+        Y_FIELD_MAX = Y_FIELD_MAX;
 
-        X_VIEW_MIN = -4.115;
-        Y_VIEW_MIN = -8.23;
-        X_VIEW_MAX = 4.115;
-        Y_VIEW_MAX = 1.75;
+        X_VIEW_MIN = X_VIEW_MIN;
+        Y_VIEW_MIN = Y_VIEW_MIN;
+        X_VIEW_MAX = X_VIEW_MAX;
+        Y_VIEW_MAX = Y_VIEW_MAX;
 
     }
 

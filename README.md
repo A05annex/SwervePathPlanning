@@ -80,9 +80,33 @@ control handle which intuitively manipulates the shape of the spline at the cont
 edit tension and bias.
 </details>
 
-### Defining a Path
+## Defining a Path
 
-*To be written.*
+<details><summary>
+A path is defined by dropping successive <i>control points</i> along the path onto a diagram of the field. Once the
+control points have been dropped, the path is edited and adjusted by: modifying positions and path derivatives
+at the control points; adding control points; removing control points; and attaching action commands to the
+path.</summary>
+
+### Initial Path Creation
+
+<details><summary>When the path planner is started is shows, by default, the full 2022 field boundary
+with no field elements (see <a href="#Field Description">Field Description</a> to shown a specific field
+and elements); and will use a default robot chassis that is 0.9m long and 0.5m wide; and 1.1m
+long amd 0.7m long with bumpers (see .
+
+Each time you click on the field a control point will be created at that position. A double-click will end
+the path at the control point created there. Alternately, you can <i>right-click</i> to get a context-sensitive
+menu, and select **End Path** to end the path at the last created control point.</summary>
+
+#### What is a Control Point?
+
+
+</details>
+
+### Editing the Path
+
+### Editing Timing along the Path
 
 ### Running Commands Along The Path
 
@@ -91,8 +115,9 @@ Rapid React** competition it became obvious we needed the paths to include other
 run at various points on the path (like *start/stop-collector*, or *aim-and-shoot*). So the
 <tt>AutonomousPathCommand</tt> run on the robot is really a dynamically configured Command Group.
 
+</details>
 
-### Path Description Format
+## Path Description Format
 
 <details>
   <summary>Paths are saved in <code>.json</code> files that can be loaded to the robot for execution by the
