@@ -91,9 +91,10 @@ path.</summary>
 ### Initial Path Creation
 
 <details><summary>When the path planner is started is shows, by default, the full 2022 field boundary
-with no field elements (see <a href="#Field-Description">Field Description</a> to shown a specific field
+with no field elements (see <a href="#Field-Description">Field Description</a> to show a specific field
 and elements); and will use a default robot chassis that is 0.9m long and 0.5m wide; and 1.1m
-long amd 0.7m long with bumpers (see .
+long amd 0.7m long with bumpers (see <a href="#Robot-Description">Robot Description</a> for loading
+a description of your robot).
 
 Each time you click on the field a control point will be created at that position. A double-click will end
 the path at the control point created there. Alternately, you can <i>right-click</i> to get a context-sensitive
