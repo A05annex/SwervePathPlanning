@@ -90,24 +90,82 @@ path.</summary>
 
 ### Initial Path Creation
 
-<details><summary>When the path planner is started is shows, by default, the full 2022 field boundary
-with no field elements (see <a href="#Field-Description">Field Description</a> to show a specific field
+When the path planner is started is shows, by default, the full 2022 field boundary
+with no field elements (see <a href="#Field-Description">Field Description</a> for loading a specific field
 and elements); and will use a default robot chassis that is 0.9m long and 0.5m wide; and 1.1m
 long amd 0.7m long with bumpers (see <a href="#Robot-Description">Robot Description</a> for loading
 a description of your robot).
+<p>
+The display starts in <i>path creation mode</i>. Each time you click on the field a control point will be
+created at that position. A <i>double-click</i> will end the path at the control point created there
+and the diaplay will then be in <i>path edit</i> mode. Alternately, you can <i>right-click</i> to get a
+context-sensitive menu, and select <b>End Path</b> to end the path at the last created control point,
+and switch to <i>path edit</i> mode.
 
-Each time you click on the field a control point will be created at that position. A double-click will end
-the path at the control point created there. Alternately, you can <i>right-click</i> to get a context-sensitive
-menu, and select **End Path** to end the path at the last created control point.</summary>
+### Editing the Path
+
+<details><summary>
+Once you create a path, really a first guess at the path by dropping a few control points, you go immediately
+into path tuning (editing). Generally, the questions and adjustments are around:
+<ul>
+<li>Is this really the path I meant, and can I fix it?;</li>
+<li>Is the robot capable of following the path, and if not, how do I fix it?;</li>
+<li>Is the robot facing the right direction, and if not, how do I fix it?;</li>
+<li>How do I tell the robot to do something in addition to following the path?;</li>
+<li>How can I optimize timing or speed for a faster (better) path?</li>
+</ul>
+Expand this section to get answers for these questions.
+</summary>
 
 #### What is a Control Point?
+
+A control point is a position on the field that the path will pass through at some velocity, direction,
+and rotation speed. Each time you drop a new control point it is, by default, 1 second further along the
+path than the last control point. At the control point you will see editing handles for: position on the field;
+direction and velocity; and field orientation of the robot as shown below.
+![alt text](./resources/ControlPoint.jpg "Control Point Editing")
+
+As you move the cursor you will always get the *field position* feedback with the cursor. If you are over an
+editing handle, the handle will be surrounded by a green circle. In the figure above, the cursor is above the
+control point position handle. When you are above a handle (it has a green circle) you can left-click and
+drag the handle to edit that parameter (field position, direction and velocity,
+robot heading) at that control point.
+
+NOTE that as you edit the control point, the robot path will reflect those edits. The robot path will be colored
+to describe things you should consider:
+* **white** - this is a valid robot path;
+* **red** - this path is asking the robot to perform beyond its capabilities - specifically, you are asking at
+  least one module to go faster than is possible;
+* **orange** - this path is in danger of crashing (or will crash) into the field perimeter.
+
+### Reshaping the path
+
+<details><summary>There are 2 primary approaches to reshaping a path:
+<ul>
+<li>Edit (move, change direction and/or velocity and orientation) at control points of the existing path;</li>
+<li>Add or remove control points.</li>
+</ul>
+</summary>
+
+#### Editing a Control Point
+
+#### Adding and Removing Control Points
+
+</details>
 
 
 </details>
 
-### Editing the Path
-
 ### Editing Timing along the Path
+
+<details><summary>
+There are 2 ways to adjust path timing:
+<ul>
+<li>Re-time point in the path;</li>
+<li>Re-time the entire path.</li>
+</ul>
+</summary>
+</details>
 
 ### Running Commands Along The Path
 
