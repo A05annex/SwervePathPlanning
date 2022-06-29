@@ -17,7 +17,8 @@ the forward/backward axis of control sticks and the vertical or forward axis whe
 down in front of the driver), Specifically, the driver is at the bottom of the screen. The +X axis is
 always to the right (common engineering convention). We adopted
 the convention that the center of the competition field is (0.0,0.0) for red-blue alliance symmetry; and
-that the left corner closest to the driver is 0,0 for the 2021 at Home field.
+that the left corner closest to the driver is 0,0 for the 2021 at Home field - both of which are reflected
+in our field descriptions for the 2020, 2021, and 2022 competitions.
 
 ## Change Log
 
@@ -80,10 +81,10 @@ control handle which intuitively manipulates the shape of the spline at the cont
 edit tension and bias.
 </details>
 
-## Defining a Path
+## Creating and Editing a Path
 
 <details><summary>
-A path is defined by dropping successive <i>control points</i> along the path onto a diagram of the field. Once the
+A path is created by dropping successive <i>control points</i> along the path onto a diagram of the field. Once the
 control points have been dropped, the path is edited and adjusted by: modifying positions and path derivatives
 at the control points; adding control points; removing control points; and attaching action commands to the
 path.</summary>
@@ -98,9 +99,18 @@ a description of your robot).
 <p>
 The display starts in <i>path creation mode</i>. Each time you click on the field a control point will be
 created at that position. A <i>double-click</i> will end the path at the control point created there
-and the diaplay will then be in <i>path edit</i> mode. Alternately, you can <i>right-click</i> to get a
+and switch to <i>path edit</i> mode. Alternately, you can <i>right-click</i> to get a
 context-sensitive menu, and select <b>End Path</b> to end the path at the last created control point,
 and switch to <i>path edit</i> mode.
+
+### Playing the Path
+
+An animation of the robot following the path can be *played* in two ways:
+<ul>
+<li>From the main menu, under <b>Path</b>, select <b>Play Path</b></li>
+<li>From the context menu (right-click anywhere to get the context menu), select <b>Play Path</b></li>
+</ul>
+This will animate the robot following the path at actual speed/timing.
 
 ### Editing the Path
 

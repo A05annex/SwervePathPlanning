@@ -161,6 +161,8 @@ public class PathCanvas extends Canvas implements ActionListener {
 
         @Override
         public void mouseEntered(MouseEvent e) {
+            mouse = (Point2D.Double) mouseXfm.transform(
+                    new Point2D.Double(e.getPoint().getX(), e.getPoint().getY()), null);
         }
 
         @Override
