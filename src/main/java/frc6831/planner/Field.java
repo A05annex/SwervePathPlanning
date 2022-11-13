@@ -20,6 +20,7 @@ import static org.a05annex.util.JsonSupport.*;
  * This class maintains and draws the field we will be plotting the path on. Note that the default
  * with no loaded field data is to draw the axes and a dotted outline of the field.
  */
+@SuppressWarnings("HungarianNotationMemberVariables")
 public class Field {
 
     // -------------------------------------------------------------------------------------------
@@ -121,8 +122,8 @@ public class Field {
 
     private String m_title = m_default_title;
     private String m_description = m_default_description;
-    private final HashMap<String, FieldComponent> m_components = new HashMap();
-    private final ArrayList<FieldDraw> m_drawList = new ArrayList();
+    private final HashMap<String, FieldComponent> m_components = new HashMap<>();
+    private final ArrayList<FieldDraw> m_drawList = new ArrayList<>();
 
 
     // -------------------------------------------------------------------------------------------
@@ -292,7 +293,7 @@ public class Field {
     // -------------------------------------------------------------------------------------------
     // Components that may appear on the field multiple times, and optionally in alliance colors
     // -------------------------------------------------------------------------------------------
-    private class FieldComponent {
+    private static class FieldComponent {
         String m_name = "default";
         String m_outlineColor = "white";
         String m_fillColor = null;
@@ -341,7 +342,7 @@ public class Field {
      * A field element is a component that is positioned and drawn onto the field. This component is
      * optionally alliance color coded.
      */
-    class FieldDraw {
+    static class FieldDraw {
         final FieldComponent m_component;
         final AffineTransform m_xfm;
         final Color m_allianceColor;
@@ -369,6 +370,7 @@ public class Field {
         return m_title;
     }
 
+    @SuppressWarnings("unused")
     public String getDescription() {
         return m_description;
     }
@@ -392,17 +394,6 @@ public class Field {
         m_description = m_default_description;
         m_components.clear();
         m_drawList.clear();
-
-        // 2022 Rapid React field and view
-        X_FIELD_MIN = X_FIELD_MIN;
-        Y_FIELD_MIN = Y_FIELD_MIN;
-        X_FIELD_MAX = X_FIELD_MAX;
-        Y_FIELD_MAX = Y_FIELD_MAX;
-
-        X_VIEW_MIN = X_VIEW_MIN;
-        Y_VIEW_MIN = Y_VIEW_MIN;
-        X_VIEW_MAX = X_VIEW_MAX;
-        Y_VIEW_MAX = Y_VIEW_MAX;
 
     }
 
@@ -432,13 +423,15 @@ public class Field {
         m_minMax .setValue(X_VIEW_MIN - AXIS_MARGIN, Y_VIEW_MIN - AXIS_MARGIN,
                         X_VIEW_MAX + AXIS_MARGIN, Y_VIEW_MAX + AXIS_MARGIN);
     }
-    /**
-     * @param filename
+
+    /** Load a field.
+     *
+     * @param filepath The path to the file ccontaining the field description.
      */
-    public void loadField(@NotNull String filename) {
+    public void loadField(@NotNull String filepath) {
         setDefaultEmptyField();
         try {
-            JSONObject dict = readJsonFileAsJSONObject(filename);
+            JSONObject dict = readJsonFileAsJSONObject(filepath);
             // title and description
             m_title = parseString(dict, TITLE, "untitled");
             m_description = parseString(dict, DESCRIPTION, "No description provided.");
@@ -515,7 +508,9 @@ public class Field {
 
     static public FieldShape shapeFactory(JSONObject shapeDesc) {
         String type = parseString(shapeDesc, TYPE, null);
-        FieldShape fieldShape = null;
+        if (null == type) {
+            return null;
+        }
         switch (type) {
             case TYPE_CIRCLE:
                 return new FieldCircle(shapeDesc);
@@ -625,6 +620,7 @@ public class Field {
     }
 
     /**
+     *
      * @param g2d
      * @param drawXfm
      * @param start
@@ -637,6 +633,7 @@ public class Field {
     }
 
     /**
+     *
      * @param g2d
      * @param drawXfm
      * @param fieldPts

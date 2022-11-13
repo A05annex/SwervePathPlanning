@@ -12,6 +12,7 @@ import static org.a05annex.util.JsonSupport.*;
  * This class is a description of the robot. There is a default programmed description, but it is expected that
  * the actual description will be read from a data file
  */
+@SuppressWarnings("HungarianNotationMemberVariables")
 public class Robot {
 
     private static final String DRIVE = "drive";
@@ -66,7 +67,7 @@ public class Robot {
         double c = forward - (rotation * (m_driveWidth / m_driveDiagonal));
         double d = forward + (rotation * (m_driveWidth / m_driveDiagonal));
 
-        // calculate wheel speeds
+        // calculate module speeds, if they are all less than the max, we are good
         return (Utl.length(b, c) <= m_moduleMaxSpeed) ||    // right front
                 (Utl.length(b, d) <= m_moduleMaxSpeed) ||   // left front
                 (Utl.length(a, d) <= m_moduleMaxSpeed) ||   // left rear

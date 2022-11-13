@@ -36,7 +36,8 @@ in our field descriptions for the 2020, 2021, and 2022 competitions.
     description from the *Swerve Path Planner* constants to the [Field Description](#Field-Description)
     as the <tt>"arena"</tt> description. The <tt>-ah</tt> command argument was removed because field
     extents are now in the field description rather than programmed. All field descriptions
-    in <tt>./resources/fields</tt> have been updated to include and <tt>"arena"</tt> description.
+    in <tt>./resources/fields</tt> have been updated to include and <tt>"arena"</tt> description;
+  * minor changes for better interactive editing feedback and response.
 </details>
 
 ## Download and Run
@@ -148,6 +149,16 @@ to describe things you should consider:
   least one module to go faster than is possible;
 * **orange** - this path is in danger of crashing (or will crash) into the field perimeter.
 
+### Clearing a Bad Path and Restarting Path Creation
+
+We all do some testing, drop some points, create a path, and say "Good experiment, delete that and let's start
+over". This is how we do that:
+<ul>
+<li>From the main menu, under <b>Path</b>, select <b>Play Path</b></li>
+<li>From the context menu (right-click anywhere to get the context menu), select <b>Play Path</b></li>
+</ul>
+This will animate the robot following the path at actual speed/timing.
+
 ### Reshaping the path
 
 <details><summary>There are 2 primary approaches to reshaping a path:
@@ -159,13 +170,21 @@ to describe things you should consider:
 
 #### Editing a Control Point
 
+In the previous <a href="#What-is-a-Control-Point">What is a Control Point</a> section, the handles are your
+way to interactively edit the curve around a control point. Specifically:
+<ul>
+<li><i>position handle</i> - moves the control point, the point the path goes though, on the field;</li>
+<li><i>direction/velocity handle</i> - shapes the curve around the point</li>
+<li><i>robot heading handle</i> - </li>
+</ul>
+It is useful to play with these on a test path to get a better idea how the handles control and shape the path.
+
 #### Adding and Removing Control Points
 
 </details>
 
 
 </details>
-
 ### Editing Timing along the Path
 
 <details><summary>
