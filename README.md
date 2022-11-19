@@ -1,7 +1,14 @@
 * **version:** 0.9.0
 * **status:** used for FRC **2022 Rapid React**, and **2021 Infinite Recharge at home**
 * **comments:** We believe this is competition-ready code. This release adds commands to be launched while
-  to robot follows the path.
+  the robot follows the path.
+* **related releases:** 
+  * [a05annexUtil](https://github.com/A05annex/a05annexUtil) - the utility library that supports various A05annex
+    projects including this swerve path planner and all of our robot competition code.
+  * [a05annexRobot](https://github.com/A05annex/a05annexRobot) - our common robot code that includes the MK4 swerve
+    base, NavX, driver and autonomous selection switch panel, autonomous path and driver commands, camera, etc. 
+  * [a05annexTemplate](https://github.com/A05annex/a05annexTemplate) - our template, built on the wpilib template
+    that provides a driveable swerve base with NavX, camera, autonomous path and driver selection.
 
 
 # 6831 A05annex: Swerve Path Planning
@@ -32,11 +39,11 @@ in our field descriptions for the 2020, 2021, and 2022 competitions.
     the [Robot Description](#Robot-Description);
   * while there is an 'FRC standard field', different competitions like **2020 Infinite Recharge**, 
     **2021 At Home**, and **2022 Rapid React** have configured this to different sizes and/or
-    restricted the portion of the field where autonomous action can happen. Moved the field boundary
+    restricted the portion of the field where autonomous action can happen. To adapt, we moved the field boundary
     description from the *Swerve Path Planner* constants to the [Field Description](#Field-Description)
     as the <tt>"arena"</tt> description. The <tt>-ah</tt> command argument was removed because field
     extents are now in the field description rather than programmed. All field descriptions
-    in <tt>./resources/fields</tt> have been updated to include and <tt>"arena"</tt> description;
+    in <tt>./resources/fields</tt> have been updated to include an <tt>"arena"</tt> description;
   * minor changes for better interactive editing feedback and response.
 </details>
 
@@ -184,16 +191,20 @@ It is useful to play with these on a test path to get a better idea how the hand
 </details>
 
 
-</details>
 ### Editing Timing along the Path
 
 <details><summary>
 There are 2 ways to adjust path timing:
 <ul>
-<li>Re-time point in the path;</li>
+<li>Re-time a control point in the path;</li>
 <li>Re-time the entire path.</li>
 </ul>
 </summary>
+
+#### Re-time a Control Point in the Path
+
+#### Re-time the Entire Path
+
 </details>
 
 ### Running Commands Along The Path
