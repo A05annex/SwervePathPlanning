@@ -1,0 +1,193 @@
+{
+  "title": "2023 Charged Up",
+  "description": "The 2023 Charged Up arena - full field.",
+  "arena": {
+    "extent": [
+      -4.01,
+      -8.27,
+      4.01,
+      8.27
+    ],
+    "view": [
+      -4.11,
+      -8.37,
+      4.11,
+      8.37
+    ]
+  },
+  "components": [
+    {
+      "name": "centerline",
+      "lineColor": "white",
+      "fillColor": "white",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [-4.01,-0.0254],
+          "upper right": [4.01,0.0254]
+        }
+      ]
+    },
+    {
+      "name": "loading",
+      "lineColor": "alliance",
+      "fillColor": "alliance",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [1.4936,5.2665],
+          "upper right": [2.7273,5.3173]
+        },
+        {
+          "type": "rect",
+          "lower left": [2.7273,1.5591],
+          "upper right": [2.7783,5.3173]
+        },
+        {
+          "type": "rect",
+          "lower left": [2.7783,1.5591],
+          "upper right": [4.01,1.6288]
+        }
+      ]
+    },
+    {
+      "name": "community",
+      "lineColor": "alliance",
+      "fillColor": "alliance",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [-4.01,3.3655],
+          "upper right": [-0.0254,3.4163]
+        },
+        {
+          "type": "rect",
+          "lower left": [-0.0254,3.3655],
+          "upper right": [0.0254,5.3173]
+        },
+        {
+          "type": "rect",
+          "lower left": [0.0254,5.2665],
+          "upper right": [1.4936,5.3173]
+        },
+        {
+          "type": "rect",
+          "lower left": [-4.01,6.8415],
+          "upper right": [1.4936,6.8923]
+        }
+      ]
+    },
+    {
+      "name": "grids_background",
+      "lineColor": "alliance",
+      "fillColor": "alliance",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [-4.01,7.32],
+          "upper right": [1.49,8.27]
+        }
+      ]
+    },
+    {
+      "name": "grids",
+      "lineColor": "white",
+      "fillColor": "white",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [-4.01,6.90],
+          "upper right": [-3.92,7.47]
+        },
+        {
+          "type": "rect",
+          "lower left": [-3.265,6.90],
+          "upper right": [-3.175,7.47]
+        },
+        {
+          "type": "rect",
+          "lower left": [-2.705,6.90],
+          "upper right": [-2.615,7.47]
+        },
+        {
+          "type": "rect",
+          "lower left": [-2.145,6.90],
+          "upper right": [-2.055,7.47]
+        },
+        {
+          "type": "rect",
+          "lower left": [-1.585,6.90],
+          "upper right": [-1.495,7.47]
+        },
+        {
+          "type": "rect",
+          "lower left": [-1.020,6.90],
+          "upper right": [-0.935,7.47]
+        },
+        {
+          "type": "rect",
+          "lower left": [-0.465,6.90],
+          "upper right": [-0.375,7.47]
+        },
+        {
+          "type": "rect",
+          "lower left": [0.095,6.90],
+          "upper right": [0.185,7.47]
+        },
+        {
+          "type": "rect",
+          "lower left": [0.655,6.90],
+          "upper right": [0.745,7.47]
+        },
+        {
+          "type": "rect",
+          "lower left": [1.40,6.90],
+          "upper right": [1.49,7.47]
+        }
+      ]
+    }
+  ],
+  "field": {
+    "components": [
+      {
+        "component": "centerline"
+      },
+      {
+        "component": "loading",
+        "alliance": "red"
+      },
+      {
+        "component": "loading",
+        "alliance": "blue",
+        "scale": [1.0, -1.0]
+      },
+      {
+        "component": "community",
+        "alliance": "blue"
+      },
+      {
+        "component": "grids_background",
+        "alliance": "blue"
+      },
+      {
+        "component": "grids",
+        "alliance": "blue"
+      },
+      {
+        "component": "community",
+        "alliance": "red",
+        "scale": [1.0, -1.0]
+      },
+      {
+        "component": "grids_background",
+        "alliance": "red",
+        "scale": [1.0, -1.0]
+      },
+      {
+        "component": "grids",
+        "alliance": "red",
+        "scale": [1.0, -1.0]
+      }
+    ]
+  }
+}

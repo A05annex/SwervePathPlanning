@@ -61,6 +61,7 @@ public class Field {
     private static final String ALLIANCE = "alliance";
     private static final String TRANSLATE = "translate";
     private static final String ROTATE = "rotate";
+    private static final String SCALE = "scale";
 
     // -------------------------------------------------------------------------------------------
     // The field outline (extent) and view. Note that this is set to the 2022 Rapid React field
@@ -487,6 +488,10 @@ public class Field {
                         Point2D translate = parsePoint(drawDesc, TRANSLATE);
                         if (null != translate) {
                             xfm.translate(translate.getX(), translate.getY());
+                        }
+                        Point2D scale = parsePoint(drawDesc, SCALE);
+                        if (null != scale) {
+                            xfm.scale(scale.getX(), scale.getY());
                         }
                         // and set the alliance color (if there is one)
                         String colorName = parseString(drawDesc, ALLIANCE, null);

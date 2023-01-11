@@ -1,5 +1,5 @@
-* **version:** 0.9.0
-* **status:** used for FRC **2022 Rapid React**, and **2021 Infinite Recharge at home**
+* **version:** 0.9.5
+* **status:** used for FRC **2023 Charge Up**, **2022 Rapid React**, and **2021 Infinite Recharge at home**
 * **comments:** We believe this is competition-ready code. This release adds commands to be launched while
   to robot follows the path.
 
@@ -38,6 +38,11 @@ in our field descriptions for the 2020, 2021, and 2022 competitions.
     extents are now in the field description rather than programmed. All field descriptions
     in <tt>./resources/fields</tt> have been updated to include and <tt>"arena"</tt> description;
   * minor changes for better interactive editing feedback and response.
+</details>
+<details>
+  <summary>version 0.9.0 to 0.9.5 (for <b>2023 Charged Up</b>):</summary>
+
+  * added <tt>scale</tt> for field components to support mirroring the red and blue side of the field.
 </details>
 
 ## Download and Run
@@ -409,6 +414,9 @@ for planning move paths. The field description file has 4 main elements:
       meters). NOTE: rotations are applied before translations.
     - **<tt>"rotate"</tt>**: (optional, double, default=0.0) The rotation for this component (in radians). NOTE:
       rotations are applied before translations.
+    - **<tt>"scale"</tt>**: (optional, [*x*,*y*], default=[1.0,1.0])) A scale multiplier for this component. Typically
+      this is used to mirror components to the other end of the field. NOTE:
+      scale is applied before translation and rotation.
 
 
 ### Example Field Description file

@@ -1,0 +1,83 @@
+{
+  "title": "2023 Charged Up",
+  "description": "The 2023 Charged Up arena - full field.",
+  "arena": {
+    "extent": [
+      -4.01,
+      -8.27,
+      4.01,
+      8.27
+    ],
+    "view": [
+      -4.11,
+      -8.37,
+      4.11,
+      8.37
+    ]
+  },
+  "components": [
+    {
+      "name": "block",
+      "lineColor": "white",
+      "fillColor": "white",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [0.5,0.5],
+          "upper right": [1.0,1.0]
+        }
+      ]
+    },
+    {
+      "name": "blue_block",
+      "lineColor": "blue",
+      "fillColor": "blue",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [1.0,1.0],
+          "upper right": [1.5,1.5]
+        }
+      ]
+    },
+    {
+      "name": "red_block",
+      "lineColor": "red",
+      "fillColor": "red",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [1.5,1.5],
+          "upper right": [2.0,2.0]
+        }
+      ]
+    }
+  ],
+  "field": {
+    "components": [
+      {
+        "component": "block"
+      },
+      {
+        "component": "blue_block",
+      },
+      {
+        "component": "red_block",
+      },
+      {
+        "component": "block",
+        "scale": [1.0, -1.0]
+      },
+      {
+        "component": "blue_block",
+        "rotate": 3.14156,
+        "scale": [-1.0,1.0]
+      },
+      {
+        "component": "red_block",
+        "translate": [3.5,-3.5],
+        "scale": [-1.0,1.0]
+      }
+    ]
+  }
+}
