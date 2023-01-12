@@ -145,6 +145,35 @@
           "upper right": [1.49,7.47]
         }
       ]
+    },
+    {
+      "name": "recharge ramps",
+      "lineColor": "light-gray",
+      "fillColor": "gray",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [-2.515,3.515],
+          "upper right": [-0.045,3.870]
+        },
+        {
+          "type": "rect",
+          "lower left": [-2.515,4.990],
+          "upper right": [-0.045,5.345]
+        }
+      ]
+    },
+    {
+      "name": "recharge pad",
+      "lineColor": "alliance",
+      "fillColor": "gray",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [-2.500,3.920],
+          "upper right": [-0.060,4.940]
+        }
+      ]
     }
   ],
   "field": {
@@ -174,6 +203,14 @@
         "alliance": "blue"
       },
       {
+        "component": "recharge ramps",
+        "alliance": "blue"
+      },
+      {
+        "component": "recharge pad",
+        "alliance": "blue"
+      },
+      {
         "component": "community",
         "alliance": "red",
         "scale": [1.0, -1.0]
@@ -185,6 +222,16 @@
       },
       {
         "component": "grids",
+        "alliance": "red",
+        "scale": [1.0, -1.0]
+      },
+      {
+        "component": "recharge ramps",
+        "alliance": "red",
+        "scale": [1.0, -1.0]
+      },
+      {
+        "component": "recharge pad",
         "alliance": "red",
         "scale": [1.0, -1.0]
       }

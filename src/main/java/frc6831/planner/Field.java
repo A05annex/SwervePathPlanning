@@ -197,14 +197,14 @@ public class Field {
             double scale = Math.sqrt((drawXfm.getScaleX() * drawXfm.getScaleX()) +
                     (drawXfm.getShearX() * drawXfm.getShearX()));
             double scaledRadius = scale * m_radius;
-            if (null != outline) {
-                g2d.setPaint(outline);
-                g2d.drawOval((int) (ptCenter.getX() - scaledRadius), (int) (ptCenter.getY() - scaledRadius),
-                        (int) (2.0 * scaledRadius), (int) (2.0 * scaledRadius));
-            }
             if (null != fill) {
                 g2d.setPaint(fill);
                 g2d.fillOval((int) (ptCenter.getX() - scaledRadius), (int) (ptCenter.getY() - scaledRadius),
+                        (int) (2.0 * scaledRadius), (int) (2.0 * scaledRadius));
+            }
+            if (null != outline) {
+                g2d.setPaint(outline);
+                g2d.drawOval((int) (ptCenter.getX() - scaledRadius), (int) (ptCenter.getY() - scaledRadius),
                         (int) (2.0 * scaledRadius), (int) (2.0 * scaledRadius));
             }
 
@@ -242,13 +242,13 @@ public class Field {
                 height = (int) (ptLL.y - ptUR.y);
 
             }
-            if (null != outline) {
-                g2d.setPaint(outline);
-                g2d.drawRect(x, y, width, height);
-            }
             if (null != fill) {
                 g2d.setPaint(fill);
                 g2d.fillRect(x, y, width, height);
+            }
+            if (null != outline) {
+                g2d.setPaint(outline);
+                g2d.drawRect(x, y, width, height);
             }
         }
     }
@@ -279,13 +279,13 @@ public class Field {
                 }
             }
             polyPath.closePath();
-            if (null != outline) {
-                g2d.setPaint(outline);
-                g2d.draw(polyPath);
-            }
             if (null != fill) {
                 g2d.setPaint(fill);
                 g2d.fill(polyPath);
+            }
+            if (null != outline) {
+                g2d.setPaint(outline);
+                g2d.draw(polyPath);
             }
 
         }
