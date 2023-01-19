@@ -12,12 +12,48 @@
       -4.11,
       -8.37,
       4.11,
-      8.37
+      0.37
     ]
   },
   "components": [
     {
       "name": "centerline",
+      "lineColor": "white",
+      "fillColor": "white",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [-4.01,-0.0254],
+          "upper right": [4.01,0.0254]
+        }
+      ]
+    },
+    {
+      "name": "barrier_base",
+      "lineColor": "gray",
+      "fillColor": "gray",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [1.29,5.27],
+          "upper right": [1.69,7.51]
+        }
+      ]
+    },
+    {
+      "name": "b",
+      "lineColor": "white",
+      "fillColor": "white",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [1.495,5.27],
+          "upper right": [1.515,6.89]
+        }
+      ]
+    },
+    {
+      "name": "barrier",
       "lineColor": "white",
       "fillColor": "white",
       "shapes": [
@@ -101,6 +137,21 @@
         },
         {
           "type": "rect",
+          "lower left": [-3.50,7.47],
+          "upper right": [-3.49,7.90]
+        },
+        {
+          "type": "circle",
+          "center": [-3.50, 7.47],
+          "radius": 0.04
+        },
+        {
+          "type": "circle",
+          "center": [-3.50, 7.90],
+          "radius": 0.04
+        },
+        {
+          "type": "rect",
           "lower left": [-3.265,6.90],
           "upper right": [-3.175,7.47]
         },
@@ -111,8 +162,38 @@
         },
         {
           "type": "rect",
+          "lower left": [-2.38,7.47],
+          "upper right": [-2.37,7.90]
+        },
+        {
+          "type": "circle",
+          "center": [-2.38, 7.47],
+          "radius": 0.04
+        },
+        {
+          "type": "circle",
+          "center": [-2.38, 7.90],
+          "radius": 0.04
+        },
+        {
+          "type": "rect",
           "lower left": [-2.145,6.90],
           "upper right": [-2.055,7.47]
+        },
+        {
+          "type": "rect",
+          "lower left": [-1.83,7.47],
+          "upper right": [-1.82,7.90]
+        },
+        {
+          "type": "circle",
+          "center": [-1.82, 7.47],
+          "radius": 0.04
+        },
+        {
+          "type": "circle",
+          "center": [-1.82, 7.90],
+          "radius": 0.04
         },
         {
           "type": "rect",
@@ -126,8 +207,38 @@
         },
         {
           "type": "rect",
+          "lower left": [-0.71,7.47],
+          "upper right": [-0.70,7.90]
+        },
+        {
+          "type": "circle",
+          "center": [-0.70, 7.47],
+          "radius": 0.04
+        },
+        {
+          "type": "circle",
+          "center": [-0.70, 7.90],
+          "radius": 0.04
+        },
+        {
+          "type": "rect",
           "lower left": [-0.465,6.90],
           "upper right": [-0.375,7.47]
+        },
+        {
+          "type": "rect",
+          "lower left": [-0.14,7.47],
+          "upper right": [-0.15,7.90]
+        },
+        {
+          "type": "circle",
+          "center": [-0.14, 7.47],
+          "radius": 0.04
+        },
+        {
+          "type": "circle",
+          "center": [-0.14, 7.90],
+          "radius": 0.04
         },
         {
           "type": "rect",
@@ -141,8 +252,60 @@
         },
         {
           "type": "rect",
+          "lower left": [0.98,7.47],
+          "upper right": [0.99,7.90]
+        },
+        {
+          "type": "circle",
+          "center": [0.98, 7.47],
+          "radius": 0.04
+        },
+        {
+          "type": "circle",
+          "center": [0.98, 7.90],
+          "radius": 0.04
+        },
+        {
+          "type": "rect",
           "lower left": [1.40,6.90],
           "upper right": [1.49,7.47]
+        }
+      ]
+    },
+    {
+      "name": "grid_cubes",
+      "lineColor": "white",
+      "fillColor": "gray",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [-3.175,7.25],
+          "upper right": [-2.705,7.69]
+        },
+        {
+          "type": "rect",
+          "lower left": [-3.175,7.69],
+          "upper right": [-2.705,8.13]
+        },
+        {
+          "type": "rect",
+          "lower left": [-1.495,7.25],
+          "upper right": [-1.025,7.69]
+        },
+        {
+          "type": "rect",
+          "lower left": [-1.495,7.69],
+          "upper right": [-1.025,8.13]
+        },
+        {
+          "type": "rect",
+          "lower left": [0.185,7.25],
+          "upper right": [0.655,7.69]
+        },
+        {
+          "type": "rect",
+          "lower left": [0.185,7.69],
+          "upper right": [0.655,8.13]
         }
       ]
     },
@@ -174,12 +337,53 @@
           "upper right": [-0.060,4.940]
         }
       ]
+    },
+    {
+      "name": "autonomous sets",
+      "lineColor": "alliance",
+      "fillColor": "alliance",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [-3.12,1.17],
+          "upper right": [-3.06,1.23]
+        },
+        {
+          "type": "rect",
+          "lower left": [-1.86,1.17],
+          "upper right": [-1.92,1.23]
+        },
+        {
+          "type": "rect",
+          "lower left": [-0.70,1.17],
+          "upper right": [-0.64,1.23]
+        },
+        {
+          "type": "rect",
+          "lower left": [0.52,1.17],
+          "upper right": [0.58,1.23]
+        }
+      ]
     }
   ],
   "field": {
     "components": [
       {
         "component": "centerline"
+      },
+      {
+        "component": "barrier_base"
+      },
+      {
+        "component": "barrier_base",
+        "scale": [1.0, -1.0]
+      },
+      {
+        "component": "b"
+      },
+      {
+        "component": "b",
+        "scale": [1.0, -1.0]
       },
       {
         "component": "loading",
@@ -203,11 +407,19 @@
         "alliance": "blue"
       },
       {
+        "component": "grid_cubes",
+        "alliance": "blue"
+      },
+      {
         "component": "recharge ramps",
         "alliance": "blue"
       },
       {
         "component": "recharge pad",
+        "alliance": "blue"
+      },
+      {
+        "component": "autonomous sets",
         "alliance": "blue"
       },
       {
@@ -226,12 +438,22 @@
         "scale": [1.0, -1.0]
       },
       {
+        "component": "grid_cubes",
+        "alliance": "red",
+        "scale": [1.0, -1.0]
+      },
+      {
         "component": "recharge ramps",
         "alliance": "red",
         "scale": [1.0, -1.0]
       },
       {
         "component": "recharge pad",
+        "alliance": "red",
+        "scale": [1.0, -1.0]
+      },
+      {
+        "component": "autonomous sets",
         "alliance": "red",
         "scale": [1.0, -1.0]
       }

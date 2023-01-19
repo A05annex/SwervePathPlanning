@@ -1,7 +1,8 @@
 * **version:** 0.9.5
 * **status:** used for FRC **2023 Charge Up**, **2022 Rapid React**, and **2021 Infinite Recharge at home**
-* **comments:** We believe this is competition-ready code. This release adds commands to be launched while
-  to robot follows the path.
+* **comments:** We believe this is competition-ready (i.e. we've used this for competition since the 2020-2021
+  season). This release adds mirroring (scale) for the 2023 field elements, and improved documentation.
+  
 
 
 # 6831 A05annex: Swerve Path Planning
@@ -186,10 +187,28 @@ It is useful to play with these on a test path to get a better idea how the hand
 
 #### Adding and Removing Control Points
 
+Often you will find that as you edit and reshape your path you will be moving too many control points and want to
+delete control points that are superfluous; or, You need finer control somewhere along the path, and you want to
+add a control point. Here is how you do that:
+<ul>
+<li>Removing a Control Point:
+<ul>
+<li>right click on the <i>field position handle</i> of the control point;</li>
+<li>from the context menu, select <b>Delete Control Point</b>. The control point will be deleted, and
+the timing for all other control points will remain unchanged.
+unchanged</li>
+</ul></li>
+<li>Adding a Control Point:
+<ul>
+<li>right click on the path point where you wnt to add a control point;</li>
+<li>from the context menu, select <b>Insert Control Point</b>. A control point will be added at that path
+point with the timing and other parameters of that path point. This should produce minimal disturbance of
+the current path and give you additional control point for path tuning.</li>
+</ul></li>
+</ul>
+
 </details>
 
-
-</details>
 ### Editing Timing along the Path
 
 <details><summary>
@@ -199,6 +218,46 @@ There are 2 ways to adjust path timing:
 <li>Re-time the entire path.</li>
 </ul>
 </summary>
+
+#### Re-timing a Single Control Point
+
+When you initially drop control points to define a path, each new control point is set to be 1 second from the
+last. Often, you will need a couple control points close together to control motion around some field obstacle,
+and the 1 second spacing between control points is not at all what you want. You can change the time for an individual
+control point, which will reset the timing for all subsequent points so they have the same relative timing.
+
+For example, suppose my robot needs to move forward 2m, then take a .25m left jog, and move forward again. I create a
+path with a start point, a 2nd control point immediately before the jog, a 3rd control point immediately after the
+jog, and then a 4th control point another 2m forward. These 4 points are assigned an initial timing of 0sec, 1sec,
+2sec, and 3sec respectively. When you play the path you will see the robot slow to a crawl between control points 2
+and 3 - not at all what you wanted.
+
+What you really want is for control points 2 and 3 to be closer together in time so the robot maintains its speed
+as it makes the jog, so instead of control point 3 being crossed in 2sec, you want to cross it in 1.3sec. Let's
+change the time the robot crosses point 3 to 1.3sec:
+<ul>
+<li>right click on the <i>field position handle</i> of the 3rd control point;</li>
+<li>from the context menu, select <b>Info</b>, this will bring up a control point information dialogue;</li>
+<li>in the control point information dialogue, edit the <b>At Time</b> from 2 to 1.3, and <b>apply</b> this
+change. The 3rd control point and all subsequent points have no wad their time adjusted, which should
+be reflected when you play the path.</li>
+</ul>
+
+#### Re-timing the Entire Path
+
+It is common to start path planning with a path that is slower than the best the robot could achieve to
+make tuning easier, and make it less damaging to the robot and test arena if the path does not go as
+expected. Once the path is working pretty well, we often want to turn up the speed and continue to tune
+until we get maximum robot performance. The path planner provides a speed multiplier to accommodate this
+need. The speed multiplier defaults to 1.0. To change the speed multiplier, from the main menu, under <b>Path</b>
+select <b>Speed Multiplier</b> to bring up a dialogue for changing the multiplier.
+
+Note that when you change the speed multiplier, the red path highlights for paths that are beyond the capability
+of the robot will change to reflect the new speed profile, encouraging you to tune control points to keep the
+path within the robot capabilities.
+
+</details>
+
 </details>
 
 ### Running Commands Along The Path
