@@ -1,0 +1,17 @@
+{
+  "title": "2023 competition base.",
+  "description": "This is the black anodized competition base for 2023 A05 annex, FRC team 6831",
+  "drive": {
+    "length": 0.5461,
+    "width": 0.5461,
+    "maxSpeed": 3.222
+  },
+  "chassis": {
+    "length": 0.7112,
+    "width": 0.7493
+  },
+  "bumpers": {
+    "length": 0.8636,
+    "width": 0.9017
+  }
+}

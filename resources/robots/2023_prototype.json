@@ -1,0 +1,17 @@
+{
+  "title": "2023 prototype base (2022 bunny-bots robot)",
+  "description": "This is the prototype (programming) base for 2023 A05 annex, FRC team 6831",
+  "drive": {
+    "length": 0.5969,
+    "width": 0.5969,
+    "maxSpeed": 3.222
+  },
+  "chassis": {
+    "length": 0.762,
+    "width": 0.762
+  },
+  "bumpers": {
+    "length": 0.9144,
+    "width": 0.9144
+  }
+}

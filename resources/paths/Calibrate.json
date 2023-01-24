@@ -1,0 +1,38 @@
+{
+  "speedMultiplier": 1.0,
+  "description": "3m straight ahead calibration path.",
+  "robotScheduledActions": [],
+  "title": "Calibration Path",
+  "controlPoints": [
+    {
+      "field_dX": 0.0,
+      "fieldY": 0.0,
+      "field_dY": 0.0,
+      "fieldX": 0.0,
+      "fieldHeading": 0.0,
+      "time": 0.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    },
+    {
+      "field_dX": 0.0,
+      "fieldY": 1.5,
+      "field_dY": 2.55,
+      "fieldX": 0.0,
+      "fieldHeading": 0.0,
+      "time": 1.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": false
+    },
+    {
+      "field_dX": 0.0,
+      "fieldY": 3.0,
+      "field_dY": 0.0,
+      "fieldX": 0.0,
+      "fieldHeading": 0.0,
+      "time": 2.0,
+      "field_dHeading": 0.0,
+      "derivativesEdited": true
+    }
+  ]
+}
