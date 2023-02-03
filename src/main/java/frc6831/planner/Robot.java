@@ -59,6 +59,15 @@ public class Robot {
 
     }
 
+    /**
+     * Test whether the robot can actually achieve the module speeds required to follow
+     * the path forward, strafe, and rotation speeds.
+     * @param forward The forward speed, meters/sec.
+     * @param strafe The strafe speed, meters/sec.
+     * @param rotation The rotation, radians/sec
+     * @return {@code true} if the robot can achieve these speeds, {@code false} if
+     * these speeds exceed the capability of the robot.
+     */
     public boolean canRobotAchieve(double forward, double strafe, double rotation)
     {
         // calculate a, b, c and d variables
@@ -68,9 +77,9 @@ public class Robot {
         double d = forward + (rotation * (m_driveWidth / m_driveDiagonal));
 
         // calculate module speeds, if they are all less than the max, we are good
-        return (Utl.length(b, c) <= m_moduleMaxSpeed) ||    // right front
-                (Utl.length(b, d) <= m_moduleMaxSpeed) ||   // left front
-                (Utl.length(a, d) <= m_moduleMaxSpeed) ||   // left rear
+        return (Utl.length(b, c) <= m_moduleMaxSpeed) &&    // right front
+                (Utl.length(b, d) <= m_moduleMaxSpeed) &&   // left front
+                (Utl.length(a, d) <= m_moduleMaxSpeed) &&   // left rear
                 (Utl.length(a, c) <= m_moduleMaxSpeed) ;    // right rear
     }
 

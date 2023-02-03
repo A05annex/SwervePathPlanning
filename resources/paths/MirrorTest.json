@@ -21,7 +21,7 @@
       "fieldX": 0.0,
       "fieldHeading": 0.0,
       "time": 1.0,
-      "field_dHeading": 0.0,
+      "field_dHeading": -1.7270000000000003,
       "derivativesEdited": true
     },
     {
@@ -30,8 +30,8 @@
       "field_dY": -1.4,
       "fieldX": 1.0,
       "fieldHeading": -3.14,
-      "time": 2.0,
-      "field_dHeading": 0.0,
+      "time": 2.75,
+      "field_dHeading": -1.7270000000000003,
       "derivativesEdited": true
     },
     {
@@ -40,7 +40,7 @@
       "field_dY": 0.0,
       "fieldX": 1.0,
       "fieldHeading": -3.14,
-      "time": 3.0,
+      "time": 3.75,
       "field_dHeading": 0.0,
       "derivativesEdited": true
     }
