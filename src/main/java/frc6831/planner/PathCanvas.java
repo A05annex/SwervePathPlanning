@@ -2,6 +2,7 @@ package frc6831.planner;
 
 import org.a05annex.util.AngleConstantD;
 import org.a05annex.util.AngleD;
+import org.a05annex.util.AngleUnit;
 import org.a05annex.util.Utl;
 import org.a05annex.util.geo2d.KochanekBartelsSpline;
 import org.a05annex.util.geo2d.KochanekBartelsSpline.ControlPoint;
@@ -491,7 +492,7 @@ public class PathCanvas extends Canvas implements ActionListener {
         int status = JOptionPane.showConfirmDialog(
                 this, p, "Control Point Time:", JOptionPane.OK_CANCEL_OPTION);
         if (status == JOptionPane.OK_OPTION) {
-            pkgSetTime(time, labelTime);
+            pkgSetTime(time, labelTime, 0.01);
         }
 
     }
@@ -503,25 +504,30 @@ public class PathCanvas extends Canvas implements ActionListener {
     private void pkgControlPointDialog() {
         JPanel p = new JPanel(new BorderLayout(5, 5));
 
+        // these are the labels for the control point timing, positions, and derivatives
         JPanel labels = new JPanel(new GridLayout(0, 1, 2, 2));
-        JLabel labelX = pkgLoadAndAddLabel(labels, "Field X");
-        JLabel labelY = pkgLoadAndAddLabel(labels, "Field Y");
-        JLabel label_dX = pkgLoadAndAddLabel(labels, "Field dX");
-        JLabel label_dY = pkgLoadAndAddLabel(labels, "Field dY");
-        JLabel labelHeading = pkgLoadAndAddLabel(labels, "Heading");
-        JLabel labelTime = pkgLoadAndAddLabel(labels, "At Time");
+        JLabel labelX = pkgLoadAndAddLabel(labels, "Field X(m)");
+        JLabel labelY = pkgLoadAndAddLabel(labels, "Field Y(m)");
+        JLabel label_dX = pkgLoadAndAddLabel(labels, "Field X speed (m/sec)");
+        JLabel label_dY = pkgLoadAndAddLabel(labels, "Field Y speed (m/sec)");
+        JLabel labelHeading = pkgLoadAndAddLabel(labels, "Heading (rad)");
+        JLabel labelRotation = pkgLoadAndAddLabel(labels, "Rotation speed (rad/sec)");
+        JLabel labelTime = pkgLoadAndAddLabel(labels, "At Time (sec)");
         p.add(labels, BorderLayout.LINE_START);
 
+        // these are the controls for the control point timing, positions, and derivatives
         JPanel controls = new JPanel(new GridLayout(0, 1, 2, 2));
         JTextField fieldX = pkgLoadAndAddField(controls, overControlPoint.getFieldX(),"%.3f");
         JTextField fieldY = pkgLoadAndAddField(controls, overControlPoint.getFieldY(),"%.3f");
         JTextField field_dX = pkgLoadAndAddField(controls, overControlPoint.getRawTangentX(),"%.3f");
         JTextField field_dY = pkgLoadAndAddField(controls, overControlPoint.getRawTangentY(),"%.3f");
         JTextField heading = pkgLoadAndAddField(controls, overControlPoint.getFieldHeading(),"%.3f");
+        JTextField rotation = pkgLoadAndAddField(controls, overControlPoint.getRotationSpeed(),"%.3f");
         JTextField time = pkgLoadAndAddField(controls, overControlPoint.getTime(),"%.2f");
         time.setEditable(null != overControlPoint.getLast());
         p.add(controls, BorderLayout.CENTER);
 
+        // This the panel for actions at this control point
         JPanel stopAction = new JPanel(new BorderLayout(5, 5));
         JPanel stopOnOff = new JPanel(new GridLayout(0, 1, 2, 2));
         stopOnOff.add(new JSeparator(SwingConstants.HORIZONTAL));
@@ -543,32 +549,39 @@ public class PathCanvas extends Canvas implements ActionListener {
         stopAction.add(stopControls, BorderLayout.CENTER);
         p.add(stopAction, BorderLayout.PAGE_END);
 
-//        int status = JOptionPane.showConfirmDialog(
-//                this, p, "Control Point Info:", JOptionPane.OK_CANCEL_OPTION);
         Object[] buttons = {"apply", "dismiss" };
         int status = JOptionPane.showOptionDialog(
                 this, p, "Control Point Info:", JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.PLAIN_MESSAGE,null, buttons, buttons[1]);
         if (status == JOptionPane.OK_OPTION) {
-            // TODO - This part of the processing may only involve changes to position or time, and do not involve
-            // TODO - setting the derivatives. There needs to be a check whether derivatives were changed/set
-            // TODO - before calling the setTangent() function which locks the derivatives to the current value.
-            overControlPoint.setFieldLocation(
-                    pkgGetDoubleFromTextField(fieldX, labelX, overControlPoint.getFieldX()),
-                    pkgGetDoubleFromTextField(fieldY, labelY, overControlPoint.getFieldY())
-            );
-            overControlPoint.setTangent(
-                    pkgGetDoubleFromTextField(field_dX, label_dX, overControlPoint.getRawTangentX()),
-                    pkgGetDoubleFromTextField(field_dY, label_dY, overControlPoint.getRawTangentY())
-            );
-            overControlPoint.setFieldHeading(
-                    pkgGetAngleFromTextField(heading, labelHeading, overControlPoint.getFieldHeading())
-            );
-            pkgSetTime(time, labelTime);
+            // The user asked to apply changes to the control point. Here we want to know whether there
+            // were changes to a field before they are set so this code tests for changes, then sets if
+            // there were changes.
+            double new_X = pkgGetDoubleFromTextField(fieldX, labelX, overControlPoint.getFieldX(), 0.001);
+            double new_Y = pkgGetDoubleFromTextField(fieldY, labelY, overControlPoint.getFieldY(), 0.001);
+            if ((new_X != overControlPoint.getFieldX()) || (new_Y != overControlPoint.getFieldY())) {
+                overControlPoint.setFieldLocation(new_X, new_Y);
+            }
+            double new_dX = pkgGetDoubleFromTextField(field_dX, label_dX, overControlPoint.getRawTangentX(), 0.001);
+            double new_dY = pkgGetDoubleFromTextField(field_dY, label_dY, overControlPoint.getRawTangentY(), 0.001);
+            if ((new_dX != overControlPoint.getRawTangentX()) || (new_dY != overControlPoint.getRawTangentY())) {
+                overControlPoint.setTangent(new_dX, new_dY);
+            }
+            AngleConstantD new_heading =
+                    pkgGetAngleFromTextField(heading, labelHeading, overControlPoint.getFieldHeading(), 0.001);
+            if (new_heading != overControlPoint.getFieldHeading()) {
+                overControlPoint.setFieldHeading(new_heading);
+            }
+            double new_rotation = pkgGetDoubleFromTextField(rotation, labelRotation,
+                    overControlPoint.getRotationSpeed(), 0.001);
+            if (new_rotation != overControlPoint.getRotationSpeed()) {
+                overControlPoint.setRotationSpeed(new_rotation);
+            }
+            pkgSetTime(time, labelTime, 0.01);
             if (hasStopAction.isSelected()) {
                 overControlPoint.setRobotAction(
                         fieldStopCommand.getText(),
-                        pkgGetDoubleFromTextField(fieldStopDuration, labelStopDuration,0.0));
+                        pkgGetDoubleFromTextField(fieldStopDuration, labelStopDuration,0.0, 0.01));
             } else {
                 overControlPoint.setRobotAction(null,0.0);
             }
@@ -579,10 +592,10 @@ public class PathCanvas extends Canvas implements ActionListener {
         JPanel p = new JPanel(new BorderLayout(5, 5));
 
         JPanel labels = new JPanel(new GridLayout(0, 1, 2, 2));
-        JLabel labelX = pkgLoadAndAddLabel(labels, "Field X");
-        JLabel labelY = pkgLoadAndAddLabel(labels, "Field Y");
-        JLabel labelHeading = pkgLoadAndAddLabel(labels, "Heading");
-        JLabel labelTime = pkgLoadAndAddLabel(labels, "At Time");
+        JLabel labelX = pkgLoadAndAddLabel(labels, "Field X (m)");
+        JLabel labelY = pkgLoadAndAddLabel(labels, "Field Y (m)");
+        JLabel labelHeading = pkgLoadAndAddLabel(labels, "Heading (rad)");
+        JLabel labelTime = pkgLoadAndAddLabel(labels, "At Time (sec)");
         p.add(labels, BorderLayout.LINE_START);
 
         JPanel controls = new JPanel(new GridLayout(0, 1, 2, 2));
@@ -631,14 +644,22 @@ public class PathCanvas extends Canvas implements ActionListener {
         }
     }
 
-    private void pkgSetTime(JTextField time, JLabel labelTime) {
+    /**
+     *
+     * @param time
+     * @param labelTime
+     * @param tolerance
+     */
+    private void pkgSetTime(JTextField time, JLabel labelTime, double tolerance) {
         if (null != overControlPoint.getLast()) {
-            overControlPoint.setTime(Utl.clip(
-                    pkgGetDoubleFromTextField(time, labelTime, overControlPoint.getTime()),
+            double newTime = Utl.clip(
+                    pkgGetDoubleFromTextField(time, labelTime, overControlPoint.getTime(), tolerance),
                     overControlPoint.getLast().getTime() + 0.1,
                     (null == overControlPoint.getNext()) ?
-                            Double.MAX_VALUE : (overControlPoint.getNext().getTime() - 0.1)),
-                    true);
+                            Double.MAX_VALUE : (overControlPoint.getNext().getTime() - 0.1));
+            if (newTime != overControlPoint.getTime()) {
+                overControlPoint.setTime(newTime, true);
+            }
         }
     }
 
@@ -675,10 +696,20 @@ public class PathCanvas extends Canvas implements ActionListener {
         return field;
     }
 
-    private Double pkgGetDoubleFromTextField(JTextField field, JLabel label, double currentValue) {
+    /**
+     *
+     * @param field
+     * @param label
+     * @param currentValue
+     * @param tolerance The tolerance between the dialogue field value and the current value within which we consider
+     *                  the value unchanged. Typically, we format the current value to 2 or 3 decimal places. unless
+     *                  the value changes more than one or two decimal places, we consider it unchanged in the dialogue.
+     * @return
+     */
+    private Double pkgGetDoubleFromTextField(JTextField field, JLabel label, double currentValue, double tolerance) {
         try {
             double newValue = Double.parseDouble(field.getText());
-            if (newValue != currentValue) {
+            if ((newValue >= currentValue + tolerance) || (newValue <= currentValue - tolerance)) {
                 modifiedSinceSave = true;
                 currentValue = newValue;
             }
@@ -689,12 +720,24 @@ public class PathCanvas extends Canvas implements ActionListener {
         return currentValue;
     }
 
-    private AngleD pkgGetAngleFromTextField(JTextField field, JLabel label, AngleD currentAngle) {
+    /**
+     *
+     *
+     * @param field
+     * @param label
+     * @param currentAngle
+     * @param tolerance The tolerance between the dialogue field value and the current value within which we consider
+     *                  the value unchanged. Typically, we format the current value to 2 or 3 decimal places. unless
+     *                  the value changes more than one or two decimal places, we consider it unchanged in the dialogue.
+     * @return
+     */
+    private AngleD pkgGetAngleFromTextField(JTextField field, JLabel label, AngleD currentAngle, double tolerance) {
         try {
             double newAngle = Double.parseDouble(field.getText());
-            if (newAngle != currentAngle.getRadians()) {
+            if ((newAngle >= currentAngle.getRadians() + tolerance) ||
+                    (newAngle >= currentAngle.getRadians() +-tolerance)) {
                 modifiedSinceSave = true;
-                currentAngle.setRadians(newAngle);
+                currentAngle = new AngleD(AngleUnit.RADIANS,newAngle);
             }
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this,
