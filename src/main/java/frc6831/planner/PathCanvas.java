@@ -827,37 +827,41 @@ public class PathCanvas extends Canvas implements ActionListener {
         // draw the robot at the control points. otherwise, the robot obscures the path and
         // other control point editing handles.
         if (animate) {
-            g2d.drawString(
-                    String.format("elapsed time = %.3f", (System.currentTimeMillis() - pathStartTime)/1000.0),
-                    10, 20);
-            g2d.drawString(
-                    String.format("path time = %.3f", currentPathTime), 10, 35);
-            g2d.drawString(
-                    String.format("forward = %.3f", currentPathPoint.speedForward), 10, 50);
-            g2d.drawString(
-                    String.format("strafe = %.3f", currentPathPoint.speedStrafe), 10, 65);
-            g2d.drawString(
-                    String.format("angular vel = %.3f", currentPathPoint.speedRotation), 10, 80);
-            if (null != stopAndRunDescription) {
-                g2d.drawString(stopAndRunDescription, 10, 95);
+            // OK because of race condition in the drawing thread, it may be the case animate is set, but the rest
+            // the event handling is not done, so, check there is a path point before trying to draw the robot there.
+            if (null != currentPathPoint) {
+                g2d.drawString(
+                        String.format("elapsed time = %.3f", (System.currentTimeMillis() - pathStartTime)/1000.0),
+                        10, 20);
+                g2d.drawString(
+                        String.format("path time = %.3f", currentPathTime), 10, 35);
+                g2d.drawString(
+                        String.format("forward = %.3f", currentPathPoint.speedForward), 10, 50);
+                g2d.drawString(
+                        String.format("strafe = %.3f", currentPathPoint.speedStrafe), 10, 65);
+                g2d.drawString(
+                        String.format("angular vel = %.3f", currentPathPoint.speedRotation), 10, 80);
+                if (null != stopAndRunDescription) {
+                    g2d.drawString(stopAndRunDescription, 10, 95);
+                }
+                boolean tooFast = !robot.canRobotAchieve(currentPathPoint.speedForward,
+                        currentPathPoint.speedStrafe, currentPathPoint.speedRotation);
+                System.out.printf("%10.3f, %10.3f, %10.3f, %10.3f      %b %n",
+                        currentPathTime, currentPathPoint.speedForward,
+                        currentPathPoint.speedStrafe, currentPathPoint.speedRotation, tooFast);
+                pkgPaintRobot(g2d, currentPathPoint, tooFast);
+                g2d.setPaint(Color.MAGENTA);
+                double fieldX = currentPathPoint.fieldPt.getX();
+                double fieldY = currentPathPoint.fieldPt.getY();
+                Point2D.Double fieldPt = (Point2D.Double) drawXfm.transform(
+                        new Point2D.Double(fieldX, fieldY), null);
+                double dirX = fieldX + currentPathPoint.fieldHeading.sin();
+                double dirY = fieldY + currentPathPoint.fieldHeading.cos();
+                Point2D.Double dirPt = (Point2D.Double) drawXfm.transform(
+                        new Point2D.Double(dirX, dirY), null);
+                g2d.drawLine((int) fieldPt.getX(), (int) fieldPt.getY(), (int) dirPt.getX(), (int) dirPt.getY());
+                g2d.drawOval((int) dirPt.getX() - 3, (int) dirPt.getY() - 3, 6, 6);
             }
-            boolean tooFast = !robot.canRobotAchieve(currentPathPoint.speedForward,
-                    currentPathPoint.speedStrafe, currentPathPoint.speedRotation);
-            System.out.printf("%10.3f, %10.3f, %10.3f, %10.3f      %b %n",
-                    currentPathTime, currentPathPoint.speedForward,
-                    currentPathPoint.speedStrafe, currentPathPoint.speedRotation, tooFast);
-            pkgPaintRobot(g2d, currentPathPoint, tooFast);
-            g2d.setPaint(Color.MAGENTA);
-            double fieldX = currentPathPoint.fieldPt.getX();
-            double fieldY = currentPathPoint.fieldPt.getY();
-            Point2D.Double fieldPt = (Point2D.Double) drawXfm.transform(
-                    new Point2D.Double(fieldX, fieldY), null);
-            double dirX = fieldX + currentPathPoint.fieldHeading.sin();
-            double dirY = fieldY + currentPathPoint.fieldHeading.cos();
-            Point2D.Double dirPt = (Point2D.Double) drawXfm.transform(
-                    new Point2D.Double(dirX, dirY), null);
-            g2d.drawLine((int) fieldPt.getX(), (int) fieldPt.getY(), (int) dirPt.getX(), (int) dirPt.getY());
-            g2d.drawOval((int) dirPt.getX() - 3, (int) dirPt.getY() - 3, 6, 6);
 
         } else {
             for (ControlPoint point : path.getControlPoints()) {
@@ -1202,7 +1206,6 @@ public class PathCanvas extends Canvas implements ActionListener {
         } else {
             timer.restart();
         }
-        animate = true;
         pathStartTime = -1;
         currentPathTime = 0.0;
         stopAndRunEndTime = -1;
@@ -1210,6 +1213,7 @@ public class PathCanvas extends Canvas implements ActionListener {
         stopAndRunDuration = 0;
         pathFollower = path.getPathFollower();
         System.out.printf("    seconds     forward      strafe     angular    too fast!%n");
+        animate = true;
     }
 
     /**
