@@ -37,13 +37,20 @@ in our field descriptions for the 2020, 2021, and 2022 competitions.
     description from the *Swerve Path Planner* constants to the [Field Description](#Field-Description)
     as the <tt>"arena"</tt> description. The <tt>-ah</tt> command argument was removed because field
     extents are now in the field description rather than programmed. All field descriptions
-    in <tt>./resources/fields</tt> have been updated to include and <tt>"arena"</tt> description;
+    in <tt>./resources/fields</tt> have been updated to include an <tt>"arena"</tt> description;
   * minor changes for better interactive editing feedback and response.
 </details>
 <details>
   <summary>version 0.9.0 to 0.9.5 (for <b>2023 Charged Up</b>):</summary>
 
-  * added <tt>scale</tt> for field components to support mirroring the red and blue side of the field.
+  * added <b>2023 Charged Up</b> field description, and 2023 robot descriptions;
+  * added <tt>scale</tt> for field components to support mirroring the red and blue side of the field;
+  * added dialog editing of the rotation speed at control points. There is currently no interactive graphical
+    editing of rotation because we have not found a good way to present an editing handle for rotation speed;
+  * Fixed a timing issue that sometimes threw exceptions when path animation started;
+  * Fixed error in path point info dialog where Field Y was incorrectly reporting field X, added X, Y, and rotation
+    speed to the reported path point information;
+  * improved user documentation.
 </details>
 
 ## Download and Run
@@ -160,10 +167,12 @@ to describe things you should consider:
 We all do some testing, drop some points, create a path, and say "Good experiment, delete that and let's start
 over". This is how we do that:
 <ul>
-<li>From the main menu, under <b>Path</b>, select <b>Play Path</b></li>
-<li>From the context menu (right-click anywhere to get the context menu), select <b>Play Path</b></li>
+<li>From the main menu, under <b>Path</b>, select <b>Clear Path</b></li>
+<li>From the context menu (right-click anywhere to get the context menu), select <b>Clear Path</b></li>
 </ul>
-This will animate the robot following the path at actual speed/timing.
+This will clear any loaded or created path from the path planner, and you will lose any edits made since the last
+time you saved the path. The path planner will be placed in path creation mode and you can start dropping cointrol
+points for the new path.
 
 ### Reshaping the path
 

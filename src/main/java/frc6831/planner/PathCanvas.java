@@ -595,13 +595,19 @@ public class PathCanvas extends Canvas implements ActionListener {
         JLabel labelX = pkgLoadAndAddLabel(labels, "Field X (m)");
         JLabel labelY = pkgLoadAndAddLabel(labels, "Field Y (m)");
         JLabel labelHeading = pkgLoadAndAddLabel(labels, "Heading (rad)");
+        JLabel label_dX = pkgLoadAndAddLabel(labels, "X speed (m/s)");
+        JLabel label_dY = pkgLoadAndAddLabel(labels, "Y speed (m/s)");
+        JLabel labelRotation = pkgLoadAndAddLabel(labels, "Rotation (rad/s)");
         JLabel labelTime = pkgLoadAndAddLabel(labels, "At Time (sec)");
         p.add(labels, BorderLayout.LINE_START);
 
         JPanel controls = new JPanel(new GridLayout(0, 1, 2, 2));
         JLabel fieldX = pkgLoadAndAddLabel(controls, overPathPoint.fieldPt.getX(),"  %.3f");
-        JLabel fieldY = pkgLoadAndAddLabel(controls, overPathPoint.fieldPt.getX(),"  %.3f");
+        JLabel fieldY = pkgLoadAndAddLabel(controls, overPathPoint.fieldPt.getY(),"  %.3f");
         JLabel heading = pkgLoadAndAddLabel(controls, overPathPoint.fieldHeading.getRadians(),"  %.3f");
+        JLabel field_dX = pkgLoadAndAddLabel(controls, overPathPoint.field_dX,"  %.3f");
+        JLabel field_dY = pkgLoadAndAddLabel(controls, overPathPoint.field_dY,"  %.3f");
+        JLabel rotation = pkgLoadAndAddLabel(controls, overPathPoint.speedRotation,"  %.3f");
         JLabel time = pkgLoadAndAddLabel(controls, overPathPoint.time,"  %.2f");controls.add(time);
         p.add(controls, BorderLayout.CENTER);
 
