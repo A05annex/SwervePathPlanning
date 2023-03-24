@@ -2,6 +2,13 @@
 * **status:** used for FRC **2023 Charge Up**, **2022 Rapid React**, and **2021 Infinite Recharge at home**
 * **comments:** We believe this is competition-ready (i.e. we've used this for competition since the 2020-2021
   season). This release adds mirroring (scale) for the 2023 field elements, and improved documentation.
+* **related releases:**
+  * [a05annexUtil](https://github.com/A05annex/a05annexUtil) - the utility library that supports various A05annex
+    projects including this swerve path planner and all of our robot competition code.
+  * [a05annexRobot](https://github.com/A05annex/a05annexRobot) - our common robot code that includes the MK4 swerve
+    base, NavX, driver and autonomous selection switch panel, autonomous path and driver commands, camera, etc.
+  * [a05annexTemplate](https://github.com/A05annex/a05annexTemplate) - our template, built on the wpilib template
+    that provides a driveable swerve base with NavX, camera, autonomous path and driver selection.
   
 
 
@@ -33,7 +40,7 @@ in our field descriptions for the 2020, 2021, and 2022 competitions.
     the [Robot Description](#Robot-Description);
   * while there is an 'FRC standard field', different competitions like **2020 Infinite Recharge**, 
     **2021 At Home**, and **2022 Rapid React** have configured this to different sizes and/or
-    restricted the portion of the field where autonomous action can happen. Moved the field boundary
+    restricted the portion of the field where autonomous action can happen. To adapt, we moved the field boundary
     description from the *Swerve Path Planner* constants to the [Field Description](#Field-Description)
     as the <tt>"arena"</tt> description. The <tt>-ah</tt> command argument was removed because field
     extents are now in the field description rather than programmed. All field descriptions
@@ -223,7 +230,7 @@ the current path and give you additional control point for path tuning.</li>
 <details><summary>
 There are 2 ways to adjust path timing:
 <ul>
-<li>Re-time point in the path;</li>
+<li>Re-time a control point in the path;</li>
 <li>Re-time the entire path.</li>
 </ul>
 </summary>
