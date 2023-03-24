@@ -4,14 +4,14 @@
   "drive": {
     "length": 0.5461,
     "width": 0.5461,
-    "maxSpeed": 2.9446
+    "maxSpeed": 3.136
   },
   "chassis": {
-    "length": 0.7112,
-    "width": 0.7493
+    "length": 0.712,
+    "width": 0.712
   },
   "bumpers": {
     "length": 0.8636,
-    "width": 0.9017
+    "width": 0.8636
   }
 }

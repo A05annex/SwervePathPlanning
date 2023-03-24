@@ -393,7 +393,7 @@ of the robots is divided into 4 sections:
 
 <details>
   <summary>
-  This is a robot file which describes our 2020 prototype swerve base:
+  This is a robot file which describes our 2023 competition swerve base:
   </summary>
 
 ```json
