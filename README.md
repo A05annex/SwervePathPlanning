@@ -405,20 +405,20 @@ of the robots is divided into 4 sections:
 
 ```json
 {
-  "title": "prototype base, summer 2020",
-  "description": "This is the prototype base for A05 annex, FRC 6831, our first experience programming a swerve drive",
+  "title": "2023 competition base.",
+  "description": "This is the black anodized competition base for 2023 A05 annex, FRC team 6831",
   "drive": {
-    "length": 0.574,
-    "width": 0.577,
-    "maxSpeed": 3.1951
+    "length": 0.5461,
+    "width": 0.5461,
+    "maxSpeed": 3.136
   },
   "chassis": {
-    "length": 0.762,
-    "width": 0.762
+    "length": 0.712,
+    "width": 0.712
   },
   "bumpers": {
-    "length": 0.9144,
-    "width": 0.9144
+    "length": 0.8636,
+    "width": 0.8636
   }
 }
 ```
