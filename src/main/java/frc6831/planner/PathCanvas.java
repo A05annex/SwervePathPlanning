@@ -740,14 +740,15 @@ public class PathCanvas extends Canvas implements ActionListener {
     private AngleD pkgGetAngleFromTextField(JTextField field, JLabel label, AngleD currentAngle, double tolerance) {
         try {
             double newAngle = Double.parseDouble(field.getText());
-            if ((newAngle >= currentAngle.getRadians() + tolerance) ||
-                    (newAngle >= currentAngle.getRadians() +-tolerance)) {
+            if (!Utl.inTolerance(newAngle, currentAngle.getRadians(),tolerance)) {
                 modifiedSinceSave = true;
                 currentAngle = new AngleD(AngleUnit.RADIANS,newAngle);
+//                JOptionPane.showMessageDialog(this,
+//                        String.format("reset angle  %s to '%f'", label.getText(), currentAngle.getRadians()));
             }
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this,
-                    String.format("In '%s': '%s' is not a valid angle.", label, field.getText()));
+                    String.format("In '%s': '%s' is not a valid angle.", label.getText(), field.getText()));
         }
         return currentAngle;
     }
