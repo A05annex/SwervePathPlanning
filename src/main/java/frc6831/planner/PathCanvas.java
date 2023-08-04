@@ -395,7 +395,6 @@ public class PathCanvas extends Canvas implements ActionListener {
         } catch (NoninvertibleTransformException ex) {
             System.out.println("  -- can't invert draw transform");
         }
-
     }
 
     /**

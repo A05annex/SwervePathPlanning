@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="PathPlanner - 2021 at home" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="frc6831.planner.PathPlanner" />
+    <module name="SwervePathPlanning.main" />
+    <option name="PROGRAM_PARAMETERS" value="-r ./resources/robots/swerve_competition_2021.json -f ./resources/fields/2021_at_home_grid.json" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

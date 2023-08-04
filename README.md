@@ -57,6 +57,7 @@ in our field descriptions for the 2020, 2021, and 2022 competitions.
   * Fixed a timing issue that sometimes threw exceptions when path animation started;
   * Fixed error in path point info dialog where Field Y was incorrectly reporting field X, added X, Y, and rotation
     speed to the reported path point information;
+  * added saved Idea run configurations;
   * improved user documentation.
 </details>
 
@@ -64,7 +65,8 @@ in our field descriptions for the 2020, 2021, and 2022 competitions.
 
 We have not packaged this for distribution as an installable application (above our payscale). The
 easiest way to run this is to clone the repository and open it in your favorite IDE (Intellij IDEA or
-Visual Studio) and create a run target for `PathPlanner`. The gradle build file will resolve the
+Visual Studio) and create a run target for `PathPlanner` (if you are using Idea, the run targets
+will be loaded when you load the project). The gradle build file will resolve the
 dependencies, build, and run the program.
 
 When you run the program it will initialize with a default view of the most recent competition field
@@ -83,6 +85,7 @@ named arguments:
 -f FIELD, --field FIELD     specify a field description file
 ```
 Our fields, robots, and paths from previous years are in the <tt>resources</tt> folder of the project.
+
 ## Path Spline
 
 <details>

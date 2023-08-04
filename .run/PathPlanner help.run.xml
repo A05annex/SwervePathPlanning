@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="PathPlanner help" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="frc6831.planner.PathPlanner" />
+    <module name="SwervePathPlanning.main" />
+    <option name="PROGRAM_PARAMETERS" value="-h" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
