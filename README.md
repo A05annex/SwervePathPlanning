@@ -30,23 +30,7 @@ in our field descriptions for the 2020, 2021, and 2022 competitions.
 
 ## Change Log
 
-<details>
-  <summary>version 0.8.0 to 0.9.0 (for <b>2022 Rapid React</b>):</summary>
 
-  * added *stop-and-run* commands for control points and *scheduled commands* for path points. See
-    [Running Commands Along The Path](#Running-Commands-Along-The-Path);
-  * robots often have *appendages*, like a collector or hangar, that extend past to robot periphery
-    and must be considered in path planning - appendages were added to
-    the [Robot Description](#Robot-Description);
-  * while there is an 'FRC standard field', different competitions like **2020 Infinite Recharge**, 
-    **2021 At Home**, and **2022 Rapid React** have configured this to different sizes and/or
-    restricted the portion of the field where autonomous action can happen. To adapt, we moved the field boundary
-    description from the *Swerve Path Planner* constants to the [Field Description](#Field-Description)
-    as the <tt>"arena"</tt> description. The <tt>-ah</tt> command argument was removed because field
-    extents are now in the field description rather than programmed. All field descriptions
-    in <tt>./resources/fields</tt> have been updated to include an <tt>"arena"</tt> description;
-  * minor changes for better interactive editing feedback and response.
-</details>
 <details>
   <summary>version 0.9.0 to 0.9.5 (for <b>2023 Charged Up</b>):</summary>
 
@@ -59,6 +43,23 @@ in our field descriptions for the 2020, 2021, and 2022 competitions.
     speed to the reported path point information;
   * added saved Idea run configurations;
   * improved user documentation.
+</details>
+<details>
+  <summary>version 0.8.0 to 0.9.0 (for <b>2022 Rapid React</b>):</summary>
+
+* added *stop-and-run* commands for control points and *scheduled commands* for path points. See
+  [Running Commands Along The Path](#Running-Commands-Along-The-Path);
+* robots often have *appendages*, like a collector or hangar, that extend past to robot periphery
+  and must be considered in path planning - appendages were added to
+  the [Robot Description](#Robot-Description);
+* while there is an 'FRC standard field', different competitions like **2020 Infinite Recharge**,
+  **2021 At Home**, and **2022 Rapid React** have configured this to different sizes and/or
+  restricted the portion of the field where autonomous action can happen. To adapt, we moved the field boundary
+  description from the *Swerve Path Planner* constants to the [Field Description](#Field-Description)
+  as the <tt>"arena"</tt> description. The <tt>-ah</tt> command argument was removed because field
+  extents are now in the field description rather than programmed. All field descriptions
+  in <tt>./resources/fields</tt> have been updated to include an <tt>"arena"</tt> description;
+* minor changes for better interactive editing feedback and response.
 </details>
 
 ## Download and Run
