@@ -9,8 +9,6 @@
     base, NavX, driver and autonomous selection switch panel, autonomous path and driver commands, camera, etc.
   * [a05annexTemplate](https://github.com/A05annex/a05annexTemplate) - our template, built on the wpilib template
     that provides a driveable swerve base with NavX, camera, autonomous path and driver selection.
-  
-
 
 # 6831 A05annex: Swerve Path Planning
 
@@ -30,7 +28,6 @@ in our field descriptions for the 2020, 2021, and 2022 competitions.
 
 ## Change Log
 
-
 <details>
   <summary>version 0.9.0 to 0.9.5 (for <b>2023 Charged Up</b>):</summary>
 
@@ -47,25 +44,43 @@ in our field descriptions for the 2020, 2021, and 2022 competitions.
 <details>
   <summary>version 0.8.0 to 0.9.0 (for <b>2022 Rapid React</b>):</summary>
 
-* added *stop-and-run* commands for control points and *scheduled commands* for path points. See
-  [Running Commands Along The Path](#Running-Commands-Along-The-Path);
-* robots often have *appendages*, like a collector or hangar, that extend past to robot periphery
-  and must be considered in path planning - appendages were added to
-  the [Robot Description](#Robot-Description);
-* while there is an 'FRC standard field', different competitions like **2020 Infinite Recharge**,
-  **2021 At Home**, and **2022 Rapid React** have configured this to different sizes and/or
-  restricted the portion of the field where autonomous action can happen. To adapt, we moved the field boundary
-  description from the *Swerve Path Planner* constants to the [Field Description](#Field-Description)
-  as the <tt>"arena"</tt> description. The <tt>-ah</tt> command argument was removed because field
-  extents are now in the field description rather than programmed. All field descriptions
-  in <tt>./resources/fields</tt> have been updated to include an <tt>"arena"</tt> description;
-* minor changes for better interactive editing feedback and response.
+  * added *stop-and-run* commands for control points and *scheduled commands* for path points. See
+    [Running Commands Along The Path](#Running-Commands-Along-The-Path);
+  * robots often have *appendages*, like a collector or hangar, that extend past to robot periphery
+    and must be considered in path planning - appendages were added to
+    the [Robot Description](#Robot-Description);
+  * while there is an 'FRC standard field', different competitions like **2020 Infinite Recharge**,
+    **2021 At Home**, and **2022 Rapid React** have configured this to different sizes and/or
+    restricted the portion of the field where autonomous action can happen. To adapt, we moved the field boundary
+    description from the *Swerve Path Planner* constants to the [Field Description](#Field-Description)
+    as the <tt>"arena"</tt> description. The <tt>-ah</tt> command argument was removed because field
+    extents are now in the field description rather than programmed. All field descriptions
+    in <tt>./resources/fields</tt> have been updated to include an <tt>"arena"</tt> description;
+  * minor changes for better interactive editing feedback and response.
 </details>
 
-## Download and Run
+## Download and/or Run
 
-We have not packaged this for distribution as an installable application (above our payscale). The
-easiest way to run this is to clone the repository and open it in your favorite IDE (Intellij IDEA or
+We have finally packaged this as a runnable *.jar* file. So you now have the
+option to:
+* Download and run from the *.jar* file;
+* Clone the project and run from an IDE, which gives you all of our field, robot,
+  and path data files for reference.
+
+### Just Download and Run
+
+In github you will find an 0.9.5 release of the *SwervePathPlanning-0.9.5-all.jar*
+which you can run at the command line as:
+```
+% java wervePathPlanning-0.9.5-all.jar
+```
+See notes in the next section about command line arguments. While this is a running
+program, it lacks data for field, robot, or path descriptions; so, you may want to
+clone the project just so you have all of our past field, robot, and path descriptions as sample data.
+
+### Clone Source and Run
+Even though we have packaged this as a runnable *.jar* file, you may want to
+clone the repository and open it in your favorite IDE (Intellij IDEA or
 Visual Studio) and create a run target for `PathPlanner` (if you are using Idea, the run targets
 will be loaded when you load the project). The gradle build file will resolve the
 dependencies, build, and run the program.
@@ -116,7 +131,7 @@ path.</summary>
 
 ### Initial Path Creation
 
-When the path planner is started is shows, by default, the full 2022 field boundary
+When the path planner is started it shows, by default, the full 2022 field boundary
 with no field elements (see <a href="#Field-Description">Field Description</a> for loading a specific field
 and elements); and will use a default robot chassis that is 0.9m long and 0.5m wide; and 1.1m
 long amd 0.7m long with bumpers (see <a href="#Robot-Description">Robot Description</a> for loading
@@ -281,11 +296,33 @@ path within the robot capabilities.
 </details>
 
 ### Running Commands Along The Path
+<details><summary>
+In the <b>2021 At Home Challenges</b>, the obstacle course challenges merely required a path. For the <b>2022
+Rapid React</b> competition it became obvious we needed the paths to include other actions (commands) that needed to
+run at various points on the path (like <i>start/stop-collector</i>, or <i>aim-and-shoot</i>). So the
+<code>AutonomousPathCommand</code> run on the robot is really a dynamically configured (configured when the path is
+executed) Command Group.
 
-In the **2021 At Home Challenges** the obstacle course challenges merely required a path. For the **2022
-Rapid React** competition it became obvious we needed the paths to include other actions (commands) that needed to
-run at various points on the path (like *start/stop-collector*, or *aim-and-shoot*). So the
-<tt>AutonomousPathCommand</tt> run on the robot is really a dynamically configured Command Group.
+Two types of commands are supported:
+<ul>
+<li>A Command that is scheduled to execute at a specif point along the path the robot is following, e.g.
+  start/stop the collector rollers;</li>
+<li>A command that happens at a control point where the robot stops, the path follower relinquishes
+  control of the swerve drive, and path following resumes at the completion
+  of the command. An example of this would be a command that aims the shooter at a target, spins-up 
+  the shooter rollers, and takes a shot.</li>
+</ul>
+</summary>
+
+#### Scheduled Commands ####
+
+<i>To be written</i>
+
+#### Stop-And-Run Commands ####
+
+<i>To be written</i>
+
+</details>
 
 </details>
 
