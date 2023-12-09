@@ -24,7 +24,7 @@ down in front of the driver), Specifically, the driver is at the bottom of the s
 always to the right (common engineering convention). We adopted
 the convention that the center of the competition field is (0.0,0.0) for red-blue alliance symmetry; and
 that the left corner closest to the driver is 0,0 for the 2021 at Home field - both of which are reflected
-in our field descriptions for the 2020, 2021, and 2022 competitions.
+in our field descriptions for the 2021, 2022, and 2023 competitions.
 
 ## Change Log
 
@@ -76,7 +76,8 @@ which you can run at the command line as:
 ```
 See notes in the next section about command line arguments. While this is a running
 program, it lacks data for field, robot, or path descriptions; so, you may want to
-clone the project just so you have all of our past field, robot, and path descriptions as sample data.
+clone the project (or just download and expand the *.zip* just so you have all of our past
+field, robot, and path descriptions as sample data.
 
 ### Clone Source and Run
 Even though we have packaged this as a runnable *.jar* file, you may want to
@@ -113,7 +114,7 @@ Our fields, robots, and paths from previous years are in the <tt>resources</tt> 
   <a href="https://www.engr.colostate.edu/ECE455/Readings/TCB.pdf">
   Interpolating Splines with Local Tension, Continuity, and Bias Control</a>.
   </summary>
-<p>
+<br>
 When control points are created the tangent (derivatives) at that control point and surrounding
 control points are computed/recomputed using the [Cardinal-Spline](https://en.wikipedia.org/wiki/Cubic_Hermite_spline)
 formulation with the default tension specified by a program constant. The tangent is adjusted using a
@@ -422,7 +423,7 @@ This is the path description for a 2m diameter calibration path (see the
   ]
 }
 ```
-When loaded into the path planner, the path looks like this:
+When loaded into the path planner, the path looks like this:<br>
 ![alt text](./resources/2m_circle_path.jpg "2m circle path")
 <p>
 Note that the path is defined using positions, velocities, and time. When the path is processed by the robot
