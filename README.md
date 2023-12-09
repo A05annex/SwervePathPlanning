@@ -72,7 +72,7 @@ option to:
 In github you will find an 0.9.5 release of the *SwervePathPlanning-0.9.5-all.jar*
 which you can run at the command line as:
 ```
-% java SwervePathPlanning-0.9.5-all.jar
+% java -jar SwervePathPlanning-0.9.5-all.jar
 ```
 See notes in the next section about command line arguments. While this is a running
 program, it lacks data for field, robot, or path descriptions; so, you may want to

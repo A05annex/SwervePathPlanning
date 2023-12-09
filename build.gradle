@@ -7,6 +7,10 @@ repositories {
     mavenCentral()
 }
 
+tasks.jar {
+    manifest.attributes["Main-Class"] = "frc6831.planner.PathPlanner"
+}
+
 dependencies {
     implementation 'org.a05annex:a05annexUtil:0.9.6'
 //    implementation fileTree(dir: 'libs', include: ['*.jar'])
