@@ -15,7 +15,7 @@
 ![alt text](./resources/swerve-path-planner.jpg "Swerve Path Planner")
 This project is a visual 2D editor for path planning for a swerve drive FRC robot. You read a field description
 and robot description into this planner as a context for path planning; then draw, tune, add commands, and
-save a paths that can be used as the autonomous programs for a match.
+save paths that can be used as the autonomous programs for a match.
 
 A05annex is committed to using the internationally recognized SI units, so the field, robot, and path
 descriptions, and path points are in SI units. The +Y axis is always downfield from the driver (as Y is
@@ -72,7 +72,7 @@ option to:
 In github you will find an 0.9.5 release of the *SwervePathPlanning-0.9.5-all.jar*
 which you can run at the command line as:
 ```
-% java wervePathPlanning-0.9.5-all.jar
+% java SwervePathPlanning-0.9.5-all.jar
 ```
 See notes in the next section about command line arguments. While this is a running
 program, it lacks data for field, robot, or path descriptions; so, you may want to
@@ -81,7 +81,7 @@ clone the project just so you have all of our past field, robot, and path descri
 ### Clone Source and Run
 Even though we have packaged this as a runnable *.jar* file, you may want to
 clone the repository and open it in your favorite IDE (Intellij IDEA or
-Visual Studio) and create a run target for `PathPlanner` (if you are using Idea, the run targets
+Visual Studio) and create a run target for `ServePathPlanner` (if you are using Idea, the run targets
 will be loaded when you load the project). The gradle build file will resolve the
 dependencies, build, and run the program.
 
@@ -113,9 +113,9 @@ Our fields, robots, and paths from previous years are in the <tt>resources</tt> 
   <a href="https://www.engr.colostate.edu/ECE455/Readings/TCB.pdf">
   Interpolating Splines with Local Tension, Continuity, and Bias Control</a>.
   </summary>
-
+<p>
 When control points are created the tangent (derivatives) at that control point and surrounding
-control points are computed using the [Cardinal-Spline](https://en.wikipedia.org/wiki/Cubic_Hermite_spline)
+control points are computed/recomputed using the [Cardinal-Spline](https://en.wikipedia.org/wiki/Cubic_Hermite_spline)
 formulation with the default tension specified by a program constant. The tangent is adjusted using a
 control handle which intuitively manipulates the shape of the spline at the control point to implicitly
 edit tension and bias.
@@ -124,7 +124,7 @@ edit tension and bias.
 ## Creating and Editing a Path
 
 <details><summary>
-A path is created by dropping successive <i>control points</i> along the path onto a diagram of the field. Once the
+A path is created by dropping successive <i>control points</i> along the path onto the diagram of the field. Once the
 control points have been dropped, the path is edited and adjusted by: modifying positions and path derivatives
 at the control points; adding control points; removing control points; and attaching action commands to the
 path.</summary>
@@ -158,7 +158,7 @@ This will animate the robot following the path at actual speed/timing.
 Once you create a path, really a first guess at the path by dropping a few control points, you go immediately
 into path tuning (editing). Generally, the questions and adjustments are around:
 <ul>
-<li>Is this really the path I meant, and can I fix it?;</li>
+<li>Is this really the path I meant, and, can I fix it?;</li>
 <li>Is the robot capable of following the path, and if not, how do I fix it?;</li>
 <li>Is the robot facing the right direction, and if not, how do I fix it?;</li>
 <li>How do I tell the robot to do something in addition to following the path?;</li>
@@ -169,8 +169,8 @@ Expand this section to get answers for these questions.
 
 #### What is a Control Point?
 
-A control point is a position on the field that the path will pass through at some velocity, direction,
-and rotation speed. Each time you drop a new control point it is, by default, 1 second further along the
+A control point is a position on the field that the path will pass through at a specified time with a specified
+velocity, direction, and rotation speed. Each time you drop a new control point it is, by default, 1 second further along the
 path than the last control point. At the control point you will see editing handles for: position on the field;
 direction and velocity; and field orientation of the robot as shown below.
 ![alt text](./resources/ControlPoint.jpg "Control Point Editing")
@@ -204,7 +204,7 @@ points for the new path.
 
 <details><summary>There are 2 primary approaches to reshaping a path:
 <ul>
-<li>Edit (move, change direction and/or velocity and orientation) at control points of the existing path;</li>
+<li>Edit (move, change direction and/or velocity and heading) at control points of the existing path;</li>
 <li>Add or remove control points.</li>
 </ul>
 </summary>
@@ -215,8 +215,8 @@ In the previous <a href="#What-is-a-Control-Point">What is a Control Point</a> s
 way to interactively edit the curve around a control point. Specifically:
 <ul>
 <li><i>position handle</i> - moves the control point, the point the path goes though, on the field;</li>
-<li><i>direction/velocity handle</i> - shapes the curve around the point</li>
-<li><i>robot heading handle</i> - </li>
+<li><i>direction/velocity handle</i> - shapes the curve around the point;</li>
+<li><i>robot heading handle</i> - changes the heading of the robot as it goes through that control point.</li>
 </ul>
 It is useful to play with these on a test path to get a better idea how the handles control and shape the path.
 
@@ -230,8 +230,7 @@ add a control point. Here is how you do that:
 <ul>
 <li>right click on the <i>field position handle</i> of the control point;</li>
 <li>from the context menu, select <b>Delete Control Point</b>. The control point will be deleted, and
-the timing for all other control points will remain unchanged.
-unchanged</li>
+the timing for all other control points will remain unchanged.</li>
 </ul></li>
 <li>Adding a Control Point:
 <ul>
@@ -274,7 +273,7 @@ change the time the robot crosses point 3 to 1.3sec:
 <li>right click on the <i>field position handle</i> of the 3rd control point;</li>
 <li>from the context menu, select <b>Info</b>, this will bring up a control point information dialogue;</li>
 <li>in the control point information dialogue, edit the <b>At Time</b> from 2 to 1.3, and <b>apply</b> this
-change. The 3rd control point and all subsequent points have no wad their time adjusted, which should
+change. The 3rd control point and all subsequent points have now had their time adjusted, which should
 be reflected when you play the path.</li>
 </ul>
 
@@ -333,31 +332,56 @@ Two types of commands are supported:
   <code>AutonomousPathCommand</code>.
   </summary>
 
-The path is saved as a list of control points:
+The path is saved as a list of control points in a dictionary with these keys:
 - **<tt>"title"</tt>**: (optional, string) A title or name for the path, primarily used as file documentation
   to refresh you on the path this file represents.
 - **<tt>"description"</tt>**: (optional, string) A more verbose description if the path, again primarily used as file
   documentation to refresh you on the path this file represents.
 - **<tt>"controlPoints"</tt>**: (required, list) The list of control points. A control point is a dictionary
-  containing these fields.
+  containing these fields:
   - **<tt>"fieldX"</tt>**: (optional, double, default=0.0) The field X position in meters.
   - **<tt>"fieldY"</tt>**: (optional, double, default=0.0) The field Y position in meters.
   - **<tt>"fieldHeading"</tt>**: (optional, double, default=0.0) The field heading in radians.
   - **<tt>"time"</tt>**: (optional, double, default=0.0) The time at which this control point should be reached.
   - **<tt>"derivativesEdited"</tt>**: (optional, boolean, default=<tt>false</tt>) Whether the derivatives of the
-    control point have been explicitly set. If <code>false</code>, then the X,Y velocities at the control point are set
-    algorithmically. If <code>true</code> then the X,Y velocities specified here are used for the point.
+    control point velocities have been explicitly set (usually by manipulating the direction/velocity handle for
+    the control point). If <code>false</code>, then the X,Y velocities at the control point are set
+    algorithmically at load and when the control point is moved. If <code>true</code> then the X,Y velocities specified
+    here are used for the control point.
   - **<tt>"field_dX"</tt>**: (optional, double, default=0.0) The field X velocity in meters per second.
   - **<tt>"field_dY"</tt>**: (optional, double, default=0.0) The field Y velocity in meters per second.
+  - **<tt>"HeadingDerivativeEdited"</tt>**: (optional, boolean, default=<tt>false</tt>) Whether the derivative of the
+    control point heading has been explicitly set. If <code>false</code>, then the heading derivative at the control
+    point is set algorithmically. If <code>true</code> then dHeading specified here is used for the control point.
   - **<tt>"field_dHeading"</tt>**: (optional, double, default=0.0) The field angular velocity in
     radians per second. Currently, ignored as the derivative is always generated from the headings of the adjacent
     control points.
+  - **<tt>"robotActionCommand"</tt>**: (optional, string) The action command to run once the robot stops
+    at this control point. This command may require the **<tt>a05annex/src/subsystems/DriveSubsystem</tt>**. If
+    this command does not finish, the rest of the path will not be run. If not specified, no robot action will
+    be run at this control point.
+  - **<tt>"robotActionDuration"</tt>**: (conditional, double) Required if **<tt>robotActionCommand</tt>** is
+    specified. This is the expected duration (in seconds) of the **<tt>robotActionCommand</tt>** and is used
+    only in the pat planner to pause path following at the control point for this time in order to simulate
+    the actual timing when the path is played for planning.
+- **<tt>"speedMultiplier"</tt>**: (optional, string, default=1.0) The speed multiplier for the path. If greater than
+  1.0 the robot will be moving faster along the path.
+- **<tt>"robotScheduledActions"</tt>**: (optional, list) The list of scheduled actions. A scheduled action is a
+  dictionary containing these fields:
+  - **<tt>"robotActionCommand"</tt>**: (required, string) The action command to be scheduled at
+    **<tt>robotScheduledActionTime</tt>**. This command must not require the
+    **<tt>a05annex/src/subsystems/DriveSubsystem</tt>**.
+  - **<tt>"robotScheduledActionTime"</tt>**: (required, double) The time along the path when the
+    **<tt>robotActionCommand</tt>** will be scheduled to run.
+  
 
+  
 #### Path Description Examples
 
 <details>
 <summary>
-This is the path description for a 2m diameter calibration path:
+This is the path description for a 2m diameter calibration path (see the
+<code>./resources/paths/test_circle_2m.json</code> path):
 </summary>
 
 ```json
@@ -398,6 +422,12 @@ This is the path description for a 2m diameter calibration path:
   ]
 }
 ```
+When loaded into the path planner, the path looks like this:
+![alt text](./resources/2m_circle_path.jpg "2m circle path")
+<p>
+Note that the path is defined using positions, velocities, and time. When the path is processed by the robot
+code that information is translated to drive commands.
+
 </details>
 </details>
 
@@ -463,6 +493,10 @@ of the robots is divided into 4 sections:
   }
 }
 ```
+
+Note that the only use for **<tt>drive.maxSpeed</tt>** is in determining whether the robot is capable
+of executing the specified path.
+
 </details>
 </details>
 
