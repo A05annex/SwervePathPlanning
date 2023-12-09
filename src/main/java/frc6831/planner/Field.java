@@ -78,8 +78,8 @@ public class Field {
     private double X_VIEW_MAX = 4.115;
     private double Y_VIEW_MAX = 8.23;
 
-    private final String m_default_title = "2022 field";
-    private final String m_default_description = "The 2022 field outline with no game elements.";
+    private final String m_default_title = "2023 field";
+    private final String m_default_description = "The 2023 field outline with no game elements.";
 
     // Additional colors - for 2021 Infinite Recharge at home
     private static final Color GREEN_ZONE = new Color(118, 215, 196);
