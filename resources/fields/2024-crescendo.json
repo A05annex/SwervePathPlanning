@@ -1,0 +1,150 @@
+{
+  "title": "2024 Crescendo",
+  "description": "The 2024 Crescendo arena - full field.",
+  "arena": {
+    "extent": [
+      -4.01,
+      -8.27,
+      4.01,
+      8.27
+    ],
+    "view": [
+      -4.11,
+      -8.37,
+      4.11,
+      8.37
+    ]
+  },
+  "components": [
+    {
+      "name": "centerline",
+      "lineColor": "white",
+      "fillColor": "white",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [-4.01,-0.0254],
+          "upper right": [4.01,0.0254]
+        }
+      ]
+    },
+    {
+      "name": "start line",
+      "lineColor": "white",
+      "fillColor": "white",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [-3.56,6.34],
+          "upper right": [4.01,6.3900]
+        }
+      ]
+    },
+    {
+      "name": "wing line",
+      "lineColor": "alliance",
+      "fillColor": "alliance",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [-4.01,2.398],
+          "upper right": [4.01,2.4488]
+        }
+      ]
+    },
+    {
+      "name": "AMP zone",
+      "lineColor": "alliance",
+      "fillColor": "alliance",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [
+            -3.56,
+            8.27
+          ],
+          "upper right": [
+            -3.6108,
+            4.97
+          ]
+        },
+        {
+          "type": "rect",
+          "lower left": [
+            -3.6108,
+            5.0208
+          ],
+          "upper right": [
+            -4.01,
+            4.97
+          ]
+        }
+      ]
+    },
+    {
+      "name": "stage",
+      "lineColor": "alliance",
+      "fillColor": "alliance",
+      "shapes": [
+        {
+          "type": "polygon",
+          "points": [
+            [1.4046,2.4488],
+            [1.557, 2.7128],
+            [0.1778, 5.1188],
+            [-0.1778, 5.1188],
+            [-1.557, 2.7128],
+            [-1.4046,2.4488],
+            [-1.3460,2.4488],
+            [-1.4984,2.7128],
+            [-0.1524, 5.068],
+            [0.1524, 5.068],
+            [1.4984,2.7128],
+            [1.3460,2.4488]
+          ]
+        }
+      ]
+    }
+  ],
+  "field": {
+    "components": [
+      {
+        "component": "centerline"
+      },
+      {
+        "component": "start line"
+      },
+      {
+        "component": "wing line",
+        "alliance": "red"
+      },
+      {
+        "component": "AMP zone",
+        "alliance": "red"
+      },
+      {
+        "component": "stage",
+        "alliance": "red"
+      },
+      {
+        "component": "start line",
+        "scale": [1.0, -1.0]
+      },
+      {
+        "component": "wing line",
+        "alliance": "blue",
+        "scale": [1.0, -1.0]
+      },
+      {
+        "component": "AMP zone",
+        "alliance": "blue",
+        "scale": [1.0, -1.0]
+      },
+      {
+        "component": "stage",
+        "alliance": "blue",
+        "scale": [1.0, -1.0]
+      }
+    ]
+  }
+}
