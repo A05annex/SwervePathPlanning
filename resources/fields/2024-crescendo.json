@@ -59,30 +59,56 @@
       "shapes": [
         {
           "type": "rect",
-          "lower left": [
-            -3.56,
-            8.27
-          ],
-          "upper right": [
-            -3.6108,
-            4.97
-          ]
+          "lower left": [-3.56, 8.27],
+          "upper right": [-3.6108,4.97]
         },
         {
           "type": "rect",
-          "lower left": [
-            -3.6108,
-            5.0208
-          ],
-          "upper right": [
-            -4.01,
-            4.97
-          ]
+          "lower left": [-3.6108,5.0208],
+          "upper right": [-4.01,4.97]
         }
       ]
     },
     {
-      "name": "stage",
+      "name": "stage structure",
+      "lineColor": "white",
+      "fillColor": "white",
+      "shapes": [
+        {
+          "type": "polygon",
+          "points": [
+            [0.7874,2.9353],
+            [0.0000,4.2991],
+            [-0.7874,2.9353]
+          ]
+        },
+        {
+          "type": "polygon",
+          "points": [
+            [1.3460,2.4488],
+            [1.4984,2.7128],
+            [1.2344,2.8652],
+            [1.0820,2.6012]
+          ]
+        },
+        {
+          "type": "polygon",
+          "points": [
+            [-1.3460,2.4488],
+            [-1.4984,2.7128],
+            [-1.2344,2.8652],
+            [-1.0820,2.6012]
+          ]
+        },
+        {
+          "type": "rect",
+          "lower left": [-0.1524,4.7632],
+          "upper right": [0.1524,5.068]
+        }
+      ]
+    },
+    {
+      "name": "stage lines",
       "lineColor": "alliance",
       "fillColor": "alliance",
       "shapes": [
@@ -101,6 +127,72 @@
             [0.1524, 5.068],
             [1.4984,2.7128],
             [1.3460,2.4488]
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SPEAKER",
+      "lineColor": "alliance",
+      "fillColor": "alliance",
+      "shapes": [
+        {
+          "type": "polygon",
+          "points": [
+            [-0.4965, 8.27],
+            [-1.0172,7.35],
+            [-2.0586, 7.35],
+            [-2.5793, 8.27]
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SPEAKER core",
+      "lineColor": "white",
+      "fillColor": "white",
+      "shapes": [
+        {
+          "type": "polygon",
+          "points": [
+            [-1.4379, 8.27],
+            [-1.0672,7.43],
+            [-2.0086, 7.43],
+            [-1.6379, 8.27]
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SOURCE",
+      "lineColor": "white",
+      "fillColor": "white",
+      "shapes": [
+        {
+          "type": "polygon",
+          "points": [
+            [4.01, 6.4416],
+            [4.1832,6.57],
+            [3.2690, 8.37],
+            [3.0958, 8.27]
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SOURCE zone",
+      "lineColor": "alliance",
+      "fillColor": "alliance",
+      "shapes": [
+        {
+          "type": "polygon",
+          "points": [
+            [2.5415, 8.27],
+            [3.4811,6.3908],
+            [4.01, 6.3908],
+            [4.01, 6.4416],
+            [3.5065, 6.4416],
+            [2.6002, 8.27]
           ]
         }
       ]
@@ -123,8 +215,25 @@
         "alliance": "red"
       },
       {
-        "component": "stage",
+        "component": "stage structure"
+      },
+      {
+        "component": "stage lines",
         "alliance": "red"
+      },
+      {
+        "component": "SPEAKER",
+        "alliance": "red"
+      },
+      {
+        "component": "SPEAKER core"
+      },
+      {
+        "component": "SOURCE"
+      },
+      {
+        "component": "SOURCE zone",
+        "alliance": "blue"
       },
       {
         "component": "start line",
@@ -141,8 +250,30 @@
         "scale": [1.0, -1.0]
       },
       {
-        "component": "stage",
+        "component": "stage structure",
+        "scale": [1.0, -1.0]
+      },
+      {
+        "component": "stage lines",
         "alliance": "blue",
+        "scale": [1.0, -1.0]
+      },
+      {
+        "component": "SPEAKER",
+        "alliance": "blue",
+        "scale": [1.0, -1.0]
+      },
+      {
+        "component": "SPEAKER core",
+        "scale": [1.0, -1.0]
+      },
+      {
+        "component": "SOURCE",
+        "scale": [1.0, -1.0]
+      },
+      {
+        "component": "SOURCE zone",
+        "alliance": "red",
         "scale": [1.0, -1.0]
       }
     ]
