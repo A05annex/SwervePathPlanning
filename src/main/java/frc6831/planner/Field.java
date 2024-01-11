@@ -7,9 +7,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Point2D;
+import java.awt.geom.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,6 +54,11 @@ public class Field {
 
     private static final String TYPE_POLYGON = "polygon";
     private static final String POINTS = "points";
+
+    private static final String TYPE_RING = "ring";
+    private static final String RING_CENTER = "center";
+    private static final String RING_OD = "OD";
+    private static final String RING_ID = "ID";
 
     private static final String COMPONENT = "component";
     private static final String ALLIANCE = "alliance";
@@ -130,7 +133,7 @@ public class Field {
     // -------------------------------------------------------------------------------------------
 
     /**
-     *
+     * The representation of a 2D min-max rectangle.
      */
     public static class MinMax {
         private double m_minX;
@@ -291,6 +294,48 @@ public class Field {
         }
     }
 
+    private static class FieldRing extends FieldShape {
+        Point2D m_center = new Point2D.Double(0.0, 0.0);
+        double m_OD = 0.356;
+        double m_ID = 0.254;
+
+        FieldRing(JSONObject shapeDesc) {
+            m_center = parsePoint(shapeDesc, RING_CENTER);
+            m_OD = parseDouble(shapeDesc, RING_OD, 0.356);
+            m_ID = parseDouble(shapeDesc, RING_ID, 0.254);
+        }
+
+        @Override
+        void draw(Graphics2D g2d, AffineTransform drawXfm, Color outline, Color fill) {
+            Point2D.Double ptCenter = (Point2D.Double) drawXfm.transform(m_center, null);
+            double scale = Math.sqrt((drawXfm.getScaleX() * drawXfm.getScaleX()) +
+                    (drawXfm.getShearX() * drawXfm.getShearX()));
+            double scaledOD = scale * m_OD;
+            double scaledID = scale * m_ID;
+            Ellipse2D outer = new Ellipse2D.Double(
+                    ptCenter.getX() - (scaledOD * 0.5),
+                    ptCenter.getY() - (scaledOD * 0.5),
+                    scaledOD,
+                    scaledOD);
+            Ellipse2D inner = new Ellipse2D.Double(
+                    ptCenter.getX() - (scaledID * 0.5),
+                    ptCenter.getY() - (scaledID * 0.5),
+                    scaledID,
+                    scaledID);
+            Area area = new Area(outer);
+            area.subtract(new Area(inner));
+
+            if (null != fill) {
+                g2d.setColor(fill);
+                g2d.fill(area);
+            }
+            if (null != outline) {
+                g2d.setColor(outline);
+                g2d.draw(area);
+            }
+
+        }
+    }
     // -------------------------------------------------------------------------------------------
     // Components that may appear on the field multiple times, and optionally in alliance colors
     // -------------------------------------------------------------------------------------------
@@ -523,6 +568,8 @@ public class Field {
                 return new FieldRect(shapeDesc);
             case TYPE_POLYGON:
                 return new FieldPolygon(shapeDesc);
+            case TYPE_RING:
+                return new FieldRing(shapeDesc);
             default:
                 return null;
         }

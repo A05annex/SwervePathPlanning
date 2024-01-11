@@ -1,7 +1,7 @@
-* **version:** 0.9.5
-* **status:** used for FRC **2023 Charge Up**, **2022 Rapid React**, and **2021 Infinite Recharge at home**
+* **version:** 0.9.6
+* **status:** used for FRC **2024 Crescendo**, **2023 Charge Up**, **2022 Rapid React**, and **2021 Infinite Recharge at home**
 * **comments:** We believe this is competition-ready (i.e. we've used this for competition since the 2020-2021
-  season). This release adds mirroring (scale) for the 2023 field elements, and improved documentation.
+  season). This release adds ring field elements, and improved documentation.
 * **related releases:**
   * [a05annexUtil](https://github.com/A05annex/a05annexUtil) - the utility library that supports various A05annex
     projects including this swerve path planner and all of our robot competition code.
@@ -28,6 +28,11 @@ in our field descriptions for the 2021, 2022, and 2023 competitions.
 
 ## Change Log
 
+<details>
+  <summary>version 0.9.6 to 0.9.? (for <b>2024 Crescendo</b>):</summary>
+
+  * added <b>2024 Crescendo</b> field description, and 2024 robot descriptions;
+</details>
 <details>
   <summary>version 0.9.0 to 0.9.5 (for <b>2023 Charged Up</b>):</summary>
 

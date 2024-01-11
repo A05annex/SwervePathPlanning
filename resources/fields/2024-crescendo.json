@@ -139,10 +139,10 @@
         {
           "type": "polygon",
           "points": [
-            [-0.4965, 8.27],
-            [-1.0172,7.35],
-            [-2.0586, 7.35],
-            [-2.5793, 8.27]
+            [-0.4065, 8.27],
+            [-0.9572,7.35],
+            [-1.9686, 7.35],
+            [-2.4893, 8.27]
           ]
         }
       ]
@@ -155,10 +155,10 @@
         {
           "type": "polygon",
           "points": [
-            [-1.4379, 8.27],
-            [-1.0672,7.43],
-            [-2.0086, 7.43],
-            [-1.6379, 8.27]
+            [-1.3479, 8.27],
+            [-0.9772,7.43],
+            [-1.9186, 7.43],
+            [-1.5479, 8.27]
           ]
         }
       ]
@@ -197,6 +197,19 @@
         }
       ]
     }
+    {
+      "name": "note",
+      "lineColor": "orange",
+      "fillColor": "orange",
+      "shapes": [
+        {
+          "type": "ring",
+          "center": [0.0,0.0],
+          "OD": 0.356,
+          "ID": 0.234
+        }
+      ]
+    }
   ],
   "field": {
     "components": [
@@ -219,7 +232,7 @@
       },
       {
         "component": "stage lines",
-        "alliance": "red"
+        "alliance": "red",
       },
       {
         "component": "SPEAKER",
@@ -275,6 +288,49 @@
         "component": "SOURCE zone",
         "alliance": "red",
         "scale": [1.0, -1.0]
+      },
+      {
+        "component": "note"
+      },
+      {
+        "component": "note",
+        "translate": [1.6764,0.0]
+      },
+      {
+        "component": "note",
+        "translate": [3.3528,0.0]
+      },
+      {
+        "component": "note",
+        "translate": [-1.6764,0.0]
+      },
+      {
+        "component": "note",
+        "translate": [-3.3528,0.0]
+      },
+      {
+        "component": "note",
+        "translate": [0.0,5.3741]
+      },
+      {
+        "component": "note",
+        "translate": [-1.4478,5.3741]
+      },
+      {
+        "component": "note",
+        "translate": [-2.8956,5.3741]
+      },
+      {
+        "component": "note",
+        "translate": [0.0,-5.3741]
+      },
+      {
+        "component": "note",
+        "translate": [-1.4478,-5.3741]
+      },
+      {
+        "component": "note",
+        "translate": [-2.8956,-5.3741]
       }
     ]
   }
