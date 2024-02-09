@@ -1,4 +1,4 @@
-* **version:** 0.9.6
+* **version:** 2024.0.1
 * **status:** used for FRC **2024 Crescendo**, **2023 Charge Up**, **2022 Rapid React**, and **2021 Infinite Recharge at home**
 * **comments:** We believe this is competition-ready (i.e. we've used this for competition since the 2020-2021
   season). This release adds ring field elements, and improved documentation.
@@ -29,9 +29,11 @@ in our field descriptions for the 2021, 2022, and 2023 competitions.
 ## Change Log
 
 <details>
-  <summary>version 0.9.6 to 0.9.? (for <b>2024 Crescendo</b>):</summary>
+  <summary>version 0.9.6 to 2024.?.? (for <b>2024 Crescendo</b>):</summary>
 
-  * added <b>2024 Crescendo</b> field description, and 2024 robot descriptions;
+  * **version 0.9.6** - added <b>2024 Crescendo</b> field description, and 2024 robot descriptions;
+  * **version 2024.0.1** - revised version numbering to be consistent with FRC versioning that uses the year as the
+    base. Added documentation for ring shape (for the 2024 *note* game piece).
 </details>
 <details>
   <summary>version 0.9.0 to 0.9.5 (for <b>2023 Charged Up</b>):</summary>
@@ -745,7 +747,9 @@ describing the shape type, and then type-specific keys and values. These are the
 corresponding keys that describe the currently supported shapes:
 - **<tt>"circle"</tt>** - A circle of some radius centered at some location:
   - **<tt>"center"</tt>**: (required, [*x*,*y*]) The local X and Y coordinates, in meters, of the center
-    of the circle.
+    of the center of the circle. This is generally (0.0,0.0) and the position of the circle on the
+    field is specified when the circle is added to the field. More specifically, this is often used with a
+    circular/spherical game piece which can be placed anywhere on the field.
   - **<tt>"radius"</tt>**: (required, double) The radius, in meters.
 - **<tt>"rect"</tt>** - An axis-aligned rectangle defined by lower-left and upper-right coordinates:
   - **<tt>"lower left"</tt>**:
@@ -755,4 +759,11 @@ corresponding keys that describe the currently supported shapes:
   - **<tt>"points"</tt>**: A list of points describing the polygon, each point is described as a list
     containing the [*x*,*y*] local X and Y coordinates, in meters, of the point. The points describe a
     path that will be automatically closed.
+- **<tt>"ring"</tt>** - A ring of some inner and outer diameter centered at some location:
+  - **<tt>"center"</tt>**: (required, [*x*,*y*]) The local X and Y coordinates, in meters, of the center
+    of the center of the ring. This is generally (0.0,0.0) and the position of the ring on the
+    field is specified when the ring is added to the field. More specifically, this is often used with a
+    ring game piece which can be placed anywhere on the field.
+  - **<tt>"ID"</tt>**: (required, double) the inner diameter of the ring, in meters.
+  - **<tt>"OD"</tt>**: (required, double) the outer diameter of the ring, in meters.
 </details>
