@@ -311,11 +311,8 @@ public class PathCanvas extends Canvas implements ActionListener {
 
         // build the right menu popup
         contextMenu = new PopupMenu();
-        menuItemClearPath = pkgCreateMenuItem(contextMenu, "Clear Path", this);
         menuItemAnimatePath = pkgCreateMenuItem(contextMenu, "Play Path", this);
         menuItemStopAnimate = pkgCreateMenuItem(contextMenu, "Stop Play", this);
-        contextMenu.addSeparator();
-        menuSwitchAlliance = pkgCreateMenuItem(contextMenu, "Switch Alliance", this);
         contextMenu.addSeparator();
         menuItemExtendPath = pkgCreateMenuItem(contextMenu, "Extend Path", this);
         menuItemEndPath = pkgCreateMenuItem(contextMenu, "End Path", this);
@@ -325,6 +322,10 @@ public class PathCanvas extends Canvas implements ActionListener {
         menuItemResetTangent = pkgCreateMenuItem(contextMenu, "Reset Tangent", this);
         menuItemSetTime = pkgCreateMenuItem(contextMenu, "Set Time", this);
         menuItemInfo = pkgCreateMenuItem(contextMenu, "Info", this);
+        contextMenu.addSeparator();
+        menuSwitchAlliance = pkgCreateMenuItem(contextMenu, "Switch Alliance", this);
+        contextMenu.addSeparator();
+        menuItemClearPath = pkgCreateMenuItem(contextMenu, "Clear Path", this);
         add(contextMenu);
 
         // setup all of the stuff for the path panel
@@ -1128,11 +1129,17 @@ public class PathCanvas extends Canvas implements ActionListener {
      * Clear the current path and restart drawing that path.
      */
     public void clearPath() {
-        path.clearPath();
-        pkgSetExtendMode();
-        pathFile = null;
-        modifiedSinceSave = false;
-        repaint();
+        int result = JOptionPane.showConfirmDialog(this,
+                "Clearing the path deletes all of your work on this path, are you sure?", "Clear Path?",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE);
+        if (result == JOptionPane.YES_OPTION) {
+            path.clearPath();
+            pkgSetExtendMode();
+            pathFile = null;
+            modifiedSinceSave = false;
+            repaint();
+        }
     }
 
     /**

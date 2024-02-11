@@ -24,7 +24,7 @@ down in front of the driver), Specifically, the driver is at the bottom of the s
 always to the right (common engineering convention). We adopted
 the convention that the center of the competition field is (0.0,0.0) for red-blue alliance symmetry; and
 that the left corner closest to the driver is 0,0 for the 2021 at Home field - both of which are reflected
-in our field descriptions for the 2021, 2022, and 2023 competitions.
+in our field descriptions for the 2021, 2022, 2023, and 2024 competitions.
 
 ## Change Log
 
@@ -34,6 +34,8 @@ in our field descriptions for the 2021, 2022, and 2023 competitions.
   * **version 0.9.6** - added <b>2024 Crescendo</b> field description, and 2024 robot descriptions;
   * **version 2024.0.1** - revised version numbering to be consistent with FRC versioning that uses the year as the
     base. Added documentation for ring shape (for the 2024 *note* game piece).
+  * **version 2024.0.2** - revised operation of 'clear path' so there is now a confirmation dialogue. The context
+    menu was reorganized to be more consistent with the main menu 'edit' item.
 </details>
 <details>
   <summary>version 0.9.0 to 0.9.5 (for <b>2023 Charged Up</b>):</summary>
@@ -76,10 +78,10 @@ option to:
 
 ### Just Download and Run
 
-In github you will find an 2024.0.1 release of the *SwervePathPlanning-2024.0.1-all.jar*
+In github you will find an 2024.0.2 release of the *SwervePathPlanning-2024.0.2-all.jar*
 which you can run at the command line as:
 ```
-% java -jar SwervePathPlanning-2024.0.1-all.jar
+% java -jar SwervePathPlanning-2024.0.2-all.jar
 ```
 See notes in the next section about command line arguments. While this is a running
 program, it lacks data for field, robot, or path descriptions; so, you may want to
