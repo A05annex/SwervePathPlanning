@@ -1,4 +1,4 @@
-* **version:** 2024.0.1
+* **version:** 2024.0.2
 * **status:** used for FRC **2024 Crescendo**, **2023 Charge Up**, **2022 Rapid React**, and **2021 Infinite Recharge at home**
 * **comments:** We believe this is competition-ready (i.e. we've used this for competition since the 2020-2021
   season). This release adds ring field elements, and improved documentation.
@@ -31,11 +31,11 @@ in our field descriptions for the 2021, 2022, 2023, and 2024 competitions.
 <details>
   <summary>version 0.9.6 to 2024.?.? (for <b>2024 Crescendo</b>):</summary>
 
-  * **version 0.9.6** - added <b>2024 Crescendo</b> field description, and 2024 robot descriptions;
-  * **version 2024.0.1** - revised version numbering to be consistent with FRC versioning that uses the year as the
-    base. Added documentation for ring shape (for the 2024 *note* game piece).
   * **version 2024.0.2** - revised operation of 'clear path' so there is now a confirmation dialogue. The context
     menu was reorganized to be more consistent with the main menu 'edit' item.
+  * **version 2024.0.1** - revised version numbering to be consistent with FRC versioning that uses the year as the
+    base. Added documentation for ring shape (for the 2024 *note* game piece).
+  * **version 0.9.6** - added <b>2024 Crescendo</b> field description, and 2024 robot descriptions;
 </details>
 <details>
   <summary>version 0.9.0 to 0.9.5 (for <b>2023 Charged Up</b>):</summary>

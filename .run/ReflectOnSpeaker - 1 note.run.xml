@@ -1,0 +1,17 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="ReflectOnSpeaker - 1 note" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="frc6831.planner.utilities.ReflectOnSpeaker" />
+    <module name="SwervePathPlanning.main" />
+    <option name="PROGRAM_PARAMETERS" value="sourceOneAndPark.json ampOneAndPark.json" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/resources/paths/2024" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="frc6831.planner.utilities.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
