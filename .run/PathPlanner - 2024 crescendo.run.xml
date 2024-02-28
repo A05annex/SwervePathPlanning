@@ -1,0 +1,12 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="PathPlanner - 2024 crescendo" type="Application" factoryName="Application">
+    <option name="ALTERNATIVE_JRE_PATH" value="17" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <option name="MAIN_CLASS_NAME" value="frc6831.planner.PathPlanner" />
+    <module name="SwervePathPlanning.main" />
+    <option name="PROGRAM_PARAMETERS" value="-r ./resources/robots/2023_competition.json -f ./resources/fields/2024-crescendo.json" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
