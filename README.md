@@ -29,7 +29,7 @@ in our field descriptions for the 2021, 2022, 2023, and 2024 competitions.
 ## Change Log
 
 <details>
-  <summary>version 0.9.6 to 2024.?.? (for <b>2024 Crescendo</b>):</summary>
+  <summary>version 0.9.6 to 2024.0.1 (for <b>2024 Crescendo</b>):</summary>
 
   * **version 2024.0.2** - revised operation of 'clear path' so there is now a confirmation dialogue. The context
     menu was reorganized to be more consistent with the main menu 'edit' item.
