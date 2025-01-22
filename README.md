@@ -1,5 +1,6 @@
 * **version:** 2024.0.2
-* **status:** used for FRC **2024 Crescendo**, **2023 Charge Up**, **2022 Rapid React**, and **2021 Infinite Recharge at home**
+* **status:** used for FRC **2025 Reefscape**, **2024 Crescendo**, **2023 Charge Up**, **2022 Rapid React**,
+  and **2021 Infinite Recharge at home**
 * **comments:** We believe this is competition-ready (i.e. we've used this for competition since the 2020-2021
   season). This release adds ring field elements, and improved documentation.
 * **related releases:**
@@ -24,10 +25,15 @@ down in front of the driver), Specifically, the driver is at the bottom of the s
 always to the right (common engineering convention). We adopted
 the convention that the center of the competition field is (0.0,0.0) for red-blue alliance symmetry; and
 that the left corner closest to the driver is 0,0 for the 2021 at Home field - both of which are reflected
-in our field descriptions for the 2021, 2022, 2023, and 2024 competitions.
+in our field descriptions for the 2021, 2022, 2023, 2024, and 2025 competitions.
 
 ## Change Log
 
+<details>
+  <summary>version 2025.0.0 to 2025.?.? (for <b>2025 Reefscape</b>):</summary>
+
+  * **version 2025.0.0** - added <b>2025 Reefscape</b> field description.
+</details>
 <details>
   <summary>version 0.9.6 to 2024.0.1 (for <b>2024 Crescendo</b>):</summary>
 
@@ -78,10 +84,10 @@ option to:
 
 ### Just Download and Run
 
-In github you will find an 2024.0.2 release of the *SwervePathPlanning-2024.0.2-all.jar*
+In github you will find an 2025.0.0 release of the *SwervePathPlanning-2025.0.0-all.jar*
 which you can run at the command line as:
 ```
-% java -jar SwervePathPlanning-2024.0.2-all.jar
+% java -jar SwervePathPlanning-2025.0.0-all.jar
 ```
 See notes in the next section about command line arguments. While this is a running
 program, it lacks data for field, robot, or path descriptions; so, you may want to

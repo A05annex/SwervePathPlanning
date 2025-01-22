@@ -1,0 +1,307 @@
+{
+  "title": "2025 Reefscape",
+  "description": "The 2025 Reefscape arena - full field.",
+  "arena": {
+    "extent": [
+      -4.025,
+      -8.775,
+      4.025,
+      8.775
+    ],
+    "view": [
+      -4.125,
+      -10.00,
+      4.125,
+      10.00
+    ]
+  },
+  "components": [
+    {
+      "name": "barge",
+      "lineColor": "alliance",
+      "fillColor": "alliance",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [0.3039,-0.5842],
+          "upper right": [0.3549, 0.5842]
+        },
+        {
+          "type": "rect",
+          "lower left": [3.964,-0.5842],
+          "upper right": [4.015, 0.5842]
+        },
+        {
+          "type": "rect",
+          "lower left": [0.3549, 0.5332],
+          "upper right": [3.974, 0.5842]
+        },
+        {
+          "type": "rect",
+          "lower left": [0.3549, -0.5332],
+          "upper right": [3.974, -0.5842]
+        },
+        {
+          "type": "rect",
+          "lower left": [0.955, -0.095],
+          "upper right": [1.145,  0.095]
+        },
+        {
+          "type": "rect",
+          "lower left": [2.045, -0.095],
+          "upper right": [2.235,  0.095]
+        },
+        {
+          "type": "rect",
+          "lower left": [3.145, -0.095],
+          "upper right": [3.335,  0.095]
+        }
+      ]
+    },
+    {
+      "name": "barge_supports",
+      "lineColor": "gray",
+      "fillColor": "dark-gray",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [4.075,-0.1524],
+          "upper right": [4.379,0.1524]
+        },
+        {
+          "type": "rect",
+          "lower left": [-0.1524,-0.1524],
+          "upper right": [0.1524,0.1524]
+        },
+        {
+          "type": "rect",
+          "lower left": [-4.075,-0.1524],
+          "upper right": [-4.379,0.1524]
+        }
+      ]
+    },
+    {
+      "name": "algae_box",
+      "lineColor": "alliance",
+      "fillColor": "alliance",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [4.045,-0.9519],
+          "upper right": [5.0862,-0.9009]
+        },
+        {
+          "type": "rect",
+          "lower left": [4.045,-3.1869],
+          "upper right": [5.0862, -3.1359]
+        },
+        {
+          "type": "rect",
+          "lower left": [5.0862, -3.1869],
+          "upper right": [5.1372, -0.9009]
+        }
+      ]
+    },
+    {
+      "name": "start_line",
+      "lineColor": "gray",
+      "fillColor": "gray",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [-4.015,1.1751],
+          "upper right": [4.015,1.2261]
+        }
+      ]
+    },
+    {
+      "name": "reef_zone",
+      "lineColor": "alliance",
+      "fillColor": "alliance",
+      "shapes": [
+        {
+          "type": "polygon",
+          "points": [
+            [-1.3711,4.2851],
+            [-0.6856,5.4730],
+            [ 0.6856,5.4730],
+            [ 1.3711,4.2851],
+            [ 0.6856,3.0981],
+            [-0.6856,3.0981],
+            [-1.3711,4.2851],
+            [-1.3122,4.2851],
+            [-0.6562,3.1491],
+            [ 0.6562,3.1491],
+            [ 1.3122,4.2851],
+            [ 0.6562,5.4220],
+            [-0.6562,5.4220],
+            [-1.3122,4.2851],
+            [-1.3711,4.2851]
+          ]
+        }
+      ]
+    },
+    {
+      "name": "reef",
+      "lineColor": "gray",
+      "fillColor": "dark-gray",
+      "shapes": [
+        {
+          "type": "polygon",
+          "points": [
+            [-0.9605,4.2851],
+            [-0.4803,5.1174],
+            [ 0.4803,5.1174],
+            [ 0.9605,4.2851],
+            [ 0.4803,3.4537],
+            [-0.4803,3.4537],
+            [-0.9605,4.2851]
+          ]
+        }
+      ]
+    },
+    {
+      "name": "pickup_zone",
+      "lineColor": "alliance",
+      "fillColor": "alliance",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [-4.6546,7.0593],
+          "upper right": [-4.045,7.1103]
+        },
+        {
+          "type": "rect",
+          "lower left": [4.6546,7.0593],
+          "upper right": [4.045,7.1103]
+        }
+      ]
+    },
+    {
+      "name": "driver_zone",
+      "lineColor": "gray",
+      "fillColor": "gray",
+      "shapes": [
+        {
+          "type": "rect",
+          "lower left": [-2.7209,9.3532],
+          "upper right": [2.7209,9.4042]
+        },
+        {
+          "type": "rect",
+          "lower left": [2.7209,8.795],
+          "upper right": [2.7719,10.625]
+        },
+        {
+          "type": "rect",
+          "lower left": [-2.7209,8.795],
+          "upper right": [-2.7719,10.625]
+        }
+      ]
+    },
+    {
+      "name": "algae_start",
+      "lineColor": "green",
+      "fillColor": "green",
+      "shapes": [
+        {
+          "type": "circle",
+          "center": [-1.8288, 7.56],
+          "radius": 0.205
+        },
+        {
+          "type": "circle",
+          "center": [ 0.0, 7.56],
+          "radius": 0.205
+        },
+        {
+          "type": "circle",
+          "center": [1.8288, 7.56],
+          "radius": 0.205
+        },
+        {
+          "type": "circle",
+          "center": [-1.8288, -7.56],
+          "radius": 0.205
+        },
+        {
+          "type": "circle",
+          "center": [0.0, -7.56],
+          "radius": 0.205
+        },
+        {
+          "type": "circle",
+          "center": [1.8288, -7.56],
+          "radius": 0.205
+        }
+      ]
+    }
+  ],
+  "field": {
+    "components": [
+      {
+        "component": "barge_supports"
+      },
+      {
+        "component": "algae_start"
+      },
+      {
+        "component": "barge",
+        "alliance": "blue"
+      },
+      {
+        "component": "algae_box",
+        "alliance": "blue"
+      },
+      {
+        "component": "start_line"
+      },
+      {
+        "component": "driver_zone"
+      },
+      {
+        "component": "pickup_zone",
+        "alliance": "blue"
+      },
+      {
+        "component": "reef_zone",
+        "alliance": "blue"
+      },
+      {
+        "component": "reef"
+      },
+      {
+        "component": "barge",
+        "alliance": "red",
+        "rotate": 3.1415
+      },
+      {
+        "component": "algae_box",
+        "alliance": "red",
+        "rotate": 3.1415
+      },
+      {
+        "component": "start_line",
+        "rotate": 3.1415
+      },
+      {
+        "component": "driver_zone",
+        "rotate": 3.1415
+      },
+      {
+        "component": "pickup_zone",
+        "alliance": "red",
+        "rotate": 3.1415
+      },
+      {
+        "component": "reef_zone",
+        "alliance": "red",
+        "rotate": 3.1415
+      },
+      {
+        "component": "reef",
+        "rotate": 3.1415
+      }
+    ]
+  }
+}
