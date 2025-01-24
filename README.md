@@ -1,8 +1,8 @@
-* **version:** 2024.0.2
-* **status:** used for FRC **2025 Reefscape**, **2024 Crescendo**, **2023 Charge Up**, **2022 Rapid React**,
+* **version:** 2025.0.0
+* **status:** used for FRC **2025 REEFSCAPE**, **2024 Crescendo**, **2023 Charge Up**, **2022 Rapid React**,
   and **2021 Infinite Recharge at home**
 * **comments:** We believe this is competition-ready (i.e. we've used this for competition since the 2020-2021
-  season). This release adds ring field elements, and improved documentation.
+  season). This release adds the 2025 REEFSCAPE field as bot a full and half field.
 * **related releases:**
   * [a05annexUtil](https://github.com/A05annex/a05annexUtil) - the utility library that supports various A05annex
     projects including this swerve path planner and all of our robot competition code.
@@ -30,9 +30,9 @@ in our field descriptions for the 2021, 2022, 2023, 2024, and 2025 competitions.
 ## Change Log
 
 <details>
-  <summary>version 2025.0.0 to 2025.?.? (for <b>2025 Reefscape</b>):</summary>
+  <summary>version 2025.0.0 to 2025.?.? (for <b>2025 REEFSCAPE</b>):</summary>
 
-  * **version 2025.0.0** - added <b>2025 Reefscape</b> field description.
+  * **version 2025.0.0** - added <b>2025 REEFSCAPE</b> field description.
 </details>
 <details>
   <summary>version 0.9.6 to 2024.0.1 (for <b>2024 Crescendo</b>):</summary>

@@ -30,7 +30,7 @@ test {
 
 sourceCompatibility = '11'
 targetCompatibility = '11'
-version = '2024.0.1'
+version = '2025.0.0'
 
 
 
