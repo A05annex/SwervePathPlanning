@@ -1,6 +1,6 @@
 plugins {
     id 'java-library'
-    id("com.github.johnrengelman.shadow") version "6.0.0"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 repositories {
@@ -12,8 +12,8 @@ tasks.jar {
 }
 
 dependencies {
-    implementation 'org.a05annex:a05annexUtil:0.9.6'
-//    implementation fileTree(dir: 'libs', include: ['*.jar'])
+//    implementation 'org.a05annex:a05annexUtil:2025.0.1'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'org.jetbrains:annotations:17.0.0'
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
     implementation 'net.sourceforge.argparse4j:argparse4j:0.8.1'
@@ -30,7 +30,7 @@ test {
 
 sourceCompatibility = '11'
 targetCompatibility = '11'
-version = '2025.0.0'
+version = '2025.0.1'
 
 
 

@@ -41,6 +41,10 @@ public class PathPlanner extends JFrame implements ActionListener, MenuListener,
     // - path clear and start again - clearing and starting a new path (severe)
     private final JMenuItem m_menuPathClearPath;        // the menu edit - clear the current path and reset to
 
+    private String m_userDir;
+    private String m_fieldResourceDir;
+    private String m_robotResourceDir;
+    private String m_pathResourceDir;
     private final PathCanvas m_canvas;                  // the rendering canvas (defined at the end of this file)
     private final Robot m_robot = new Robot();          // the robot description
     private final Field m_field = new Field();          // the field description
@@ -85,6 +89,14 @@ public class PathPlanner extends JFrame implements ActionListener, MenuListener,
         if (boundsRect.height < m_nSizeY) m_nSizeY = boundsRect.height;
         setSize(m_nSizeX, m_nSizeY);
 
+        //------------------------------------------------------------------
+        // Setup the default resource directories
+        //------------------------------------------------------------------
+        m_userDir = System.getProperty("user.dir");
+        m_fieldResourceDir = m_userDir + "/resources/fields";
+        m_robotResourceDir = m_userDir + "/resources/robots";
+        m_pathResourceDir = m_userDir + "/resources/paths/2025";
+
         // ----------------------------------------------------------------------------------
         // Create the menu with exit
         // ----------------------------------------------------------------------------------
@@ -123,7 +135,7 @@ public class PathPlanner extends JFrame implements ActionListener, MenuListener,
         if (null != fieldDescFile) {
             m_field.loadField(fieldDescFile);
         }
-        m_canvas = new PathCanvas(m_graphicsConfig, m_robot, m_field, this);
+        m_canvas = new PathCanvas(m_graphicsConfig, m_robot, m_field, this, m_pathResourceDir);
         titleChanged();
         add(m_canvas, BorderLayout.CENTER);
 
@@ -160,7 +172,7 @@ public class PathPlanner extends JFrame implements ActionListener, MenuListener,
     }
 
     private void loadGameField() {
-        JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+        JFileChooser fc = new JFileChooser(m_fieldResourceDir);
         fc.setDialogTitle("Load Field");
         fc.setFileFilter(new FileNameExtensionFilter("JSON file", "json"));
         fc.setAcceptAllFileFilterUsed(false);
@@ -177,7 +189,7 @@ public class PathPlanner extends JFrame implements ActionListener, MenuListener,
     }
 
     private void loadRobot() {
-        JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+        JFileChooser fc = new JFileChooser(m_robotResourceDir);
         fc.setDialogTitle("Load Robot");
         fc.setFileFilter(new FileNameExtensionFilter("JSON file", "json"));
         fc.setAcceptAllFileFilterUsed(false);

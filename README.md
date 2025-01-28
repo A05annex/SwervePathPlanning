@@ -1,4 +1,4 @@
-* **version:** 2025.0.0
+* **version:** 2025.0.1
 * **status:** used for FRC **2025 REEFSCAPE**, **2024 Crescendo**, **2023 Charge Up**, **2022 Rapid React**,
   and **2021 Infinite Recharge at home**
 * **comments:** We believe this is competition-ready (i.e. we've used this for competition since the 2020-2021
@@ -32,7 +32,18 @@ in our field descriptions for the 2021, 2022, 2023, 2024, and 2025 competitions.
 <details>
   <summary>version 2025.0.0 to 2025.?.? (for <b>2025 REEFSCAPE</b>):</summary>
 
+  * **version 2025.0.1** - merged UI feature requests from 2024:
+    * added more autonomous path format description documentation.
+    * automatically zero dX, dY, and dHeading for start, end, and *stop and run command* control points. Reset
+      to default dX, dY, and dHeading values if the curve is extended or the *stop and run ommand* is removed.
+    * remove tanget display and hit testing for control points where the robot is stopped (eliminates the
+      problem of not being able to move the point because the tangent handle and point are coincident).
+    * disabled context menu 'Reset Tangent' for control points where the robot is stopped.
+    * setup default field, robot and path directories to the conventions used in this project.
+    * reset the default path directory to the last or read path to facilitate support of
+      the season directory structure and default path locations.
   * **version 2025.0.0** - added <b>2025 REEFSCAPE</b> field description.
+
 </details>
 <details>
   <summary>version 0.9.6 to 2024.0.1 (for <b>2024 Crescendo</b>):</summary>
@@ -76,25 +87,26 @@ in our field descriptions for the 2021, 2022, 2023, 2024, and 2025 competitions.
 
 ## Download and/or Run
 
-We have finally packaged this as a runnable *.jar* file. So you now have the
+Our swerve path planner is packaged as a runnable *.jar* file. So you now have the
 option to:
-* Download and run from the *.jar* file;
-* Clone the project and run from an IDE, which gives you all of our field, robot,
+* Download and run from the *.jar* file (the current release on github), with the project
+  `*.zip` file which give you all of our data files;
+* Clone the project and run from an IDE, which gives you a buildable project with all of our field, robot,
   and path data files for reference.
 
 ### Just Download and Run
 
-In github you will find an 2025.0.0 release of the *SwervePathPlanning-2025.0.0-all.jar*
+In github you will find an 2025.0.1 release of the *SwervePathPlanning-2025.0.0-all.jar*
 which you can run at the command line as:
 ```
-% java -jar SwervePathPlanning-2025.0.0-all.jar
+% java -jar SwervePathPlanning-2025.0.1-all.jar
 ```
 See notes in the next section about command line arguments. While this is a running
 program, it lacks data for field, robot, or path descriptions; so, you may want to
 clone the project (or just download and expand the *.zip* just so you have all of our past
 field, robot, and path descriptions as sample data.
 
-### Clone Source and Run
+### Clone Project, Build, and Run
 Even though we have packaged this as a runnable *.jar* file, you may want to
 clone the repository and open it in your favorite IDE (Intellij IDEA or
 Visual Studio) and create a run target for `ServePathPlanner` (if you are using Idea, the run targets
@@ -305,9 +317,7 @@ select <b>Speed Multiplier</b> to bring up a dialogue for changing the multiplie
 Note that when you change the speed multiplier, the red path highlights for paths that are beyond the capability
 of the robot will change to reflect the new speed profile, encouraging you to tune control points to keep the
 path within the robot capabilities.
-
 </details>
-
 </details>
 
 ### Running Commands Along The Path
@@ -320,13 +330,20 @@ executed) Command Group.
 
 Two types of commands are supported:
 <ul>
-<li>A Command that is scheduled to execute at a specif point along the path the robot is following, e.g.
+<li>A Command that is scheduled to execute at a specific point along the path the robot is following, e.g.
   start/stop the collector rollers;</li>
 <li>A command that happens at a control point where the robot stops, the path follower relinquishes
   control of the swerve drive, and path following resumes at the completion
   of the command. An example of this would be a command that aims the shooter at a target, spins-up 
   the shooter rollers, and takes a shot.</li>
 </ul>
+The swerve path planner has been written to let you plan paths independent of `wpilib` and your competition
+robot code, so it does not know what commands you have actually written for your robot, nor does it have a way
+to check. The commands you specify by name, are created using java reflection by the path following command. That
+is, at runtime, the path following command will ask if the command class exists, and if it does, the command
+will be started and executed, otherwise there will be a runtime exception logged, and
+the path will continue. Currently, the commands must have a *no-argument* constructor
+that will be used. We are working on supporting contractor arguments.
 </summary>
 
 #### Scheduled Commands ####
@@ -378,7 +395,7 @@ The path is saved as a list of control points in a dictionary with these keys:
     be run at this control point.
   - **<tt>"robotActionDuration"</tt>**: (conditional, double) Required if **<tt>robotActionCommand</tt>** is
     specified. This is the expected duration (in seconds) of the **<tt>robotActionCommand</tt>** and is used
-    only in the pat planner to pause path following at the control point for this time in order to simulate
+    only in the path planner to pause path playing the path at the control point for this time in order to simulate
     the actual timing when the path is played for planning.
 - **<tt>"speedMultiplier"</tt>**: (optional, string, default=1.0) The speed multiplier for the path. If greater than
   1.0 the robot will be moving faster along the path.
@@ -386,7 +403,9 @@ The path is saved as a list of control points in a dictionary with these keys:
   dictionary containing these fields:
   - **<tt>"robotActionCommand"</tt>**: (required, string) The action command to be scheduled at
     **<tt>robotScheduledActionTime</tt>**. This command must not require the
-    **<tt>a05annex/src/subsystems/DriveSubsystem</tt>**.
+    **<tt>a05annex/src/subsystems/DriveSubsystem</tt>** because it is expected that the command executes concurrently
+    with the robot continuing on it's path. A good example of what would be a good path command is
+    spinning up a collector as a robot should be approaching a game piece it wants to collect.
   - **<tt>"robotScheduledActionTime"</tt>**: (required, double) The time along the path when the
     **<tt>robotActionCommand</tt>** will be scheduled to run.
   

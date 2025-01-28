@@ -64,6 +64,7 @@ public class PathCanvas extends Canvas implements ActionListener {
     private final Robot robot;                        // the robot description
     private final Field field;
     private final TitleChangeListener titleChange;
+    private String defaultPathResourceDir;
     private File pathFile = null;
     private boolean modifiedSinceSave = false;
     private final KochanekBartelsSpline path = new KochanekBartelsSpline();
@@ -224,13 +225,7 @@ public class PathCanvas extends Canvas implements ActionListener {
             // loop through the control points and see is we are over a control point handle. These are tested
             // first as they are most important in controlling the path
             for (ControlPoint point : path.getControlPoints()) {
-                // Normally we test the tangent point first, because it is rare that the tangents would be 0,
-                // which would make the tangent point coincident with the control point and would stop the
-                // robot at that point. The notable exception is when the robot stops to do something. In
-                // that case the tangent is explicitly set to 0.0, and cannot be changed unless the stop and
-                // do something action is removed.
-                if ((null == point.getRobotAction()) &&
-                        point.testOveTangentPoint(pt.getX(), pt.getY(), OVER_TOL / scale)) {
+                if (point.testOverTangentPoint(pt.getX(), pt.getY(), OVER_TOL / scale)) {
                     overControlPoint = point;
                     overWhat = OVER_TANGENT_POINT;
 
@@ -243,7 +238,7 @@ public class PathCanvas extends Canvas implements ActionListener {
                     overWhat = OVER_HEADING_POINT;
                 }
             }
-            // If we are not over any  control point handle, then test path points to see if we are over
+            // If we are not over any control point handle, then test path points to see if we are over
             // a path point. There are few actions for path points, however, sometimes we want something
             // to happen along the path.
             if (OVER_NOTHING == overWhat) {
@@ -280,7 +275,8 @@ public class PathCanvas extends Canvas implements ActionListener {
 
             boolean controlPointSelected = (null != overControlPoint) && (overWhat == OVER_CONTROL_POINT);
             menuItemDelete.setEnabled(controlPointSelected && (null != overControlPoint.getLast()));
-            menuItemResetTangent.setEnabled(controlPointSelected && overControlPoint.getDerivativesManuallyEdited());
+            menuItemResetTangent.setEnabled(controlPointSelected && !overControlPoint.isRobotStopped() &&
+                    overControlPoint.getDerivativesManuallyEdited());
             menuItemSetTime.setEnabled(controlPointSelected && (null != overControlPoint.getLast()));
             menuItemInfo.setEnabled(controlPointSelected || pathPointSelected);
 
@@ -303,11 +299,13 @@ public class PathCanvas extends Canvas implements ActionListener {
      * @param field The representation of the field.
      */
     public PathCanvas(@NotNull GraphicsConfiguration gc, @NotNull Robot robot,
-                      @NotNull Field field, @NotNull TitleChangeListener titleChange) {
+                      @NotNull Field field, @NotNull TitleChangeListener titleChange,
+                      @NotNull String defaultPathResourceDir) {
         super(gc);
         this.robot = robot;
         this.field = field;
         this.titleChange = titleChange;
+        this.defaultPathResourceDir = defaultPathResourceDir;
 
         // build the right menu popup
         contextMenu = new PopupMenu();
@@ -399,8 +397,8 @@ public class PathCanvas extends Canvas implements ActionListener {
     }
 
     /**
-     * An action listener for the {@link PathCanvas} that is specifically looking for {@link #timer} events
-     * during path animation.
+     * An action listener for the {@link PathCanvas} that is waiting for either context menu events, or events
+     * or from a running path animation usch as {@link #timer} events.
      *
      * @param event (ActionEvent) The action event that was sent to this path canvas.
      */
@@ -519,10 +517,11 @@ public class PathCanvas extends Canvas implements ActionListener {
         JPanel controls = new JPanel(new GridLayout(0, 1, 2, 2));
         JTextField fieldX = pkgLoadAndAddField(controls, overControlPoint.getFieldX(),"%.3f");
         JTextField fieldY = pkgLoadAndAddField(controls, overControlPoint.getFieldY(),"%.3f");
-        JTextField field_dX = pkgLoadAndAddField(controls, overControlPoint.getRawTangentX(),"%.3f");
-        JTextField field_dY = pkgLoadAndAddField(controls, overControlPoint.getRawTangentY(),"%.3f");
+        boolean isStopped = overControlPoint.isRobotStopped();
+        JTextField field_dX = pkgLoadAndAddField(controls, overControlPoint.getRawTangentX(), "%.3f", isStopped);
+        JTextField field_dY = pkgLoadAndAddField(controls, overControlPoint.getRawTangentY(),"%.3f", isStopped);
         JTextField heading = pkgLoadAndAddField(controls, overControlPoint.getFieldHeading(),"%.3f");
-        JTextField rotation = pkgLoadAndAddField(controls, overControlPoint.getRotationSpeed(),"%.3f");
+        JTextField rotation = pkgLoadAndAddField(controls, overControlPoint.getRotationSpeed(),"%.3f", isStopped);
         JTextField time = pkgLoadAndAddField(controls, overControlPoint.getTime(),"%.2f");
         time.setEditable(null != overControlPoint.getLast());
         p.add(controls, BorderLayout.CENTER);
@@ -685,6 +684,16 @@ public class PathCanvas extends Canvas implements ActionListener {
     private JTextField pkgLoadAndAddField(JPanel controls, double value, String format) {
         String str = String.format(format, value);
         JTextField field = new JTextField(str);
+        controls.add(field);
+        return field;
+    }
+
+    private JTextField pkgLoadAndAddField(JPanel controls, double value, String format, boolean disable) {
+        String str = String.format(format, value);
+        JTextField field = new JTextField(str);
+        if (disable) {
+            field.setEditable(false);
+        }
         controls.add(field);
         return field;
     }
@@ -909,7 +918,7 @@ public class PathCanvas extends Canvas implements ActionListener {
         if (!animate) {
             // draw the control point editing handles.
             for (ControlPoint point : path.getControlPoints()) {
-                g2d.setPaint(Color.RED);
+                g2d.setPaint(Color.ORANGE);
                 KochanekBartelsSpline.RobotAction robotAction = point.getRobotAction();
                 Point2D.Double fieldPt = (Point2D.Double) drawXfm.transform(
                         new Point2D.Double(point.getFieldX(), point.getFieldY()), null);
@@ -1147,7 +1156,8 @@ public class PathCanvas extends Canvas implements ActionListener {
      * absolute directory path to the path file.
      */
     public void loadPath() {
-        JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+        JFileChooser fc = new JFileChooser(null == pathFile ?
+                defaultPathResourceDir : pathFile.getParent());
         fc.setDialogTitle("Load Path");
         fc.setFileFilter(new FileNameExtensionFilter("JSON file", "json"));
         fc.setAcceptAllFileFilterUsed(false);
@@ -1191,7 +1201,8 @@ public class PathCanvas extends Canvas implements ActionListener {
      * Save the path to a new path file.
      */
     public void savePathAs() {
-        JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+        JFileChooser fc = new JFileChooser(null == pathFile ?
+                defaultPathResourceDir : pathFile.getParent());
         fc.setDialogTitle("Save Path As");
         fc.setFileFilter(new FileNameExtensionFilter("JSON file", "json"));
         fc.setAcceptAllFileFilterUsed(false);

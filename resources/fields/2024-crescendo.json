@@ -196,7 +196,7 @@
           ]
         }
       ]
-    }
+    },
     {
       "name": "note",
       "lineColor": "orange",
@@ -232,7 +232,7 @@
       },
       {
         "component": "stage lines",
-        "alliance": "red",
+        "alliance": "red"
       },
       {
         "component": "SPEAKER",
