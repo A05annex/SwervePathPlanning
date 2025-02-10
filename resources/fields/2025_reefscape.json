@@ -178,6 +178,248 @@
       ]
     },
     {
+      "name": "reef_coral_bars",
+      "lineColor": "magenta",
+      "fillColor": "magenta",
+      "shapes": [
+        {
+          "type": "circle",
+          "center": [0.1621,3.5083],
+          "radius": 0.0230
+        },
+        {
+          "type": "circle",
+          "center": [0.1621,3.7581],
+          "radius": 0.0230
+        },
+        {
+          "type": "rect",
+          "lower left": [0.1392,3.5083],
+          "upper right": [0.1851,3.7581]
+        },
+        {
+          "type": "circle",
+          "center": [-0.1621,3.5083],
+          "radius": 0.0230
+        },
+        {
+          "type": "circle",
+          "center": [-0.1621,3.7581],
+          "radius": 0.0230
+        },
+        {
+          "type": "rect",
+          "lower left": [-0.1392,3.5083],
+          "upper right": [-0.1851,3.7581]
+        },
+        {
+          "type": "circle",
+          "center": [0.1621,4.8077],
+          "radius": 0.0230
+        },
+        {
+          "type": "circle",
+          "center": [0.1621,5.0579],
+          "radius": 0.0230
+        },
+        {
+          "type": "rect",
+          "lower left": [0.1392,4.8077],
+          "upper right": [0.1851,5.0579]
+        },
+        {
+          "type": "circle",
+          "center": [-0.1621,4.8077],
+          "radius": 0.0230
+        },
+        {
+          "type": "circle",
+          "center": [-0.1621,5.0579],
+          "radius": 0.0230
+        },
+        {
+          "type": "rect",
+          "lower left": [-0.1392,4.8077],
+          "upper right": [-0.1851,5.0579]
+        },
+        {
+          "type": "circle",
+          "center": [-0.1621,4.8077],
+          "radius": 0.0230
+        },
+        {
+          "type": "circle",
+          "center": [-0.1621,5.0579],
+          "radius": 0.0230
+        },
+        {
+          "type": "rect",
+          "lower left": [-0.1392,4.8077],
+          "upper right": [-0.1851,5.0579]
+        },
+        {
+          "type": "circle",
+          "center": [0.3716,4.6867],
+          "radius": 0.0230
+        },
+        {
+          "type": "circle",
+          "center": [0.5883,4.8118],
+          "radius": 0.0230
+        },
+        {
+          "type": "polygon",
+          "points": [
+            [0.3601,4.7066],
+            [0.5768,4.8317],
+            [0.5998,4.7919],
+            [0.3831,4.6748],
+            [0.3601,4.7066]
+          ]
+        },
+        {
+          "type": "circle",
+          "center": [0.5336,4.4061],
+          "radius": 0.0230
+        },
+        {
+          "type": "circle",
+          "center": [0.7504,4.5312],
+          "radius": 0.0230
+        },
+        {
+          "type": "polygon",
+          "points": [
+            [0.5221,4.4269],
+            [0.7389,4.5511],
+            [0.7619,4.5113],
+            [0.5451,4.3826],
+            [0.5221,4.4269]
+          ]
+        },
+        {
+          "type": "circle",
+          "center": [0.3716,3.8835],
+          "radius": 0.0230
+        },
+        {
+          "type": "circle",
+          "center": [0.5883,3.7583],
+          "radius": 0.0230
+        },
+        {
+          "type": "polygon",
+          "points": [
+            [0.3601,3.8636],
+            [0.3831,3.9034],
+            [0.5998,3.7782],
+            [0.5768,3.7384],
+            [0.3601,3.8636]
+          ]
+        },
+        {
+          "type": "circle",
+          "center": [0.5336,4.1641],
+          "radius": 0.0230
+        },
+        {
+          "type": "circle",
+          "center": [0.7504,4.0388],
+          "radius": 0.0230
+        },
+        {
+          "type": "polygon",
+          "points": [
+            [0.5240,4.1442],
+            [0.5451,4.1840],
+            [0.7619,4.0587],
+            [0.7389,4.0189],
+            [0.5240,4.1442]
+          ]
+        },
+        {
+          "type": "circle",
+          "center": [-0.3716,4.6867],
+          "radius": 0.0230
+        },
+        {
+          "type": "circle",
+          "center": [-0.5883,4.8118],
+          "radius": 0.0230
+        },
+        {
+          "type": "polygon",
+          "points": [
+            [-0.3601,4.7066],
+            [-0.5768,4.8317],
+            [-0.5998,4.7919],
+            [-0.3831,4.6748],
+            [-0.3601,4.7066]
+          ]
+        },
+        {
+          "type": "circle",
+          "center": [-0.5336,4.4061],
+          "radius": 0.0230
+        },
+        {
+          "type": "circle",
+          "center": [-0.7504,4.5312],
+          "radius": 0.0230
+        },
+        {
+          "type": "polygon",
+          "points": [
+            [-0.5221,4.4269],
+            [-0.7389,4.5511],
+            [-0.7619,4.5113],
+            [-0.5451,4.3826],
+            [-0.5221,4.4269]
+          ]
+        },
+        {
+          "type": "circle",
+          "center": [-0.3716,3.8835],
+          "radius": 0.0230
+        },
+        {
+          "type": "circle",
+          "center": [-0.5883,3.7583],
+          "radius": 0.0230
+        },
+        {
+          "type": "polygon",
+          "points": [
+            [-0.3601,3.8636],
+            [-0.3831,3.9034],
+            [-0.5998,3.7782],
+            [-0.5768,3.7384],
+            [-0.3601,3.8636]
+          ]
+        },
+        {
+          "type": "circle",
+          "center": [-0.5336,4.1641],
+          "radius": 0.0230
+        },
+        {
+          "type": "circle",
+          "center": [-0.7504,4.0388],
+          "radius": 0.0230
+        },
+        {
+          "type": "polygon",
+          "points": [
+            [-0.5240,4.1442],
+            [-0.5451,4.1840],
+            [-0.7619,4.0587],
+            [-0.7389,4.0189],
+            [-0.5240,4.1442]
+          ]
+        }
+      ]
+    },
+    {
       "name": "pickup_zone",
       "lineColor": "alliance",
       "fillColor": "alliance",
@@ -323,6 +565,9 @@
         "component": "reef"
       },
       {
+        "component": "reef_coral_bars"
+      },
+      {
         "component": "barge",
         "alliance": "red",
         "rotate": 3.1415
@@ -362,6 +607,10 @@
       },
       {
         "component": "reef",
+        "rotate": 3.1415
+      },
+      {
+        "component": "reef_coral_bars",
         "rotate": 3.1415
       }
     ]

@@ -32,11 +32,12 @@ in our field descriptions for the 2021, 2022, 2023, 2024, and 2025 competitions.
 <details>
   <summary>version 2025.0.0 to 2025.?.? (for <b>2025 REEFSCAPE</b>):</summary>
 
-  * **version 2025.0.1** - merged UI feature requests from 2024:
+  **version 2025.0.2** - added coarl racks to the <b>2025 REEFSCAPE</b> field description.
+  **version 2025.0.1** - merged UI feature requests from 2024:
     * added more autonomous path format description documentation.
     * automatically zero dX, dY, and dHeading for start, end, and *stop and run command* control points. Reset
       to default dX, dY, and dHeading values if the curve is extended or the *stop and run ommand* is removed.
-    * remove tanget display and hit testing for control points where the robot is stopped (eliminates the
+    * remove tangent display and hit testing for control points where the robot is stopped (eliminates the
       problem of not being able to move the point because the tangent handle and point are coincident).
     * disabled context menu 'Reset Tangent' for control points where the robot is stopped.
     * setup default field, robot and path directories to the conventions used in this project.
