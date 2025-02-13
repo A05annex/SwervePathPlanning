@@ -1,8 +1,8 @@
-* **version:** 2025.0.1
+* **version:** 2025.0.2
 * **status:** used for FRC **2025 REEFSCAPE**, **2024 Crescendo**, **2023 Charge Up**, **2022 Rapid React**,
   and **2021 Infinite Recharge at home**
 * **comments:** We believe this is competition-ready (i.e. we've used this for competition since the 2020-2021
-  season). This release adds the 2025 REEFSCAPE field as bot a full and half field.
+  season). This release adds the 2025 REEFSCAPE field as both a full and half field.
 * **related releases:**
   * [a05annexUtil](https://github.com/A05annex/a05annexUtil) - the utility library that supports various A05annex
     projects including this swerve path planner and all of our robot competition code.
