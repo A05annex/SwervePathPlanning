@@ -1,4 +1,4 @@
-* **version:** 2025.0.2
+* **version:** 2025.0.3
 * **status:** used for FRC **2025 REEFSCAPE**, **2024 Crescendo**, **2023 Charge Up**, **2022 Rapid React**,
   and **2021 Infinite Recharge at home**
 * **comments:** We believe this is competition-ready (i.e. we've used this for competition since the 2020-2021
@@ -32,6 +32,12 @@ in our field descriptions for the 2021, 2022, 2023, 2024, and 2025 competitions.
 <details>
   <summary>version 2025.0.0 to 2025.?.? (for <b>2025 REEFSCAPE</b>):</summary>
 
+  * **version 2025.0.3** - UI improvements, support for scheduled actions that the path relinquishes
+    drive control to. In detail, the changes are:
+    * Errors in dialogue input previously reported errors when the dialogue was applied, but then simply
+      cancelled the dialogue possibly with some of the changes applied. The error handling has been revised so
+      the user is returned to the dialogue to correct the errors. No changes are applied unless all fields are
+      verified to be valid.
   * **version 2025.0.2** - added coral racks to the <b>2025 REEFSCAPE</b> field description.
   * **version 2025.0.1** - merged UI feature requests from 2024:
     * added more autonomous path format description documentation.
