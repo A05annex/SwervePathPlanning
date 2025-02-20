@@ -424,10 +424,10 @@ public class PathCanvas extends Canvas implements ActionListener {
                 } else {
                     if ((null != currentPathPoint.action) &&
                             (RobotActionType.STOP_AND_RUN_COMMAND == currentPathPoint.action.actionType)) {
-                        stopAndRunEndTime = event.getWhen() + (long) (currentPathPoint.action.approxDuration * 1000.0);
-                        stopAndRunDescription = "Stop and Run: " + currentPathPoint.action.command;
-                        stopAndRunDuration += (long) (currentPathPoint.action.approxDuration * 1000.0);
-                        System.out.printf("    stopping to run: " + currentPathPoint.action.command + "%n");
+                        stopAndRunEndTime = event.getWhen() + (long) (currentPathPoint.action.getApproxDuration() * 1000.0);
+                        stopAndRunDescription = "Stop and Run: " + currentPathPoint.action.getCommand();
+                        stopAndRunDuration += (long) (currentPathPoint.action.getApproxDuration() * 1000.0);
+                        System.out.printf("    stopping to run: " + currentPathPoint.action.getCommand() + "%n");
                     }
                 }
             }
@@ -487,12 +487,28 @@ public class PathCanvas extends Canvas implements ActionListener {
         controls.add(time);
         p.add(controls, BorderLayout.CENTER);
 
-        int status = JOptionPane.showConfirmDialog(
-                this, p, "Control Point Time:", JOptionPane.OK_CANCEL_OPTION);
-        if (status == JOptionPane.OK_OPTION) {
-            pkgSetTime(time, labelTime, 0.01);
+        // Set up the "apply" and "cancel" buttons and start the dialogue
+        Object[] buttons = {"apply", "dismiss" };
+        while (true) {
+            int status = JOptionPane.showOptionDialog(
+                    this, p, "Control Point Time:", JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.PLAIN_MESSAGE, null, buttons, buttons[1]);
+            // If the "apply" option was selected, apply the changes
+            if (status == JOptionPane.OK_OPTION) {
+                try {
+                    double newTime = pkgGetSetTime(time, labelTime, 0.01);
+                    if (newTime != overControlPoint.getTime()) {
+                        overControlPoint.setTime(newTime, true);
+                    }
+                    break;
+                } catch (Exception e) {
+                    // if there were input errors reported, the dialogue display loop repeats so the user can
+                    // correct errors, then re-apply the state in the dialogue.
+                }
+            } else {
+                break;
+            }
         }
-
     }
 
     /**
@@ -541,14 +557,14 @@ public class PathCanvas extends Canvas implements ActionListener {
         stopAction.add(stopLabels, BorderLayout.LINE_START);
         JPanel stopControls = new JPanel(new GridLayout(0, 1, 2, 2));
         JTextField fieldStopCommand = pkgLoadAndAddField(
-                stopControls, (null == robotAction) ? "" : robotAction.command);
+                stopControls, (null == robotAction) ? "" : robotAction.getCommand());
         JTextField fieldStopDuration = (null == robotAction) ?
                 pkgLoadAndAddField(stopControls, ""):
-                pkgLoadAndAddField(stopControls, robotAction.approxDuration,"%.3f");
+                pkgLoadAndAddField(stopControls, robotAction.getApproxDuration(),"%.3f");
         stopAction.add(stopControls, BorderLayout.CENTER);
         p.add(stopAction, BorderLayout.PAGE_END);
 
-        // setup the buttons and start thr dialogue
+        // Set up the "apply" and "cancel" buttons and start the dialogue
         Object[] buttons = {"apply", "dismiss" };
         while (true) {
             int status = JOptionPane.showOptionDialog(
@@ -562,30 +578,33 @@ public class PathCanvas extends Canvas implements ActionListener {
                     // there were changes.
 
                     // get and validate values before setting anything
-                    double new_X = pkgGetDoubleFromTextField(fieldX, labelX, overControlPoint.getFieldX(), 0.001);
-                    double new_Y = pkgGetDoubleFromTextField(fieldY, labelY, overControlPoint.getFieldY(), 0.001);
-                    double new_dX = pkgGetDoubleFromTextField(field_dX, label_dX, overControlPoint.getRawTangentX(), 0.001);
-                    double new_dY = pkgGetDoubleFromTextField(field_dY, label_dY, overControlPoint.getRawTangentY(), 0.001);
-                    double new_rotation = pkgGetDoubleFromTextField(rotation, labelRotation,
+                    double newX = pkgGetDoubleFromTextField(fieldX, labelX, overControlPoint.getFieldX(), 0.001);
+                    double newY = pkgGetDoubleFromTextField(fieldY, labelY, overControlPoint.getFieldY(), 0.001);
+                    double newDX = pkgGetDoubleFromTextField(field_dX, label_dX, overControlPoint.getRawTangentX(), 0.001);
+                    double newDY = pkgGetDoubleFromTextField(field_dY, label_dY, overControlPoint.getRawTangentY(), 0.001);
+                    double newRotation = pkgGetDoubleFromTextField(rotation, labelRotation,
                             overControlPoint.getRotationSpeed(), 0.001);
-                    AngleConstantD new_heading =
+                    AngleConstantD newHeading =
                             pkgGetAngleFromTextField(heading, labelHeading, overControlPoint.getFieldHeading(), 0.001);
+                    double newTime = pkgGetSetTime(time, labelTime, 0.01);
 
                     // We have valid values, now set things that have changed.
-                    if ((new_X != overControlPoint.getFieldX()) || (new_Y != overControlPoint.getFieldY())) {
-                        overControlPoint.setFieldLocation(new_X, new_Y);
+                    if ((newX != overControlPoint.getFieldX()) || (newY != overControlPoint.getFieldY())) {
+                        overControlPoint.setFieldLocation(newX, newY);
                     }
-                    if ((new_dX != overControlPoint.getRawTangentX()) || (new_dY != overControlPoint.getRawTangentY())) {
-                        overControlPoint.setTangent(new_dX, new_dY);
+                    if ((newDX != overControlPoint.getRawTangentX()) || (newDY != overControlPoint.getRawTangentY())) {
+                        overControlPoint.setTangent(newDX, newDY);
                     }
-                    if (new_heading != overControlPoint.getFieldHeading()) {
-                        overControlPoint.setFieldHeading(new_heading);
+                    if (newHeading != overControlPoint.getFieldHeading()) {
+                        overControlPoint.setFieldHeading(newHeading);
                     }
-                    if (new_rotation != overControlPoint.getRotationSpeed()) {
-                        overControlPoint.setRotationSpeed(new_rotation);
+                    if (newRotation != overControlPoint.getRotationSpeed()) {
+                        overControlPoint.setRotationSpeed(newRotation);
+                    }
+                    if (newTime != overControlPoint.getTime()) {
+                        overControlPoint.setTime(newTime, true);
                     }
                     // this needs a rework ...
-                    pkgSetTime(time, labelTime, 0.01);
                     if (hasStopAction.isSelected()) {
                         overControlPoint.setRobotAction(
                                 fieldStopCommand.getText(),
@@ -605,7 +624,7 @@ public class PathCanvas extends Canvas implements ActionListener {
     }
 
     /**
-     * This is the information and editing dialogue for a path paint. The dialogue is primarily
+     * This is the information and editing dialogue for a path point. The dialogue is primarily
      * information about the robot motion state at the path point, except for scheduled robot actions, which can be
      * edited.
      */
@@ -613,6 +632,7 @@ public class PathCanvas extends Canvas implements ActionListener {
         JPanel p = new JPanel(new BorderLayout(5, 5));
 
         // Robot state information along the path
+        JPanel pathPointState = new JPanel(new BorderLayout(0, 0));
         JPanel labels = new JPanel(new GridLayout(0, 1, 2, 2));
         JLabel labelX = pkgLoadAndAddLabel(labels, "Field X (m)");
         JLabel labelY = pkgLoadAndAddLabel(labels, "Field Y (m)");
@@ -621,7 +641,7 @@ public class PathCanvas extends Canvas implements ActionListener {
         JLabel label_dY = pkgLoadAndAddLabel(labels, "Y speed (m/s)");
         JLabel labelRotation = pkgLoadAndAddLabel(labels, "Rotation (rad/s)");
         JLabel labelTime = pkgLoadAndAddLabel(labels, "At Time (sec)");
-        p.add(labels, BorderLayout.LINE_START);
+        pathPointState.add(labels, BorderLayout.LINE_START);
 
         JPanel controls = new JPanel(new GridLayout(0, 1, 2, 2));
         JLabel fieldX = pkgLoadAndAddLabel(controls, overPathPoint.fieldPt.getX(),"  %.3f");
@@ -631,57 +651,113 @@ public class PathCanvas extends Canvas implements ActionListener {
         JLabel field_dY = pkgLoadAndAddLabel(controls, overPathPoint.field_dY,"  %.3f");
         JLabel rotation = pkgLoadAndAddLabel(controls, overPathPoint.speedRotation,"  %.3f");
         JLabel time = pkgLoadAndAddLabel(controls, overPathPoint.time,"  %.2f");controls.add(time);
-        p.add(controls, BorderLayout.CENTER);
+        pathPointState.add(controls, BorderLayout.CENTER);
+        p.add(pathPointState, BorderLayout.PAGE_START);
 
-        // editing dialogue for the scheduled command at this path point.
-        JPanel scheduleAction = new JPanel(new BorderLayout(5, 5));
-        // is there an action?
-        JPanel scheduleOnOff = new JPanel(new GridLayout(0, 1, 2, 2));
-        scheduleOnOff.add(new JSeparator(SwingConstants.HORIZONTAL));
+        // editing dialogue for the scheduled command at this path point:
+        // get the currently scheduled action (usually null)
         KochanekBartelsSpline.RobotAction robotAction = overPathPoint.action;
+
+        // is there a scheduled action at this control point?
+        JPanel scheduleAction = new JPanel(new BorderLayout(5, 2));
+        // The checkbox for the action
+        JPanel scheduleOnOff = new JPanel(new GridLayout(0, 1, 2, 1));
+        scheduleOnOff.add(new JSeparator(SwingConstants.HORIZONTAL));
         JCheckBox hasScheduledAction = new JCheckBox("schedule command");
         hasScheduledAction.setSelected(null != robotAction);
         scheduleOnOff.add(hasScheduledAction);
-        // does it take control of the drive?
-        JPanel takesDrive = new JPanel(new GridLayout(0, 1, 2, 2));
-        JCheckBox actionTakesDrive = new JCheckBox("action takes control of swerve drive");
-        takesDrive.add(actionTakesDrive);
-        scheduleOnOff.add(actionTakesDrive);
         scheduleAction.add(scheduleOnOff, BorderLayout.PAGE_START);
-        // the action
-        JPanel cmdLabels = new JPanel(new GridLayout(0, 1, 2, 2));
+        // the command for the action
+        JPanel cmdLabels = new JPanel(new GridLayout(0, 1, 2, 1));
         JLabel labelScheduleCommand = pkgLoadAndAddLabel(cmdLabels, "Command");
-        JLabel labelActionDuration = pkgLoadAndAddLabel(cmdLabels, "Duration");
-        scheduleAction.add(cmdLabels, BorderLayout.LINE_START);
-        JPanel cmdControls = new JPanel(new GridLayout(0, 1, 2, 2));
+        JPanel cmdControls = new JPanel(new GridLayout(0, 1, 2, 1));
         JTextField fieldScheduleCommand = pkgLoadAndAddField(
-                cmdControls, (null == robotAction) ? "" : robotAction.command);
-        // the action duration
-        JTextField fieldActionDuration = (null == robotAction) ?
-                pkgLoadAndAddField(cmdControls, ""):
-                pkgLoadAndAddField(cmdControls, robotAction.approxDuration,"%.3f");
+                cmdControls, (null == robotAction) ? "" : robotAction.getCommand());
+        scheduleAction.add(cmdLabels, BorderLayout.LINE_START);
         scheduleAction.add(cmdControls, BorderLayout.CENTER);
+        p.add(scheduleAction, BorderLayout.CENTER);
 
-        p.add(scheduleAction, BorderLayout.PAGE_END);
 
+        // does the action take control of the drive?
+        JPanel actionTakesDrive = new JPanel(new BorderLayout(5, 1));
+        // the checkbox for taking the drive
+        JPanel takesDrive = new JPanel(new GridLayout(0, 1, 2, 1));
+        takesDrive.add(new JSeparator(SwingConstants.HORIZONTAL));
+        JCheckBox doesActionTakeDrive = new JCheckBox("action takes control of swerve drive");
+        doesActionTakeDrive.setSelected((null != robotAction) &&
+                (robotAction.actionType == RobotActionType.RELINQUISH_DRIVE_TO_COMMAND));
+        takesDrive.add(doesActionTakeDrive);
+        actionTakesDrive.add(takesDrive, BorderLayout.PAGE_START);
+        // the approximate time the command takes control of the drive
+        JPanel takesDriveLabels = new JPanel(new GridLayout(0, 1, 2, 1));
+        JLabel labelDuration = pkgLoadAndAddLabel(takesDriveLabels, "Duration");
+        JPanel takesDriveControls = new JPanel(new GridLayout(0, 1, 2, 1));
+        JTextField takesDriveDuration = ((null == robotAction) ||
+                (robotAction.actionType != RobotActionType.RELINQUISH_DRIVE_TO_COMMAND)) ?
+                pkgLoadAndAddField(takesDriveControls, ""):
+                pkgLoadAndAddField(takesDriveControls, robotAction.getApproxDuration(),"%.3f");
+        actionTakesDrive.add(takesDriveLabels, BorderLayout.LINE_START);
+        actionTakesDrive.add(takesDriveControls, BorderLayout.CENTER);
+        p.add(actionTakesDrive, BorderLayout.PAGE_END);
+
+        // Set up the "apply" and "dismiss" buttons and start the dialogue
         Object[] buttons = {"apply", "dismiss" };
-        int status = JOptionPane.showOptionDialog(
-                this, p, "Path Point Info:", JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.PLAIN_MESSAGE,null, buttons, buttons[1]);
-        if (status == JOptionPane.OK_OPTION) {
-             if (hasScheduledAction.isSelected()) {
-                 if ((null != robotAction) && !fieldScheduleCommand.getText().equals(robotAction.command)) {
-                     // the command name has changed - delete the old action
-                     path.deleteScheduledCommand(robotAction);
-                 }
-                 if ((null == robotAction) || !fieldScheduleCommand.getText().equals(robotAction.command)) {
-                     // there is no old action, of the command has changed and the old action was deleted,
-                     // so schedule a new one.
-                     path.scheduleCommand(overPathPoint.time * path.getSpeedMultiplier(),
-                             fieldScheduleCommand.getText());
-                 }
-            } else if (null != robotAction) {
-                 path.deleteScheduledCommand(robotAction);
+        while (true) {
+            int status = JOptionPane.showOptionDialog(
+                    this, p, "Path Point Info:", JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.PLAIN_MESSAGE, null, buttons, buttons[1]);
+            if (status == JOptionPane.OK_OPTION) {
+                try {
+                    boolean newHasScheduledAction = hasScheduledAction.isSelected();
+                    boolean newActionTakesDrive = doesActionTakeDrive.isSelected();
+                    String newCommand = fieldScheduleCommand.getText(); //need some error checking here
+                    double newFieldActionDuration = !newActionTakesDrive ? -1.0 :
+                            pkgGetDoubleFromTextField(takesDriveDuration, labelDuration, robotAction.getApproxDuration(),
+                            0.01);
+
+                    if (newHasScheduledAction) {
+                        if (null != robotAction) {
+                            // edits can happen on an action of the correct type. if the type is not correct, then
+                            // we need to delete this action and create one of the correct type.
+                            if (newActionTakesDrive &&
+                                    (robotAction.actionType != RobotActionType.RELINQUISH_DRIVE_TO_COMMAND)){
+                                path.deleteScheduledCommand(robotAction);
+                                robotAction = null;
+                            } else if (robotAction.actionType != RobotActionType.SCHEDULE_COMMAND) {
+                                path.deleteScheduledCommand(robotAction);
+                                robotAction = null;
+                            }
+                        }
+
+                        if (null != robotAction) {
+                            if (!newCommand.equals(robotAction.getCommand())) {
+                                // the command name has changed - modify the name
+                                robotAction.setCommand(newCommand);
+                            }
+                            if (newFieldActionDuration != robotAction.getApproxDuration()) {
+                                robotAction.setApproxDuration(newFieldActionDuration);
+                            }
+                        } else {
+                            // there is no old action, of the command has changed and the old action was deleted,
+                            // so schedule a new one.
+                            if (newActionTakesDrive) {
+                                path.scheduleCommand(overPathPoint.time * path.getSpeedMultiplier(),
+                                        newCommand, newFieldActionDuration);
+                            } else {
+                                path.scheduleCommand(overPathPoint.time * path.getSpeedMultiplier(),
+                                        newCommand);
+                            }
+                        }
+                    } else if (null != robotAction) {
+                        path.deleteScheduledCommand(robotAction);
+                    }
+                    break;
+                } catch (Exception e) {
+                    // if there were input errors reported, the dialogue display loop repeats so the user can
+                    // correct errors, then re-apply the state in the dialogue.
+                }
+            } else {
+                break;
             }
         }
     }
@@ -698,18 +774,20 @@ public class PathCanvas extends Canvas implements ActionListener {
      *                  may be a round-off error between the displayed (and subsequently read) time, and the time now
      *                  read from the edit box. This tolerance allows specifying the magnitude of the difference
      *                  required to consider this an edit of the control point time.
+     * @throws NumberFormatException Thrown if the {@code time} value cannot be parsed as a double.
      */
-    private void pkgSetTime(JTextField time, JLabel labelTime, double tolerance) {
-        if (null != overControlPoint.getLast()) {
-            double newTime = Utl.clip(
-                    pkgGetDoubleFromTextField(time, labelTime, overControlPoint.getTime(), tolerance),
-                    overControlPoint.getLast().getTime() + 0.1,
-                    (null == overControlPoint.getNext()) ?
-                            Double.MAX_VALUE : (overControlPoint.getNext().getTime() - 0.1));
-            if (newTime != overControlPoint.getTime()) {
-                overControlPoint.setTime(newTime, true);
-            }
+    private double pkgGetSetTime(JTextField time, JLabel labelTime, double tolerance) {
+        if (null == overControlPoint.getLast()) {
+            String msg = "The time of the first path control point is always 0.0 and cannot be changed.";
+            JOptionPane.showMessageDialog(this, msg);
+            throw new IllegalStateException(msg);
         }
+        double newTime = Utl.clip(
+                pkgGetDoubleFromTextField(time, labelTime, overControlPoint.getTime(), tolerance),
+                overControlPoint.getLast().getTime() + 0.1,
+                (null == overControlPoint.getNext()) ?
+                        Double.MAX_VALUE : (overControlPoint.getNext().getTime() - 0.1));
+        return newTime;
     }
 
     private @NotNull JLabel pkgLoadAndAddLabel(@NotNull JPanel labels, String name) {
@@ -756,15 +834,19 @@ public class PathCanvas extends Canvas implements ActionListener {
     }
 
     /**
+     * Read a double editable field and check that it is actually a valid decimal number. If it is not a valid
+     * number, post an error for the user so they can fix it before applying the edits
+     * again.
      *
-     * @param field
-     * @param label
-     * @param currentValue
+     * @param field The field containing the new value (as a string).
+     * @param label The label for the field (used in the error dialogue.
+     * @param currentValue The current value.
      * @param tolerance The tolerance between the dialogue field value and the current value within which we consider
      *                  the value unchanged. Typically, we format the current value to 2 or 3 decimal places. unless
      *                  the value changes more than one or two decimal places, we consider it unchanged in the dialogue.
-     * @return
-     * @throws NumberFormatException
+     * @return Returns the double value in the dialogue - adjusted to be the current value
+     *          if the dialogue value is within tolerance.
+     * @throws NumberFormatException Thrown if the {@code field} value cannot be parsed as a double.
      */
     private Double pkgGetDoubleFromTextField(@NotNull JTextField field, @NotNull JLabel label,
                                              double currentValue, double tolerance) {
@@ -1203,8 +1285,7 @@ public class PathCanvas extends Canvas implements ActionListener {
      * absolute directory path to the path file.
      */
     public void loadPath() {
-        JFileChooser fc = new JFileChooser(null == pathFile ?
-                defaultPathResourceDir : pathFile.getParent());
+        JFileChooser fc = new JFileChooser(defaultPathResourceDir);
         fc.setDialogTitle("Load Path");
         fc.setFileFilter(new FileNameExtensionFilter("JSON file", "json"));
         fc.setAcceptAllFileFilterUsed(false);
@@ -1215,6 +1296,7 @@ public class PathCanvas extends Canvas implements ActionListener {
             path.loadPath(file.getAbsolutePath());
             modifiedSinceSave = false;
             titleChange.titleChanged();
+            defaultPathResourceDir = pathFile.getParent();
         } else {
             System.out.println("Load path command cancelled by user.");
         }
