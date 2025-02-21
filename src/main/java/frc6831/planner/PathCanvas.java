@@ -100,12 +100,15 @@ public class PathCanvas extends Canvas implements ActionListener {
     private KochanekBartelsSpline.PathFollower pathFollower = null;
     private boolean animate = false;
 
-    // The symbol for a stop and run action
+    // The symbol for a 'stop and run action'
     private final int[] robotStopAndRunActionX = {0,  5,  5,  0, -5, -5};
     private final int[] robotStopAndRunActionY = {6,  3, -3, -6, -3,  3};
-    // The symbol for schedule action
+    // The symbol for a 'scheduled action'
     private final int[] robotScheduleActionX = {0,  7,  0, -7};
     private final int[] robotScheduleActionY = {7,  0, -7,  0};
+    // The symbol for a 'takes drive action'
+    private final int[] robotTakesDriveActionX = { 0, 7, -7};
+    private final int[] robotTakesDriveActionY = {-8, 4,  4};
 
     /**
      * This is the handler for resizing. The main thing in resizing is that we scale the
@@ -719,10 +722,11 @@ public class PathCanvas extends Canvas implements ActionListener {
                         if (null != robotAction) {
                             // edits can happen on an action of the correct type. if the type is not correct, then
                             // we need to delete this action and create one of the correct type.
-                            if (newActionTakesDrive &&
-                                    (robotAction.actionType != RobotActionType.RELINQUISH_DRIVE_TO_COMMAND)){
-                                path.deleteScheduledCommand(robotAction);
-                                robotAction = null;
+                            if (newActionTakesDrive) {
+                                if (robotAction.actionType != RobotActionType.RELINQUISH_DRIVE_TO_COMMAND) {
+                                    path.deleteScheduledCommand(robotAction);
+                                    robotAction = null;
+                                }
                             } else if (robotAction.actionType != RobotActionType.SCHEDULE_COMMAND) {
                                 path.deleteScheduledCommand(robotAction);
                                 robotAction = null;
@@ -1039,8 +1043,10 @@ public class PathCanvas extends Canvas implements ActionListener {
                 g2d.drawOval((int) thisPt.getX() - 2, (int) thisPt.getY() - 2, 4, 4);
             } else if (RobotActionType.SCHEDULE_COMMAND == pathPoint.action.actionType) {
                 pkgDrawScheduledRobotAction(g2d, thisPt, true);
-            } else {
+            } else if (RobotActionType.STOP_AND_RUN_COMMAND == pathPoint.action.actionType) {
                 pkgDrawStopAndRunRobotAction(g2d, thisPt, true);
+            } else {
+                pkgDrawTakesDriveAction(g2d, thisPt, true);
             }
         }
 
@@ -1127,32 +1133,33 @@ public class PathCanvas extends Canvas implements ActionListener {
             pkgDrawStopAndRunRobotAction(g2d, fieldPt, false);
         } else if (RobotActionType.SCHEDULE_COMMAND == robotAction.actionType) {
             pkgDrawScheduledRobotAction(g2d, fieldPt, false);
+        } else {
+            pkgDrawTakesDriveAction(g2d, fieldPt, false);
         }
     }
 
     private void pkgDrawStopAndRunRobotAction(Graphics2D g2d, Point2D.Double fieldPt, boolean fill) {
-        int[] tmpX = new int[6];
-        int[] tmpY = new int[6];
-        for (int i = 0; i < 6; i++) {
-            tmpX[i] = robotStopAndRunActionX[i] + (int)fieldPt.getX();
-            tmpY[i] = robotStopAndRunActionY[i] + (int)fieldPt.getY();
-        }
-        g2d.drawPolygon(tmpX, tmpY, 6);
-        if (fill) {
-            g2d.fillPolygon(tmpX, tmpY, 6);
-        }
+        pkgDrawRobotAction(g2d, fieldPt, fill, robotStopAndRunActionX, robotStopAndRunActionY);
     }
 
     private void pkgDrawScheduledRobotAction(Graphics2D g2d, Point2D.Double fieldPt, boolean fill) {
-        int[] tmpX = new int[4];
-        int[] tmpY = new int[4];
-        for (int i = 0; i < 4; i++) {
-            tmpX[i] = robotScheduleActionX[i] + (int)fieldPt.getX();
-            tmpY[i] = robotScheduleActionY[i] + (int)fieldPt.getY();
+        pkgDrawRobotAction(g2d, fieldPt, fill, robotScheduleActionX, robotScheduleActionY);
+    }
+    private void pkgDrawTakesDriveAction(Graphics2D g2d, Point2D.Double fieldPt, boolean fill) {
+        pkgDrawRobotAction(g2d, fieldPt, fill, robotTakesDriveActionX, robotTakesDriveActionY);
+    }
+    private void pkgDrawRobotAction(Graphics2D g2d, Point2D.Double fieldPt, boolean fill,
+                                    int[] symbolX, int[] symbolY) {
+        int len = symbolX.length;
+        int[] tmpX = new int[len];
+        int[] tmpY = new int[len];
+        for (int i = 0; i < len; i++) {
+            tmpX[i] = symbolX[i] + (int)fieldPt.getX();
+            tmpY[i] = symbolY[i] + (int)fieldPt.getY();
         }
-        g2d.drawPolygon(tmpX, tmpY, 4);
+        g2d.drawPolygon(tmpX, tmpY, len);
         if (fill) {
-            g2d.fillPolygon(tmpX, tmpY, 4);
+            g2d.fillPolygon(tmpX, tmpY, len);
         }
     }
 
