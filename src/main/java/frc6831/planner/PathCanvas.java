@@ -619,6 +619,7 @@ public class PathCanvas extends Canvas implements ActionListener {
                 } catch (Exception e) {
                     // if there were input errors reported, the dialogue display loop repeats so the user can
                     // correct errors, then re-apply the state in the dialogue.
+                    JOptionPane.showMessageDialog(this, e.getMessage());
                 }
             } else {
                 break;
@@ -714,9 +715,9 @@ public class PathCanvas extends Canvas implements ActionListener {
                     boolean newHasScheduledAction = hasScheduledAction.isSelected();
                     boolean newActionTakesDrive = doesActionTakeDrive.isSelected();
                     String newCommand = fieldScheduleCommand.getText(); //need some error checking here
-                    double newFieldActionDuration = !newActionTakesDrive ? -1.0 :
-                            pkgGetDoubleFromTextField(takesDriveDuration, labelDuration, robotAction.getApproxDuration(),
-                            0.01);
+                    double newFieldActionDuration = (!newActionTakesDrive) ? -1.0 :
+                            pkgGetDoubleFromTextField(takesDriveDuration, labelDuration,
+                                    (null == robotAction) ? -1.0 : robotAction.getApproxDuration(),0.01);
 
                     if (newHasScheduledAction) {
                         if (null != robotAction) {
@@ -742,8 +743,7 @@ public class PathCanvas extends Canvas implements ActionListener {
                                 robotAction.setApproxDuration(newFieldActionDuration);
                             }
                         } else {
-                            // there is no old action, of the command has changed and the old action was deleted,
-                            // so schedule a new one.
+                            // there is no old action.
                             if (newActionTakesDrive) {
                                 path.scheduleCommand(overPathPoint.time * path.getSpeedMultiplier(),
                                         newCommand, newFieldActionDuration);
@@ -759,6 +759,7 @@ public class PathCanvas extends Canvas implements ActionListener {
                 } catch (Exception e) {
                     // if there were input errors reported, the dialogue display loop repeats so the user can
                     // correct errors, then re-apply the state in the dialogue.
+                    JOptionPane.showMessageDialog(this, e.getMessage());
                 }
             } else {
                 break;
@@ -861,9 +862,8 @@ public class PathCanvas extends Canvas implements ActionListener {
                 currentValue = newValue;
             }
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this,
+            throw new IllegalArgumentException(
                     String.format("In '%s': '%s' is not a valid number.", label.getText(), field.getText()));
-            throw e;
         }
         return currentValue;
     }
