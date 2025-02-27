@@ -95,7 +95,10 @@ public class PathCanvas extends Canvas implements ActionListener {
     private Double currentPathTime = 0.0;
     private long stopAndRunEndTime = -1;
     private String stopAndRunDescription = null;
-    private long stopAndRunDuration = 0;
+    private long accumulatedActionTime = 0;
+    private long takeDriveEndTime = -1;
+    private long takeDriveInPositionTime = -1;
+    private String takeDriveDescription = null;
     private PathPoint currentPathPoint = null;
     private KochanekBartelsSpline.PathFollower pathFollower = null;
     private boolean animate = false;
@@ -401,7 +404,7 @@ public class PathCanvas extends Canvas implements ActionListener {
 
     /**
      * An action listener for the {@link PathCanvas} that is waiting for either context menu events, or events
-     * or from a running path animation usch as {@link #timer} events.
+     * or from a running path animation such as {@link #timer} events.
      *
      * @param event (ActionEvent) The action event that was sent to this path canvas.
      */
@@ -409,28 +412,60 @@ public class PathCanvas extends Canvas implements ActionListener {
     public void actionPerformed(ActionEvent event) {
         final Object src = event.getSource();
         if ((event.getSource() == timer) && (null != pathFollower)) {
-            // This is a timer event while there is a path follower.
+            // This is a timer event while there is a path follower - i.e. the timer is telling the canvas
+            // to paint the next robot position on the path.
             if (pathStartTime == -1) {
                  pathStartTime = event.getWhen();
             }
-            if (stopAndRunEndTime < event.getWhen()) {
-                if (null != stopAndRunDescription) {
+
+            // The animation is simulating what the robot is likely to be doing. There are cases where robot
+            // control is being passed off to commands that may take some time to run. In this case approximate
+            // durations are specified so that the path timing simulates what we expect to happen. There are 2
+            // specific cases we are handing here:
+            //  * Stop and run - the robot stops at a control point and runs a command (which has an approximate
+            //    duration
+            //  * take drive actions - targeting takes control of the robot drive to place it at the next control
+            //    point and maybe do something.
+            //
+            // Are we not in a wait state?
+            if (((null == stopAndRunDescription) || (stopAndRunEndTime < event.getWhen())) &&
+                    ((null == takeDriveDescription) ||
+                    ((takeDriveEndTime < event.getWhen()) || (takeDriveInPositionTime > event.getWhen())))) {
+
+                if ((null != stopAndRunDescription) && (stopAndRunEndTime < event.getWhen())) {
                     stopAndRunEndTime = -1;
                     stopAndRunDescription = null;
                 }
-                // This is a point at some time on the path
-                currentPathTime = (event.getWhen() - pathStartTime - stopAndRunDuration) / 1000.0;
+                if ((null != takeDriveDescription) && (takeDriveEndTime < event.getWhen())) {
+                    accumulatedActionTime += takeDriveEndTime - takeDriveInPositionTime;
+                    takeDriveInPositionTime = -1;
+                    takeDriveEndTime = -1;
+                    takeDriveDescription = null;
+                }
+
+                // Get the next point on the path
+                currentPathTime = (event.getWhen() - pathStartTime - accumulatedActionTime) / 1000.0;
                 currentPathPoint = pathFollower.getPointAt(currentPathTime);
                 if (null == currentPathPoint) {
-                    pkgStopAnimation();
                     // reached the end of the path
+                    pkgStopAnimation();
                 } else {
-                    if ((null != currentPathPoint.action) &&
-                            (RobotActionType.STOP_AND_RUN_COMMAND == currentPathPoint.action.actionType)) {
-                        stopAndRunEndTime = event.getWhen() + (long) (currentPathPoint.action.getApproxDuration() * 1000.0);
-                        stopAndRunDescription = "Stop and Run: " + currentPathPoint.action.getCommand();
-                        stopAndRunDuration += (long) (currentPathPoint.action.getApproxDuration() * 1000.0);
-                        System.out.printf("    stopping to run: " + currentPathPoint.action.getCommand() + "%n");
+                    KochanekBartelsSpline.RobotAction robotAction = currentPathPoint.action;
+                    if (null != robotAction) {
+                        if (RobotActionType.STOP_AND_RUN_COMMAND == robotAction.actionType) {
+                            stopAndRunEndTime = event.getWhen() + (long) (robotAction.getApproxDuration() * 1000.0);
+                            stopAndRunDescription = "Stop and Run: " + robotAction.getCommand();
+                            accumulatedActionTime += (long) (robotAction.getApproxDuration() * 1000.0);
+                            System.out.printf("    stopping to run: " + robotAction.getCommand() + "%n");
+                        }
+                        if (RobotActionType.RELINQUISH_DRIVE_TO_COMMAND == robotAction.actionType) {
+                            long timeToControlPoint = (long)((currentPathPoint.nextControlPoint.getTime() -
+                                    currentPathPoint.time) * 1000.0);
+                            takeDriveEndTime = event.getWhen() + (long) (robotAction.getApproxDuration() * 1000.0);
+                            takeDriveDescription = "Take Drive: " + robotAction.getCommand();
+                            takeDriveInPositionTime = event.getWhen() + timeToControlPoint;
+                            System.out.printf("    relinquish drive to: " + robotAction.getCommand() + "%n");
+                        }
                     }
                 }
             }
@@ -593,18 +628,23 @@ public class PathCanvas extends Canvas implements ActionListener {
 
                     // We have valid values, now set things that have changed.
                     if ((newX != overControlPoint.getFieldX()) || (newY != overControlPoint.getFieldY())) {
+                        modifiedSinceSave = true;
                         overControlPoint.setFieldLocation(newX, newY);
                     }
                     if ((newDX != overControlPoint.getRawTangentX()) || (newDY != overControlPoint.getRawTangentY())) {
+                        modifiedSinceSave = true;
                         overControlPoint.setTangent(newDX, newDY);
                     }
                     if (newHeading != overControlPoint.getFieldHeading()) {
+                        modifiedSinceSave = true;
                         overControlPoint.setFieldHeading(newHeading);
                     }
                     if (newRotation != overControlPoint.getRotationSpeed()) {
+                        modifiedSinceSave = true;
                         overControlPoint.setRotationSpeed(newRotation);
                     }
                     if (newTime != overControlPoint.getTime()) {
+                        modifiedSinceSave = true;
                         overControlPoint.setTime(newTime, true);
                     }
                     // this needs a rework ...
@@ -716,8 +756,8 @@ public class PathCanvas extends Canvas implements ActionListener {
                     boolean newActionTakesDrive = doesActionTakeDrive.isSelected();
                     String newCommand = fieldScheduleCommand.getText(); //need some error checking here
                     double newFieldActionDuration = (!newActionTakesDrive) ? -1.0 :
-                            pkgGetDoubleFromTextField(takesDriveDuration, labelDuration,
-                                    (null == robotAction) ? -1.0 : robotAction.getApproxDuration(),0.01);
+                            pkgGetTakesDriveDuration(takesDriveDuration, labelDuration,
+                                    (null == robotAction) ? -1.0: robotAction.getApproxDuration(),0.01);
 
                     if (newHasScheduledAction) {
                         if (null != robotAction) {
@@ -765,6 +805,29 @@ public class PathCanvas extends Canvas implements ActionListener {
                 break;
             }
         }
+    }
+
+    private Double pkgGetTakesDriveDuration(@NotNull JTextField field, @NotNull JLabel label,
+                                            double currentValue, double tolerance) {
+        Double minAllowableDuration = (overPathPoint.nextControlPoint.getTime() - overPathPoint.time) * 1.05;
+        try {
+            double newValue = Double.parseDouble(field.getText());
+            if (!Utl.inTolerance(newValue,currentValue,tolerance)) {
+                currentValue = newValue;
+            }
+            if (newValue < minAllowableDuration) {
+                throw new IllegalArgumentException();
+            }
+
+        } catch (Exception e) {
+            // So, if an exception happens, report it and set the min allowable value in the control
+            field.setText(String.format("%.3f", minAllowableDuration));
+            throw new IllegalArgumentException(
+                    String.format("In '%s': a minimum value of '%.3f' (a little\n" +
+                            "more that the time from this path point to the next\n" +
+                            "control point) is required.", label.getText(), minAllowableDuration));
+        }
+        return currentValue;
     }
 
     /**
@@ -974,7 +1037,8 @@ public class PathCanvas extends Canvas implements ActionListener {
         field.draw(g2d, drawXfm);
 
         // draw the robot at the control points. otherwise, the robot obscures the path and
-        // other control point editing handles.
+        // other control point editing handles. If we are animating, draw the robot at the
+        // current path point.
         if (animate) {
             // OK because of race condition in the drawing thread, it may be the case animate is set, but the rest
             // the event handling is not done, so, check there is a path point before trying to draw the robot there.
@@ -992,6 +1056,9 @@ public class PathCanvas extends Canvas implements ActionListener {
                         String.format("angular vel = %.3f", currentPathPoint.speedRotation), 10, 80);
                 if (null != stopAndRunDescription) {
                     g2d.drawString(stopAndRunDescription, 10, 95);
+                }
+                if (null != takeDriveDescription) {
+                    g2d.drawString(takeDriveDescription, 10, 95);
                 }
                 boolean tooFast = !robot.canRobotAchieve(currentPathPoint.speedForward,
                         currentPathPoint.speedStrafe, currentPathPoint.speedRotation);
@@ -1024,15 +1091,19 @@ public class PathCanvas extends Canvas implements ActionListener {
         Point2D.Double lastPt;
         PathPoint thisPathPoint = null;
         Point2D.Double thisPt = null;
+        boolean driveTaken = false;
+        double driveTakenEnd = 0.0;
         for (PathPoint pathPoint : path.getCurveSegments()) {
             lastPathPoint = thisPathPoint;
             lastPt = thisPt;
             thisPathPoint = pathPoint;
             boolean tooFast = !robot.canRobotAchieve(pathPoint.speedForward,
                     pathPoint.speedStrafe, pathPoint.speedRotation);
-
+            if (driveTaken && (pathPoint.time > driveTakenEnd)) {
+                driveTaken = false;
+            }
             g2d.setPaint(pkgIsRobotInside(pathPoint.fieldPt, pathPoint.fieldHeading) ?
-                    (tooFast ? Color.RED : Color.WHITE) : Color.ORANGE);
+                    (driveTaken ? Color.GRAY : (tooFast ? Color.RED : Color.WHITE)) : Color.ORANGE);
             thisPt = (Point2D.Double) drawXfm.transform(pathPoint.fieldPt, null);
 
             if (lastPathPoint != null) {
@@ -1047,6 +1118,8 @@ public class PathCanvas extends Canvas implements ActionListener {
                 pkgDrawStopAndRunRobotAction(g2d, thisPt, true);
             } else {
                 pkgDrawTakesDriveAction(g2d, thisPt, true);
+                driveTaken = true;
+                driveTakenEnd = pathPoint.nextControlPoint.getTime();
             }
         }
 
@@ -1370,7 +1443,7 @@ public class PathCanvas extends Canvas implements ActionListener {
         currentPathTime = 0.0;
         stopAndRunEndTime = -1;
         stopAndRunDescription = null;
-        stopAndRunDuration = 0;
+        accumulatedActionTime = 0;
         pathFollower = path.getPathFollower();
         System.out.printf("    seconds     forward      strafe     angular    too fast!%n");
         animate = true;
@@ -1386,7 +1459,7 @@ public class PathCanvas extends Canvas implements ActionListener {
         currentPathTime = 0.0;
         stopAndRunEndTime = -1;
         stopAndRunDescription = null;
-        stopAndRunDuration = 0;
+        accumulatedActionTime = 0;
         pathFollower = null;
         currentPathPoint = null;
     }
