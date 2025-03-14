@@ -845,13 +845,19 @@ public class PathCanvas extends Canvas implements ActionListener {
      * @throws NumberFormatException Thrown if the {@code time} value cannot be parsed as a double.
      */
     private double pkgGetSetTime(JTextField time, JLabel labelTime, double tolerance) {
+        double dialogueTime = pkgGetDoubleFromTextField(time, labelTime, overControlPoint.getTime(), tolerance);
         if (null == overControlPoint.getLast()) {
-            String msg = "The time of the first path control point is always 0.0 and cannot be changed.";
-            JOptionPane.showMessageDialog(this, msg);
-            throw new IllegalStateException(msg);
+            if (dialogueTime == overControlPoint.getTime()) {
+                return dialogueTime;
+            } else {
+                String msg = "The time of the first path control point is always 0.0 and cannot be changed.";
+                JOptionPane.showMessageDialog(this, msg);
+                throw new IllegalStateException(msg);
+            }
+
         }
         double newTime = Utl.clip(
-                pkgGetDoubleFromTextField(time, labelTime, overControlPoint.getTime(), tolerance),
+                dialogueTime,
                 overControlPoint.getLast().getTime() + 0.1,
                 (null == overControlPoint.getNext()) ?
                         Double.MAX_VALUE : (overControlPoint.getNext().getTime() - 0.1));
