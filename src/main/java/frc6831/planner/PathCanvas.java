@@ -821,11 +821,11 @@ public class PathCanvas extends Canvas implements ActionListener {
 
         } catch (Exception e) {
             // So, if an exception happens, report it and set the min allowable value in the control
-            field.setText(String.format("%.3f", minAllowableDuration));
+            field.setText(String.format("%.3f", minAllowableDuration + 0.001));
             throw new IllegalArgumentException(
                     String.format("In '%s': a minimum value of '%.3f' (a little\n" +
                             "more that the time from this path point to the next\n" +
-                            "control point) is required.", label.getText(), minAllowableDuration));
+                            "control point) is required.", label.getText(), minAllowableDuration + 0.001));
         }
         return currentValue;
     }
@@ -1428,6 +1428,7 @@ public class PathCanvas extends Canvas implements ActionListener {
             }
             savePath();
             titleChange.titleChanged();
+            defaultPathResourceDir = pathFile.getParent();
         } else {
             System.out.println("Save path command cancelled by user.");
         }
