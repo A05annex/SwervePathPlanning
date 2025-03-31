@@ -118,7 +118,7 @@ public class PathCanvas extends Canvas implements ActionListener {
      * drawing so the field fills the window but maintains the correct field aspect ratio.
      */
     private class ComponentHandler extends ComponentAdapter {
-        public void componentResized(ComponentEvent e) {
+        public void componentResized(@NotNull ComponentEvent e) {
             Component comp = e.getComponent();
             float width = comp.getWidth();
             float height = comp.getHeight();
@@ -134,7 +134,7 @@ public class PathCanvas extends Canvas implements ActionListener {
      */
     private class MouseHandler extends MouseAdapter {
         @Override
-        public void mousePressed(MouseEvent e) {
+        public void mousePressed(@NotNull MouseEvent e) {
             Point2D pt = mouse = (Point2D.Double) mouseXfm.transform(
                     new Point2D.Double(e.getPoint().getX(), e.getPoint().getY()), null);
             if (e.isPopupTrigger()) {
@@ -590,16 +590,34 @@ public class PathCanvas extends Canvas implements ActionListener {
         stopOnOff.add(hasStopAction);
         stopAction.add(stopOnOff, BorderLayout.PAGE_START);
         JPanel stopLabels = new JPanel(new GridLayout(0, 1, 2, 2));
-        JLabel labelStopCommand = pkgLoadAndAddLabel(stopLabels, "Command");
         JLabel labelStopDuration = pkgLoadAndAddLabel(stopLabels, "Duration");
+        JLabel labelStopCommand = pkgLoadAndAddLabel(stopLabels, "Command");
         stopAction.add(stopLabels, BorderLayout.LINE_START);
         JPanel stopControls = new JPanel(new GridLayout(0, 1, 2, 2));
-        JTextField fieldStopCommand = pkgLoadAndAddField(
-                stopControls, (null == robotAction) ? "" : robotAction.getCommand());
         JTextField fieldStopDuration = (null == robotAction) ?
                 pkgLoadAndAddField(stopControls, ""):
                 pkgLoadAndAddField(stopControls, robotAction.getApproxDuration(),"%.3f");
+        JTextField fieldStopCommand = pkgLoadAndAddField(
+                stopControls, (null == robotAction) ? "" : robotAction.getCommand());
         stopAction.add(stopControls, BorderLayout.CENTER);
+
+        if ((null != robotAction) && robotAction.getActionArgs().iterator().hasNext()) {
+            // The arguments for the command
+            JPanel robotActionArgs = new JPanel(new BorderLayout(0, 0));
+            robotActionArgs.add(new JLabel("Command Arguments:", SwingConstants.LEFT), BorderLayout.PAGE_START);
+            JPanel argTypes = new JPanel(new GridLayout(0, 1, 2, 1));
+            JPanel argValues = new JPanel(new GridLayout(0, 1, 2, 1));
+            JLabel argTypeLabel = pkgLoadAndAddLeftLabel(argTypes, "Type");
+            JLabel argValueLabel = pkgLoadAndAddLeftLabel(argValues, "Value");
+            for (KochanekBartelsSpline.RobotActionArg arg : robotAction.getActionArgs()) {
+                JTextField argTypeField = pkgLoadAndAddField(argTypes, arg.getArgType(), true);
+                JTextField argValueField = pkgLoadAndAddField(argValues, arg.getValueString(), true);
+            }
+            robotActionArgs.add(argTypes, BorderLayout.LINE_START);
+            robotActionArgs.add(argValues, BorderLayout.CENTER);
+            stopAction.add(robotActionArgs, BorderLayout.PAGE_END);
+        }
+
         p.add(stopAction, BorderLayout.PAGE_END);
 
         // Set up the "apply" and "cancel" buttons and start the dialogue
@@ -704,6 +722,7 @@ public class PathCanvas extends Canvas implements ActionListener {
 
         // is there a scheduled action at this control point?
         JPanel scheduleAction = new JPanel(new BorderLayout(5, 2));
+
         // The checkbox for the action
         JPanel scheduleOnOff = new JPanel(new GridLayout(0, 1, 2, 1));
         scheduleOnOff.add(new JSeparator(SwingConstants.HORIZONTAL));
@@ -711,6 +730,7 @@ public class PathCanvas extends Canvas implements ActionListener {
         hasScheduledAction.setSelected(null != robotAction);
         scheduleOnOff.add(hasScheduledAction);
         scheduleAction.add(scheduleOnOff, BorderLayout.PAGE_START);
+
         // the command for the action
         JPanel cmdLabels = new JPanel(new GridLayout(0, 1, 2, 1));
         JLabel labelScheduleCommand = pkgLoadAndAddLabel(cmdLabels, "Command");
@@ -719,6 +739,23 @@ public class PathCanvas extends Canvas implements ActionListener {
                 cmdControls, (null == robotAction) ? "" : robotAction.getCommand());
         scheduleAction.add(cmdLabels, BorderLayout.LINE_START);
         scheduleAction.add(cmdControls, BorderLayout.CENTER);
+        // The arguments for the command
+        if ((null != robotAction) && robotAction.getActionArgs().iterator().hasNext()) {
+            JPanel robotActionArgs = new JPanel(new BorderLayout(0, 0));
+            robotActionArgs.add(new JLabel("Command Arguments:", SwingConstants.LEFT), BorderLayout.PAGE_START);
+            JPanel argTypes = new JPanel(new GridLayout(0, 1, 2, 1));
+            JPanel argValues = new JPanel(new GridLayout(0, 1, 2, 1));
+            JLabel argTypeLabel = pkgLoadAndAddLeftLabel(argTypes, "Type");
+            JLabel argValueLabel = pkgLoadAndAddLeftLabel(argValues, "Value");
+            for (KochanekBartelsSpline.RobotActionArg arg : robotAction.getActionArgs()) {
+                JTextField argTypeField = pkgLoadAndAddField(argTypes, arg.getArgType(), true);
+                JTextField argValueField = pkgLoadAndAddField(argValues, arg.getValueString(), true);
+            }
+            robotActionArgs.add(argTypes, BorderLayout.LINE_START);
+            robotActionArgs.add(argValues, BorderLayout.CENTER);
+            scheduleAction.add(robotActionArgs, BorderLayout.PAGE_END);
+        }
+
         p.add(scheduleAction, BorderLayout.CENTER);
 
 
@@ -733,9 +770,9 @@ public class PathCanvas extends Canvas implements ActionListener {
         takesDrive.add(doesActionTakeDrive);
         actionTakesDrive.add(takesDrive, BorderLayout.PAGE_START);
         // the approximate time the command takes control of the drive
-        JPanel takesDriveLabels = new JPanel(new GridLayout(0, 1, 2, 1));
+        JPanel takesDriveLabels = new JPanel(new GridLayout(0, 1, 2, 0));
         JLabel labelDuration = pkgLoadAndAddLabel(takesDriveLabels, "Duration");
-        JPanel takesDriveControls = new JPanel(new GridLayout(0, 1, 2, 1));
+        JPanel takesDriveControls = new JPanel(new GridLayout(0, 1, 2, 0));
         JTextField takesDriveDuration = ((null == robotAction) ||
                 (robotAction.actionType != RobotActionType.RELINQUISH_DRIVE_TO_COMMAND)) ?
                 pkgLoadAndAddField(takesDriveControls, ""):
@@ -869,48 +906,60 @@ public class PathCanvas extends Canvas implements ActionListener {
         labels.add(label);
         return label;
     }
+    private @NotNull JLabel pkgLoadAndAddLeftLabel(@NotNull JPanel labels, String name) {
+        JLabel label = new JLabel(name, SwingConstants.LEFT);
+        labels.add(label);
+        return label;
+    }
 
-    private @NotNull JLabel pkgLoadAndAddLabel(JPanel labels, double value, String format) {
+    private @NotNull JLabel pkgLoadAndAddLabel(@NotNull JPanel labels, double value, String format) {
         String str = String.format(format, value);
         JLabel label = new JLabel(str, SwingConstants.LEADING);
         labels.add(label);
         return label;
     }
 
-    private JTextField pkgLoadAndAddField(JPanel controls, double value, String format) {
+    private @NotNull JTextField pkgLoadAndAddField(@NotNull JPanel controls, double value, String format) {
         String str = String.format(format, value);
         JTextField field = new JTextField(str);
         controls.add(field);
         return field;
     }
 
-    private JTextField pkgLoadAndAddField(JPanel controls, double value, String format, boolean disable) {
-        String str = String.format(format, value);
-        JTextField field = new JTextField(str);
+    private @NotNull JTextField pkgLoadAndAddField(JPanel controls, double value, String format, boolean disable) {
+        JTextField field = pkgLoadAndAddField(controls, value, format);
         if (disable) {
             field.setEditable(false);
         }
-        controls.add(field);
         return field;
     }
 
-    private JTextField pkgLoadAndAddField(JPanel controls, AngleConstantD value, String format) {
+    private @NotNull JTextField pkgLoadAndAddField(@NotNull JPanel controls, @NotNull AngleConstantD value, String format) {
         String str = String.format(format, value.getRadians());
         JTextField field = new JTextField(str);
         controls.add(field);
         return field;
     }
 
-    private JTextField pkgLoadAndAddField(JPanel controls, String value) {
+    private @NotNull JTextField pkgLoadAndAddField(@NotNull JPanel controls, String value, boolean disable) {
+        JTextField field = pkgLoadAndAddField(controls, value);
+        if (disable) {
+            field.setEditable(false);
+        }
+        return field;
+    }
+
+    private @NotNull JTextField pkgLoadAndAddField(@NotNull JPanel controls, String value) {
         JTextField field = new JTextField(value);
         controls.add(field);
         return field;
     }
 
     /**
-     * Read a double editable field and check that it is actually a valid decimal number. If it is not a valid
-     * number, post an error for the user so they can fix it before applying the edits
-     * again.
+     * Read a editable double field and check that it is actually a valid decimal number. If it is not a valid
+     * number, post an error for the user so they can fix it before applying the edits again. Once it is a valid
+     * number, test whether it is actually a new value, and return either the current value if unchanged, or the
+     * new value.
      *
      * @param field The field containing the new value (as a string).
      * @param label The label for the field (used in the error dialogue.
@@ -938,15 +987,21 @@ public class PathCanvas extends Canvas implements ActionListener {
     }
 
     /**
+     * Read a editable angle field and check that it is actually a valid angle value. If it is not a valid
+     * angle, post an error for the user so they can fix it before applying the edits again. Once it is a valid
+     * angle, test whether it is actually a new value, and return either the current value if unchanged, or the
+     * new value.
      *
-     *
-     * @param field
-     * @param label
-     * @param currentAngle
+     * @param field The field containing the new value (as a string).
+     * @param label The label for the field (used in the error dialogue.
+     * @param currentAngle The current angle.
      * @param tolerance The tolerance between the dialogue field value and the current value within which we consider
      *                  the value unchanged. Typically, we format the current value to 2 or 3 decimal places. unless
      *                  the value changes more than one or two decimal places, we consider it unchanged in the dialogue.
-     * @return
+     * @return Returns the angle value in the dialogue - adjusted to be the current angle
+     *          if the dialogue angle is within tolerance.
+     * @throws NumberFormatException Thrown if the {@code field} value cannot be parsed as a
+     *      double (the angle in radians).
      */
     private AngleD pkgGetAngleFromTextField(@NotNull JTextField field, @NotNull JLabel label,
                                             AngleD currentAngle, double tolerance) {
