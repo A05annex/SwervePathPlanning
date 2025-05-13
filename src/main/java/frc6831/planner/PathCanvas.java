@@ -755,8 +755,7 @@ public class PathCanvas extends Canvas implements ActionListener {
             robotActionArgs.add(argValues, BorderLayout.CENTER);
             scheduleAction.add(robotActionArgs, BorderLayout.PAGE_END);
         }
-
-        p.add(scheduleAction, BorderLayout.CENTER);
+       p.add(scheduleAction, BorderLayout.CENTER);
 
 
         // does the action take control of the drive?

@@ -1,8 +1,9 @@
-* **version:** 2025.0.3
+* **version:** 2025.0.4
 * **status:** used for FRC **2025 REEFSCAPE**, **2024 Crescendo**, **2023 Charge Up**, **2022 Rapid React**,
   and **2021 Infinite Recharge at home**
 * **comments:** We believe this is competition-ready (i.e. we've used this for competition since the 2020-2021
-  season). This release adds the 2025 REEFSCAPE field as both a full and half field.
+  season). This release adds the 2025 REEFSCAPE field as both a full and half field. It also adds path commands
+  that take control of the drive for targeting.
 * **related releases:**
   * [a05annexUtil](https://github.com/A05annex/a05annexUtil) - the utility library that supports various A05annex
     projects including this swerve path planner and all of our robot competition code.
@@ -32,6 +33,11 @@ in our field descriptions for the 2021, 2022, 2023, 2024, and 2025 competitions.
 <details>
   <summary>version 2025.0.0 to 2025.?.? (for <b>2025 REEFSCAPE</b>):</summary>
 
+  * **version 2025.0.4** - UI improvements, better support for actions with instantiation arguments:
+    * Robot action commands instantiation arguments are read and written to path files (interactive editing is not yet
+      supported
+    * Robot action commands instantiation arguments are displayed in control point and path point dialogues (but are
+      not editable).
   * **version 2025.0.3** - UI improvements, support for scheduled actions that the path relinquishes
     drive control to. In detail, the changes are:
     * Errors in dialogue input previously reported errors when the dialogue was applied, but then simply
@@ -103,10 +109,10 @@ option to:
 
 ### Just Download and Run
 
-In github you will find an 2025.0.1 release of the *SwervePathPlanning-2025.0.0-all.jar*
+In github you will find an 2025.0.4 release of the *SwervePathPlanning-2025.0.4-all.jar*
 which you can run at the command line as:
 ```
-% java -jar SwervePathPlanning-2025.0.1-all.jar
+% java -jar SwervePathPlanning-2025.0.4-all.jar
 ```
 See notes in the next section about command line arguments. While this is a running
 program, it lacks data for field, robot, or path descriptions; so, you may want to
@@ -189,7 +195,6 @@ This will animate the robot following the path at actual speed/timing.
 
 ### Editing the Path
 
-<details><summary>
 Once you create a path, really a first guess at the path by dropping a few control points, you go immediately
 into path tuning (editing). Generally, the questions and adjustments are around:
 <ul>
@@ -199,6 +204,7 @@ into path tuning (editing). Generally, the questions and adjustments are around:
 <li>How do I tell the robot to do something in addition to following the path?;</li>
 <li>How can I optimize timing or speed for a faster (better) path?</li>
 </ul>
+<details><summary>
 Expand this section to get answers for these questions.
 </summary>
 
@@ -219,6 +225,7 @@ robot heading) at that control point.
 NOTE that as you edit the control point, the robot path will reflect those edits. The robot path will be colored
 to describe things you should consider:
 * **white** - this is a valid robot path;
+* **gray** - this is a part of the path where a targeting action may be controlling the drive;
 * **red** - this path is asking the robot to perform beyond its capabilities - specifically, you are asking at
   least one module to go faster than is possible;
 * **orange** - this path is in danger of crashing (or will crash) into the field perimeter.
@@ -328,36 +335,59 @@ path within the robot capabilities.
 </details>
 
 ### Running Commands Along The Path
-<details><summary>
-In the <b>2021 At Home Challenges</b>, the obstacle course challenges merely required a path. For the <b>2022
-Rapid React</b> competition it became obvious we needed the paths to include other actions (commands) that needed to
-run at various points on the path (like <i>start/stop-collector</i>, or <i>aim-and-shoot</i>). So the
-<code>AutonomousPathCommand</code> run on the robot is really a dynamically configured (configured when the path is
-executed) Command Group.
 
-Two types of commands are supported:
+In the <b>2021 At Home Challenges</b> the obstacle course challenges merely required a path. For the <b>2022
+Rapid React</b> competition it became obvious we needed the paths to include other actions (commands) that needed to
+run at various points on the path (like <i>start/stop-collector</i>, <i>aim-and-shoot</i>, or
+<i>drive-to-vision-guided-position</i>). The
+<code>AutonomousPathCommand</code> run on the robot is really a dynamically configured (configured when the path is
+executed) Command Group that controls the drive,
+
+Three types of path initiated commands are supported as shown in the illustration below:
+![alt text](./resources/PathActionCommands.jpg "Path Action Commands")
+This is a cursory description of each of the command types:
 <ul>
-<li>A Command that is scheduled to execute at a specific point along the path the robot is following, e.g.
-  start/stop the collector rollers;</li>
-<li>A command that happens at a control point where the robot stops, the path follower relinquishes
-  control of the swerve drive, and path following resumes at the completion
-  of the command. An example of this would be a command that aims the shooter at a target, spins-up 
+<li>Scheduled Command - A Command that is scheduled to execute at a specific point along the path, e.g.
+  start/stop the collector rollers; The command is scheduled on the <code>CommandScheduler</code>, so the
+  <code>CommandScheduler</code> handles subsystem requirements. NOTE: a scheduled command may not require the
+  drive subsystem, or, it will interrupt the <code>AutonomousPathCommand</code></li>
+<li>Stop and Run Command - A command that happens at a control point where the robot stops, the path follower
+  relinquishes control of the swerve drive, and path following resumes at the completion of the command. For
+  <b>2022 Rapid React</b> this was a command that aims the shooter at the target (by spinning the root), spins-up 
   the shooter rollers, and takes a shot.</li>
+<li>Move to Target Command - Generally a visual targeting command that runs inside the
+  <code>AutonomousPathCommand</code>, and lets the <code>AutonomousPathCommand</code> know when it is ready to take
+  control of the drive. For <b>2025 REEFSCAPE</b> our emphasis was semiautonomous scoring, so we needed a way to
+  transfer drive control from the path follower to the 'move to scoring position' command when the targetwas visible.
 </ul>
+<details><summary>
+Expand this section for details about actions along a path.
+</summary>
+
+#### Generic Path Command Notes ####
+
 The swerve path planner has been written to let you plan paths independent of `wpilib` and your competition
 robot code, so it does not know what commands you have actually written for your robot, nor does it have a way
-to check. The commands you specify by name, are created using java reflection by the path following command. That
-is, at runtime, the path following command will ask if the command class exists, and if it does, the command
+to check. The commands you specify by name, are instantiated using java reflection by
+the <code>AutonomousPathCommand</code>. That is, at runtime, the <code>AutonomousPathCommand</code> will ask the
+java runtime if the command class exists in the <code>"frc.robot.commands."</code> package, and if it does, the command
 will be started and executed, otherwise there will be a runtime exception logged, and
-the path will continue. Currently, the commands must have a *no-argument* constructor
-that will be used. We are working on supporting contractor arguments.
-</summary>
+the path will continue. For example, if you specified the command name <code>"StartCollector"</code> with no arguments,
+the <code>"frc.robot.commands.StartCollector"</code> command would be instantiated using the no-argument constructor.
+
+##### Path Command Arguments #####
+
+
 
 #### Scheduled Commands ####
 
 <i>To be written</i>
 
 #### Stop-And-Run Commands ####
+
+<i>To be written</i>
+
+#### Move-To-Target Commands ####
 
 <i>To be written</i>
 
